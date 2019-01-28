@@ -28,40 +28,39 @@ M
 
 
  ### Version blender
- Passage du plugin en phython pour intégration à Blender par Dindoune Amigo Bruno ! | git | dindoun.lautre.net
-
-
-Merci à Dindoune Amigo Bruno ! | [git](https://github.com/dindoun) | [dindoun.lautre.net](http://www.dindoun.lautre.net/)
+ Passage du plugin en phython pour intégration à Blender par Dindoune el amigo dit Bruno ! | [git](https://github.com/dindoun) | [dindoun.lautre.net](http://www.dindoun.lautre.net/)
 
 
 ----------
- ### Installation
+ ### Installation 3ds max
 
-1.  Copier le dossier _'cp-Urba'_ dans _'C:\Users\...\AppData\Local\Autodesk\3dsMax\20xx - 64bit\ENU\scripts\'_
+1.  Copier le dossier _'cp-Urba'_ dans _'C:\Users\\...\AppData\Local\Autodesk\3dsMax\20xx - 64bit\ENU\scripts\'_
 
     ...     : le nom du User;   
     20xx    : la version de 3ds max
 
-2.  Pour qu'il charge le plug au démarrage de max : Copier les fichiers du dossier _'cp-Urba\Startup\'_ dans _'C:\Users\...\AppData\Local\Autodesk\3dsMax\20xx - 64bit\ENU\scripts\startup\'_,
+    On doit avoir au final l'arbo suivante :  _'C:\Users\\...\AppData\Local\Autodesk\3dsMax\20xx - 64bit\ENU\scripts\cp-Urba\'_.
+
+2.  Pour qu'il charge le plug au démarrage de max : Copier les fichiers du dossier _'cp-Urba\Startup\'_ dans _'C:\Users\\...\AppData\Local\Autodesk\3dsMax\20xx - 64bit\ENU\scripts\startup\'_,
 3.  Pour avoir un bouton qui recompile le script (programation) :
 
-    a. Ouvrir le fichier 'cpUrba\macros\cp - Batiment - recompile.mcr' dans l'éditeur de max, puis executer le, ou executer le script directement (menu: scripting\run script).
+    a. Ouvrir le fichier 'cp-Urba\macros\cp - Batiment - recompile.mcr' dans l'éditeur de max, puis l'executer (ctrl+E), ou executer le script directement (menu: scripting\run script).
 
     b. Il faut customiser l'interface : menu : Customize\Customize User Interface.
 
     c. Dans l'onglet 'Toolbars', group 'Main UI', Category '#CPages', glisser l'action 'DEBUG: recompile le plugin Batiment' dans l'interface de max.
 
 ----------
- ### Utilisation
+ ### Utilisation 3ds max
 
-Il suffit de créer un objet 'Batiment' accessible dans la category "CP | Urba".
+Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create', puis la category "CP | Urba", puis de lui assigner une spline.
 
 
  ----------
 ### Todo:
 
 #### __Terrain__
-  - [ ]
+  - [ ]  .
 
 
 ##### Importeur de reliefs
@@ -69,10 +68,18 @@ Il suffit de créer un objet 'Batiment' accessible dans la category "CP | Urba".
 - [ ] DEM/DTM Data base. ex:https://asterweb.jpl.nasa.gov/gdem.asp
 
 
+
 #### __Bâtiment__
-  - [ ]
+  - [ ] .
 
 #### __OSM__
- - [ ]
+ - [ ] .
 _____________________________
 ### Historique des versions:
+
+
+
+
+----------
+
+Merci à Dindoune el amigo dit Bruno pour ces bons tuyaux ! | [git](https://github.com/dindoun) | [dindoun.lautre.net](http://www.dindoun.lautre.net/)
