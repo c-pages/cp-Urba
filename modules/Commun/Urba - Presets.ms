@@ -1,5 +1,5 @@
 
-include	 "$userScripts\\cp-Urba\\modules\\Commun\\Urba - mgr - Datas to string.ms" 
+-- include	 "$userScripts\\cp-Urba\\modules\\Commun\\Urba - mgr - Datas to string.ms" 
 
 struct str_mgr_presets (
 		
@@ -21,7 +21,7 @@ struct str_mgr_presets (
 		fichier_type 					= fichier_categorie + "(*." + fichier_extension + ")|*." + fichier_extension + "|All|*.*|",
 		
 		---- convertisseur Parametres to String  -------------
-		mgr_datas 					= str_datasToString 	m_prt:this,
+		mgr_datas 						= str_datasToString 	m_prt:this,
 		
 		separateur_params 			="¤",
 		separateur_mutation 		= "µ",
@@ -214,4 +214,28 @@ struct str_mgr_presets (
 		)
 		
 )	--- fin struct ------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

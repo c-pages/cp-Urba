@@ -775,7 +775,7 @@ struct str_mgr_shape (
 			
 			if vec2.x > vec1.X do result = not result
 			
-			debug "est_sensPositif FIN"
+			debug "est_sensPositif result" var:result
 			result
 			
 		),
@@ -784,7 +784,7 @@ struct str_mgr_shape (
 			local result =#()
 			for i= _pts.count to 1 by -1 do 
 				append result 	_pts[i]
-			debug "changer_sens()	FIN"
+			debug "changer_sens result" var:result
 			result
 		),
 		fn get_positionRelative_BB		_pts_shpA		_pts_shpB 	=(
@@ -1900,7 +1900,7 @@ struct str_mgr_shape (
 		
 		------Subdivision ----------------------------------------------------------
 		fn scanner_points 	_shape	=(
-			
+			debug "scanner_points"
 			local ptsSurface				=#()
 			
 			---- On chope les points de la surface a scanner -----------
@@ -1913,7 +1913,7 @@ struct str_mgr_shape (
 			
 			--- on fait tourner les spline dans le meme sens ----
 			if not est_sensPositif 	ptsSurface 	 do
-				trace_absolu = changer_sens		ptsSurface
+				ptsSurface = changer_sens		ptsSurface
 			
 			ptsSurface
 			

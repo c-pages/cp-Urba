@@ -1,7 +1,7 @@
 
 
 
------ les fichiers à inclure ------------------------------------------------------------------------------------
+-------------- les fichiers à inclure ------------------------------------------------------------------------------------
 --- pour debogage -----------
 include	 "$userScripts\\cp-Urba\\modules\\Commun\\Urba - Debug.ms" 
 --- les fichiers necessaires au plug -----------
@@ -12,15 +12,15 @@ include	 "$userScripts\\cp-Urba\\Startup\\cp - Urba - Batiment - FileIn.ms"
 
 
 	
----- fonction pour affichage viewport ------------------------------------------------------------------------------------
-global 	urba_fn_afficheur_longueurs
-
+--------------------------------------------------------------------------------------------------------
+global 	urba_fn_afficheur_longueurs	--- fonction pour affichage viewport 
+global	urba_clipboard_batiment		---	clipboard pour copier/coller des presets
 
 
 
 
 	
----- le plugin himself ------------------------------------------------------------------------------------
+--------------- le plugin himself ------------------------------------------------------------------------------------
 plugin simpleObject		cp_batiment
 name:"Bâtiment"
 classID:#(0x3ae67906, 0x740a62d7)
@@ -41,6 +41,7 @@ category:"CP | Urba"
 	
 	---- pré déclaration -----------
 	local basculer_editeurFacade, ajouter_facade, retirer_facade, monter_facade, descendre_facade, renommer_facade, actualiser_shape
+	local ajouter_etage_spe, supprimer_etage_spe
 	local afficher_longueurs
 	
 	local definir_toiture
@@ -63,6 +64,13 @@ category:"CP | Urba"
 		
 		dalle_epaisseur				type: #worldUnits 		default:20.	 		ui:spn_dalle_epaisseur	 			animatable:false		invisibleInTV:true
 		soubassement_hauteur		type: #worldUnits 		default:100.	 	ui:spn_soubassement_hauteur	animatable:false		invisibleInTV:true
+		
+		
+		------- Etages	 specifiques		------------------
+		etage_spe_min				type: #intTab					tabSizeVariable:true
+		etage_spe_max				type: #intTab					tabSizeVariable:true
+		etage_spe_hauteur			type: #worldUnitsTab		tabSizeVariable:true
+		
 	)
 	
 	parameters param_surface rollout:roll_surface	(
@@ -86,7 +94,7 @@ category:"CP | Urba"
 	
 	
 	parameters param_facades rollout:roll_facades	(
-		facades					type:#maxObjectTab	tabSizeVariable:true
+		facades						type:#maxObjectTab	tabSizeVariable:true
 		
 		affichage_longueurs		type:#boolean 		/* ui:ckb_afficher_longueur	 */			default:true
 	)
@@ -128,29 +136,30 @@ category:"CP | Urba"
 	rollout roll_presets 			"Presets" 		rolledUp:true		(
 
 
-		button btn_enregistrer "Enregistrer" pos:[88,2] width:85 height:16 align:#left
+		button btn_enregistrer "Enregistrer" 	pos:[88,2] width:85 height:16 align:#left
 		button btn_charger 	"Charger" 		pos:[5,2] width:85 height:16 align:#left
-		button btn_coller 		"Coller" 		pos:[88,17] width:85 height:16 align:#left
-		button btn_copier 		"Copier" 		pos:[5,17] width:85 height:16 align:#left
-/* 
+		button btn_coller 		"Coller" 			pos:[88,17] width:85 height:16 align:#left
+		button btn_copier 		"Copier" 			pos:[5,17] width:85 height:16 align:#left
+		
+		
 		fn actualiser =(
 			btn_coller.enabled 			= urba_clipboard_batiment != ""
 		)
 
 		on roll_presets open do actualiser ()
 		on btn_copier pressed do	(
-			core.preset_copier ()
+				preset_copier ()
 				actualiser()
 			)
 		on btn_coller pressed do	(
-			core.preset_coller ()
+				preset_coller ()
 				actualiser()
 			)
 		on btn_enregistrer pressed do
-			core.preset_enregistrer ()
+			preset_enregistrer ()
 		on btn_charger pressed do
-			core.preset_charger ()
- */
+			preset_charger ()
+		
 	) 	---- fin rollout Presets ---------------------------
 	
 	rollout roll_surface "Surface" (
@@ -177,8 +186,6 @@ category:"CP | Urba"
 			checkbox 	chk_projeter 	"Projeter"  
 		)
 		
--- 		on btn_pick_perimetre picked _node do 	actualiser_shape ()
-		
 	)	---- fin rollout Surface ---------------------------
 	
 	
@@ -194,18 +201,100 @@ category:"CP | Urba"
 		)
 		group "Etages spécifiques" (	
 			
-			button 	btn_etages_nouveau "Nouv." width:35 height:16 toolTip:"Ajouter	étages spécifiques" across:2
-			button 	btn_etages_supprimer "Sup."  width:35 height:16 toolTip:"Supprimer étages spécifiques"
-			listbox	lbx_etages_specifiques ""  height:4
+			button 	btn_etages_nouveau 	"Nouv." width:35 height:16 toolTip:"Ajouter	étages spécifiques" across:2
+			button 	btn_etages_supprimer 	"Sup."  width:35 height:16 toolTip:"Supprimer étages spécifiques"
+			listbox	lbx_etages_specifiques 	""  height:4
 			
-			label				lbl_etage_specifiques 		"Etages :"  width:45 height:19  across:4		align:#left
+			label				lbl_etage_specifiques 		"Etages :"  width:45 height:19  across:4		align:#left 
 			spinner 		spn_etageMin_specifiques 	""  width:40 height:16 range:[0,1e+13,0] type:#integer scale:1 
-			checkbutton 	ckb_etageMax_specifiques ">"  width:16 height:16 
+-- 			checkbutton 	ckb_etageMax_specifiques ">"  width:16 height:16 
+			label 			lbl_etageMax_specifiques ">"  width:16 height:16 
 			spinner 		spn_etageMax_specifiques "" width:40 height:16 range:[0,1e+13,0] type:#integer	align:#right
 			label				lbl_hauteur_specifiques 	"Hauteur :"  width:55 height:22	across:2	align:#left
 			spinner 		spn_hauteur_specifiques "" width:92 height:16 range:[0,1e+13,0] type:#worldunits 	align:#right
 			
 		)
+		
+		fn actualiser =(
+			
+			--- la liste box ------
+			local liste_etages =#()
+			for i = 1 to  etage_spe_min.count do 
+				append liste_etages ( etage_spe_min[i] as string + " > " + etage_spe_max[i] as string + " : " + etage_spe_hauteur[i] as string + "cm." )			
+			lbx_etages_specifiques.items = liste_etages
+			
+			---- les valeurs --------
+			if lbx_etages_specifiques.selection != 0 then (
+				local selec = lbx_etages_specifiques.selection
+				
+				btn_etages_supprimer.enabled 		= true
+				lbl_etage_specifiques.enabled 		= true
+				lbl_etageMax_specifiques.enabled 	= true
+				lbl_hauteur_specifiques.enabled 		= true
+				
+				spn_etageMin_specifiques.enabled 	= true
+				spn_etageMax_specifiques.enabled 	= true
+				spn_hauteur_specifiques.enabled 	= true
+				
+				spn_etageMin_specifiques.indeterminate 	= false
+				spn_etageMax_specifiques.indeterminate 	= false
+				spn_hauteur_specifiques.indeterminate 	= false
+				
+				spn_etageMin_specifiques.value 		= etage_spe_min[selec] 
+				spn_etageMax_specifiques.value 	= etage_spe_max[selec] 
+				spn_hauteur_specifiques.value 		= etage_spe_hauteur[selec] 
+				
+			) else (
+				
+				btn_etages_supprimer.enabled 		= false
+				lbl_etage_specifiques.enabled 		= false
+				lbl_etageMax_specifiques.enabled 	= false
+				lbl_hauteur_specifiques.enabled 		= false
+				
+				spn_etageMin_specifiques.enabled 	= false
+				spn_etageMax_specifiques.enabled 	= false
+				spn_hauteur_specifiques.enabled 	= false
+				
+				spn_etageMin_specifiques.indeterminate 	= true
+				spn_etageMax_specifiques.indeterminate 	= true
+				spn_hauteur_specifiques.indeterminate 	= true
+				
+			)
+			
+		)
+		
+		on roll_etages open do actualiser ()
+		
+		on btn_etages_nouveau pressed do (
+			ajouter_etage_spe	()
+			actualiser ()
+		)
+		on btn_etages_supprimer pressed do (
+			supprimer_etage_spe	lbx_etages_specifiques.selection
+			actualiser ()
+		)
+		
+		on spn_etageMin_specifiques changed val do (
+			local selec = lbx_etages_specifiques.selection			
+			etage_spe_min[selec] = val
+			if etage_spe_max[selec] < val do
+				etage_spe_max[selec] = val
+			actualiser ()
+		)
+		on spn_etageMax_specifiques changed val do (
+			local selec = lbx_etages_specifiques.selection			
+			etage_spe_max[selec] = val
+			if etage_spe_min[selec] > val do
+				etage_spe_min[selec] = val
+			actualiser ()
+		)
+		on spn_hauteur_specifiques changed val do (
+			local selec = lbx_etages_specifiques.selection			
+			etage_spe_hauteur[selec] = val
+			actualiser ()
+		)
+			
+		
 	)	---- fin rollout etages ---------------------------
 	
 	rollout roll_facades "Facades"	(
@@ -216,14 +305,14 @@ category:"CP | Urba"
 		button 		btn_descendre	"\\/"	--align:#right
 		
 		listBox		lbx_facades		""	height:5
-		/* 
+		
 		group "Viewport" (
 			checkButton	ckb_afficher_longueur	"Long"	width:35	across:4 	align:#right
 			checkButton	ckb_autre_1	""	width:35	align:#right
 			checkButton	ckb_autre_2	""	width:35	align:#right
 			checkButton	ckb_autre_3	""	width:35	align:#right
 		)
-		 */
+		
 		
 		editText 	edTxt_nom		 	"" 	
 		
@@ -437,26 +526,19 @@ category:"CP | Urba"
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	-------------- divers -------------------------
+	-------------- Initialisation -------------------------
 	fn initialiser =(
 		mgr_shp 	= str_mgr_shape ()
 		mgr_mesh 	= str_mgr_mesh ()
 	)
 	
 	
+	------------- actualiser --------------------------
 	fn actualiser_shape =(
 		if surface_node != undefined then (
 			
 			---- on place le batiment sur le shape ----------
 			local this_node 		= (refs.dependents this)[1]
--- 			this_node.rotation	=	surface_node.rotation
--- 			this_node.pos			=	surface_node.pos
 			
 			this_node.transform	=	surface_node.transform
 			
@@ -476,14 +558,15 @@ category:"CP | Urba"
 		) else (
 			pts_surface =#()
 		)
-	)--- fin actualisr shape ---------------
-
+	)
 	fn actualiser =(
 -- 		corriger_parametres ()		
 -- 		actualiser_composants()		
 		if roll_facades.open do	roll_facades.actualiser ()		
 		redrawViews ()
 	)
+	
+	
 	
 	
 	
@@ -580,6 +663,50 @@ category:"CP | Urba"
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	---------------- les presets-------------------------------------
+	fn preset_copier = (
+		
+	)
+	
+	fn preset_coller = (
+		
+	)
+	
+	fn preset_enregistrer = (
+		
+	)
+	
+	fn preset_charger = (
+		
+	)
+	
+	
+	--------------- etages ----------------------------------	
+	fn		ajouter_etage_spe	=(
+		
+		append	etage_spe_min			0
+		append	etage_spe_max			0
+		append	etage_spe_hauteur		250.
+		
+	)
+	
+	fn supprimer_etage_spe 	_id =(
+		deleteItem etage_spe_min			_id
+		deleteItem etage_spe_max		_id
+		deleteItem etage_spe_hauteur	_id		
+	)
+		
+		
+		
+		
 	--------------- facades ----------------------------------
 	fn basculer_editeurFacade 	_etat			=(
 		
@@ -693,16 +820,6 @@ category:"CP | Urba"
 		actualiser ()
 	)
 	
-	
-	fn definir_toiture		_id_type 	=(
--- 		debug "definir_toiture" var:_id_type
-		case _id_type of (
-			1:		toiture		=	undefined
-			5:		toiture 		= createInstance		batiment_composant_toiture_nPans
-		)
--- 		debug "toiture" var:toiture
-	)
-	
 	----- gestion des facades ----------------------------------------------------
 	fn get_facades_pourMur		_id_pt	 =(
 		
@@ -767,6 +884,15 @@ category:"CP | Urba"
 	
 	
 	
+	--------- toiture ----------------------------------
+	fn definir_toiture		_id_type 	=(
+-- 		debug "definir_toiture" var:_id_type
+		case _id_type of (
+			1:		toiture		=	undefined
+			5:		toiture 		= createInstance		batiment_composant_toiture_nPans
+		)
+-- 		debug "toiture" var:toiture
+	)
 	
 	
 	
@@ -824,15 +950,6 @@ category:"CP | Urba"
 				compo_planV.hauteur	=	soubassement_hauteur				
 				compo_planV.matId		=	matId_mur
 				mgr_mesh.attacher		mesh		compo_planV	transf:( transf_facade * transMatrix [0,0, -(soubassement_hauteur + dalle_epaisseur ) ] )
-/* 
-				---- l'epaisseur de la dalle RdC --------
-				local compo_planV		=	createInstance	cp_prim_planVertical
-				compo_planV.longueur	=	distance	pt	pt_suivant
-				compo_planV.hauteur	=	dalle_epaisseur				
-				compo_planV.matId		=	matId_mur
-				mgr_mesh.attacher		mesh		compo_planV	transf:( transf_facade * transMatrix [0,0, - dalle_epaisseur  ] )
-
-				 */
 				
 				
 				
