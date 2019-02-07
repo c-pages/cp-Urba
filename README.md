@@ -57,6 +57,25 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
 
 
  ----------
+### CP - Urba V0.4.1
+
+
+#### __Bâtiment__
+  - [x] Gestion des hauteurs d'étages spécifiques. (07/02/2019)
+  - [ ] Début de l'intégration des presets, il y a questionnement sur enregistrement ou plutot sur la lecture des parametres des maxObjects inclus dans des parametres (tableau) de nos preset a sauvegarder...
+
+
+#### __Terrain__
+  - [ ]  .
+
+
+##### Importeur de reliefs
+- [ ] .
+
+
+#### __OSM__
+ - [ ] .
+ ----------
 ### Todo:
 
 #### __Terrain__

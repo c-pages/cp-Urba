@@ -67,9 +67,9 @@ category:"CP | Urba"
 		
 		
 		------- Etages	 specifiques		------------------
-		etage_spe_min				type: #intTab					tabSizeVariable:true
-		etage_spe_max				type: #intTab					tabSizeVariable:true
-		etage_spe_hauteur			type: #worldUnitsTab		tabSizeVariable:true
+		etages_spe_min				type: #intTab					tabSizeVariable:true
+		etages_spe_max				type: #intTab					tabSizeVariable:true
+		etages_spe_hauteur			type: #worldUnitsTab		tabSizeVariable:true
 		
 	)
 	
@@ -92,8 +92,7 @@ category:"CP | Urba"
 		
 	)
 	
-	
-	parameters param_facades rollout:roll_facades	(
+	parameters param_facades rollout:roll_facades(
 		facades						type:#maxObjectTab	tabSizeVariable:true
 		
 		affichage_longueurs		type:#boolean 		/* ui:ckb_afficher_longueur	 */			default:true
@@ -188,7 +187,6 @@ category:"CP | Urba"
 		
 	)	---- fin rollout Surface ---------------------------
 	
-	
 	rollout roll_etages "Etages"	(
 		group "Général" (
 			spinner spn_etages_nbres 		"Nombre" 			type:#integer 				range:[0,1000,1]
@@ -219,8 +217,8 @@ category:"CP | Urba"
 			
 			--- la liste box ------
 			local liste_etages =#()
-			for i = 1 to  etage_spe_min.count do 
-				append liste_etages ( etage_spe_min[i] as string + " > " + etage_spe_max[i] as string + " : " + etage_spe_hauteur[i] as string + "cm." )			
+			for i = 1 to  etages_spe_min.count do 
+				append liste_etages ( etages_spe_min[i] as string + " > " + etages_spe_max[i] as string + " : " + etages_spe_hauteur[i] as string + "cm." )			
 			lbx_etages_specifiques.items = liste_etages
 			
 			---- les valeurs --------
@@ -240,9 +238,9 @@ category:"CP | Urba"
 				spn_etageMax_specifiques.indeterminate 	= false
 				spn_hauteur_specifiques.indeterminate 	= false
 				
-				spn_etageMin_specifiques.value 		= etage_spe_min[selec] 
-				spn_etageMax_specifiques.value 	= etage_spe_max[selec] 
-				spn_hauteur_specifiques.value 		= etage_spe_hauteur[selec] 
+				spn_etageMin_specifiques.value 		= etages_spe_min[selec] 
+				spn_etageMax_specifiques.value 	= etages_spe_max[selec] 
+				spn_hauteur_specifiques.value 		= etages_spe_hauteur[selec] 
 				
 			) else (
 				
@@ -274,24 +272,29 @@ category:"CP | Urba"
 			actualiser ()
 		)
 		
+		
+		on lbx_etages_specifiques selected sel do
+			actualiser ()
+		
 		on spn_etageMin_specifiques changed val do (
 			local selec = lbx_etages_specifiques.selection			
-			etage_spe_min[selec] = val
-			if etage_spe_max[selec] < val do
-				etage_spe_max[selec] = val
+			etages_spe_min[selec] = val
+			if etages_spe_max[selec] < val do
+				etages_spe_max[selec] = val
 			actualiser ()
 		)
 		on spn_etageMax_specifiques changed val do (
 			local selec = lbx_etages_specifiques.selection			
-			etage_spe_max[selec] = val
-			if etage_spe_min[selec] > val do
-				etage_spe_min[selec] = val
+			etages_spe_max[selec] = val
+			if etages_spe_min[selec] > val do
+				etages_spe_min[selec] = val
 			actualiser ()
 		)
 		on spn_hauteur_specifiques changed val do (
 			local selec = lbx_etages_specifiques.selection			
-			etage_spe_hauteur[selec] = val
+			etages_spe_hauteur[selec] = val
 			actualiser ()
+			redrawViews ()
 		)
 			
 		
@@ -419,7 +422,6 @@ category:"CP | Urba"
 		
 	) --- fin rollout facades-------------------------
 	
-	
 	rollout roll_toiture "Toiture"	(
 		
 		
@@ -493,7 +495,6 @@ category:"CP | Urba"
 		on 	ddl_toiture_type		selected val		do actualiser()
 	) ----- fin rollout toiture -----------------------
 	
-	
 	rollout roll_divers  "Divers"	(
 		 group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly" 		
@@ -505,7 +506,6 @@ category:"CP | Urba"
 			spinner spn_matId_mur 			"Mur" 					type:#integer range:[1,1000,1]
 		)
 	) 	---- fin rollout	-----------------------
-	
 	
 	rollout roll_hasard  "Hasard"	(
 		
@@ -692,21 +692,24 @@ category:"CP | Urba"
 	--------------- etages ----------------------------------	
 	fn		ajouter_etage_spe	=(
 		
-		append	etage_spe_min			0
-		append	etage_spe_max			0
-		append	etage_spe_hauteur		250.
+		append	etages_spe_min			0
+		append	etages_spe_max			0
+		append	etages_spe_hauteur		250.
 		
+		actualiser()
 	)
 	
 	fn supprimer_etage_spe 	_id =(
-		deleteItem etage_spe_min			_id
-		deleteItem etage_spe_max		_id
-		deleteItem etage_spe_hauteur	_id		
+		deleteItem etages_spe_min		_id
+		deleteItem etages_spe_max		_id
+		deleteItem etages_spe_hauteur	_id
+		
+		actualiser()
 	)
-		
-		
-		
-		
+	
+	
+	
+	
 	--------------- facades ----------------------------------
 	fn basculer_editeurFacade 	_etat			=(
 		
@@ -754,7 +757,7 @@ category:"CP | Urba"
 		local	id_elem_select 	= 	roll_facades.lbx_facades.selection
 		local	id_elem_insert		= 	id_elem_select + 1
 		
-		local nvl_facade		= createinstance		batiment_composant_facade
+		local nvl_facade			= createinstance		batiment_composant_facade
 		
 		if id_elem_select != 0 and id_elem_select	!= facades.count	then	
 			insertItem nvl_facade					facades 					id_elem_insert
@@ -835,6 +838,22 @@ category:"CP | Urba"
 			local facade_trouve 			= false
 			local facade_pasDeResultat	=	facades.count == 0
 			local id_facade = 1
+			
+			
+			---- la hauteur des étages, normal ou specifique -----------------
+			local on_est_sur_etage_spe	=	false
+			local hauteur_etage 			=	etages_hauteur_global
+			for i = 1 to  etages_spe_min.count do (
+				local etageSpe_min 		= etages_spe_min[i]
+				local etageSpe_max 	= etages_spe_max[i]
+				local etageSpe_ht 		= etages_spe_hauteur[i]
+				if not on_est_sur_etage_spe and etageSpe_min <= etage_courant and etageSpe_max >= etage_courant	do (
+					on_est_sur_etage_spe = true
+					hauteur_etage	=	etageSpe_ht
+				)
+			)
+			
+			
 			while not facade_trouve	and not facade_pasDeResultat  do (
 				
 				local facade_aTester = copy facades[ id_facade ]
@@ -842,7 +861,7 @@ category:"CP | Urba"
 				if facade_aTester.est_facadeValide		pt		pt_suivant		etage_courant 		etages_nbre		then (
 				
 					facade_aTester.longueur			=	distance	pt	pt_suivant
-					facade_aTester.hauteur			=	etages_hauteur_global
+					facade_aTester.hauteur			=	hauteur_etage
 					facade_aTester.low_poly			=	low_poly
 					facade_aTester.fen_ouvMax		=	fen_ouvMax
 					facade_aTester.fen_proba_ouv	=	fen_proba_ouv
@@ -868,7 +887,7 @@ category:"CP | Urba"
 				
 				local compo_planV		=	createInstance	cp_prim_planVertical
 				compo_planV.longueur	=	distance	pt	pt_suivant
-				compo_planV.hauteur	=	etages_hauteur_global
+				compo_planV.hauteur	=	hauteur_etage
 				compo_planV.matId		=	matId_mur
 				
 				append 	result		compo_planV
@@ -929,7 +948,8 @@ category:"CP | Urba"
 			
 			
 			
-			
+			---le repere de hauteur --------
+			local hauteur_courante = 0
 			
 			----- 1 ) les Facades ----------------------------------------------------------------------------------------------------------------------
 			---- Pour chaque segment de la surface ----------------------------
@@ -957,9 +977,8 @@ category:"CP | Urba"
 				----- les facades ---------------------
 				local depose_etage 				= 	transf_facade* transMatrix [0,0, -dalle_epaisseur  ]
 				local facades_murCourant		=	get_facades_pourMur	i	
+				
 				for i = 1 to facades_murCourant.count do (
-					
-					
 					
 					---- l'epaisseur de la dalle --------
 					local compo_planV		=	createInstance	cp_prim_planVertical
@@ -973,23 +992,53 @@ category:"CP | Urba"
 					
 					
 					
-					
 					---- la facade ----
 					local fcd 				= facades_murCourant[i]
 					mgr_mesh.attacher		mesh		fcd	transf:depose_etage
 					
 					---- maj depose-----
-					depose_etage 		*=  transMatrix [0,0,  etages_hauteur_global ]
+					depose_etage 		*=  transMatrix [0,0,  fcd.hauteur ]
 					
-					
-					
-					
-				)				
-			)
+				)
+				
+				
+				---- la derniere dalle --------
+				local compo_planV		=	createInstance	cp_prim_planVertical
+				compo_planV.longueur	=	distance	pt	pt_suivant
+				compo_planV.hauteur	=	dalle_epaisseur		
+				compo_planV.matId		=	matId_mur		
+				mgr_mesh.attacher		mesh		compo_planV	transf:depose_etage
+				
+				
+				
+			) ---- fin des facades ------------------
 			
 			----- 2 ) la toiture ----------------------------------------------------------------------------------------------------------------------
-			local pts_toiture 	= deepcopy pts_surface
-			pts_toiture.z 		+=  ( etages_nbre	+ 1 ) *	etages_hauteur_global	+ (etages_nbre  ) * dalle_epaisseur	
+			local pts_toiture 			= 	deepcopy pts_surface
+			
+			--- calcul de l'altitude du toit ---------
+			local altitude_toiture	=	0
+			for etage_courant = 0 to etages_nbre do (
+				
+				altitude_toiture += dalle_epaisseur
+				
+				---- la hauteur des étages, normal ou specifique -----------------
+				local on_est_sur_etage_spe	=	false
+				local hauteur_etage 			=	etages_hauteur_global
+				for i = 1 to  etages_spe_min.count do (
+					local etageSpe_min 		= etages_spe_min[i]
+					local etageSpe_max 	= etages_spe_max[i]
+					local etageSpe_ht 		= etages_spe_hauteur[i]
+					if not on_est_sur_etage_spe and etageSpe_min <= etage_courant and etageSpe_max >= etage_courant	do (
+						on_est_sur_etage_spe = true
+						hauteur_etage	=	etageSpe_ht
+					)
+				)
+				altitude_toiture += hauteur_etage
+			)
+			
+			--- on place donc les points sur Z ---------------
+			pts_toiture.z 		= altitude_toiture
 			
 			
 			
