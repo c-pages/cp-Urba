@@ -689,6 +689,10 @@ category:"CP | Urba"
 	)
 	
 	
+	
+	
+	
+	
 	--------------- etages ----------------------------------	
 	fn		ajouter_etage_spe	=(
 		
@@ -715,7 +719,7 @@ category:"CP | Urba"
 		
 		
 		----- rollout editeur ---------------------
-		rollout roll_editeur_facade "Facade"	width:480 height:570		--	width:500
+		rollout roll_editeur_facade "Facade"	width:480 height:700		--	width:500
 		(
 			
 			subRollout 'subroll_param' "" pos:[13,7] width:224 height:300 align:#left	

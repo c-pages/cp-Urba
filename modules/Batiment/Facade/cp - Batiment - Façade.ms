@@ -28,7 +28,8 @@ category:"CP | Bâtiment	| Composant"
 	local compo_baie
 	
 	---- manager de mesh -------------------
-	local mgr_mesh = str_mgr_mesh ()
+	local mgr_mesh 	= str_mgr_mesh ()
+	local mgr_shp 	= str_mgr_shape ()
 	
 	
 	
@@ -76,13 +77,13 @@ category:"CP | Bâtiment	| Composant"
 		
 		longueur_min_use		type:#boolean 		ui:chk_longueur_min			default:false
 		longueur_min			type:#integer			ui:spn_longueur_min			default:0
-		longueur_max_use		type:#boolean 		ui:chk_longueur_max			default:false
+		longueur_max_use	type:#boolean 		ui:chk_longueur_max			default:false
 		longueur_max			type:#integer			ui:spn_longueur_max			default:0
 		
 		mur_nord			type:#boolean 		ui:ckb_mur_nord			default:false
-		mur_sud			type:#boolean 		ui:ckb_mur_sud			default:false
-		mur_est			type:#boolean 		ui:ckb_mur_est				default:false
-		mur_ouest		type:#boolean 		ui:ckb_mur_ouest			default:false
+		mur_sud				type:#boolean 		ui:ckb_mur_sud			default:false
+		mur_est				type:#boolean 		ui:ckb_mur_est				default:false
+		mur_ouest			type:#boolean 		ui:ckb_mur_ouest			default:false
 		
 		murs				type:#integer			ui:ddl_murs					default:1
 		
@@ -804,56 +805,19 @@ category:"CP | Bâtiment	| Composant"
 	)
 	
 	
-	---- validation contraints facades ---------------------------------------
-	fn est_facadeValide	_pt_1 		_pt_2  			_etage		_etages_nbre	=(
-		
-		local pt_1 = _pt_1
-		local pt_2 = _pt_2
-		local result_valid 		= true
-		
-		
-		--- longueur ------------
-		local longueur_mur 	= distance		pt_1 	pt_2
-		if longueur_min_use and longueur_mur < longueur_min do
-			result_valid = false
-		if longueur_max_use and longueur_mur > longueur_max do
-			result_valid = false
-		
-		
-		---- etages -------------
-		if etages_max_use and  _etage > etages_max do
-			result_valid = false
-		
-		local etage_min_tmp	=	etages_min
-		if etage_min_tmp < 0 do etage_min_tmp = _etages_nbre + etages_min + 1
-		if etages_min_use and  _etage < etage_min_tmp do
-			result_valid = false
-		
-		result_valid
-	)
-	
-
-	
 	
 	--------------- sequence ----------------------------------
 	fn ajouter_element_facade			_element_plug	 		=(
 		
--- 		local	id_elem_select 	= 	roll_parametres.lbx_sequence.selection
--- 		local	id_elem_insert		= 	id_elem_select + 1
-		
 		local nvl_element 		= createinstance	_element_plug
--- 		
--- 		if id_elem_select != 0 and id_elem_select	!= sequence.count	then	
--- 			insertItem nvl_element 					sequence 					id_elem_insert
--- 		else		
-			append sequence						nvl_element
+		append sequence			nvl_element
 		
 		---- actualisations -----------
 		actualiser_UI ()
 		
 		if roll_parametres.open do	(
--- 			roll_parametres.lbx_sequence.selection = id_elem_insert 
-			roll_parametres.actualiser ()	
+-- 			roll_parametres.tv_sequence.SelectedNode	=	
+			roll_parametres.actualiser ()
 		)
 		
 	)
@@ -995,6 +959,58 @@ category:"CP | Bâtiment	| Composant"
 	
 	
 	
+	---- validation contraints facades ---------------------------------------
+	fn est_facadeValide	_pt_1 		_pt_2  			_etage		_etages_nbre	=(
+		
+		local pt_1 = _pt_1
+		local pt_2 = _pt_2
+		local result_valid 		= true
+		
+		
+		--- longueur ------------
+		local longueur_mur 	= distance		pt_1 	pt_2
+		if longueur_min_use and longueur_mur < longueur_min do
+			result_valid = false
+		if longueur_max_use and longueur_mur > longueur_max do
+			result_valid = false
+		
+		
+		---- etages -------------
+		if etages_max_use and  _etage > etages_max do
+			result_valid = false
+		
+		local etage_min_tmp	=	etages_min
+		if etage_min_tmp < 0 do etage_min_tmp = _etages_nbre + etages_min + 1
+		if etages_min_use and  _etage < etage_min_tmp do
+			result_valid = false
+		
+		
+		---- Orientation N, S, E, O -------------------
+		--- si une des contrainte d'orientation est active, on check, sinon on passe, tout est bon ----
+		if mur_nord	 or mur_ouest or mur_sud	or 	mur_est do (
+			
+			local angle_orientation	=	mgr_shp.get_angle_oriente 	(pt_2 - pt_1 )
+-- 			debug "angle_orientation" var: angle_orientation
+			
+			if angle_orientation >= -135 	and angle_orientation < -45 	 	and not mur_ouest	do
+				result_valid = false
+-- 				debug "Facade: OUEST"
+			if angle_orientation >= -45 	and angle_orientation < 45	 	and not mur_sud	 	do
+				result_valid = false
+-- 				debug "Facade: SUD"
+			if angle_orientation >= 45 	and angle_orientation < 135 		 and not mur_est	do
+				result_valid = false
+-- 				debug "Facade: EST"
+			if angle_orientation >= 135 	and angle_orientation < 180 	and not mur_nord	 	or angle_orientation > -180 and angle_orientation <-135 	and not mur_nord	do
+				result_valid = false
+-- 				debug "Facade: NORD"
+		)
+		
+		result_valid
+	)
+	
+
+	
 	
 	
 	--------------- comopsants ----------------------------------
@@ -1056,6 +1072,8 @@ category:"CP | Bâtiment	| Composant"
 			)
 			
 			
+			
+			
 			---- si on a la place de rentrer les element sur la longueur --------------
 			if longueur > longueur_definies_total then (
 			
@@ -1066,7 +1084,7 @@ category:"CP | Bâtiment	| Composant"
 						
 						
 						---- on a donc notre longueur a repartir -------------------
-						longueur_repartition		=  ( longueur - longueur_definies_total  )  	/ (  ( nombre_deRepetitions /* *2 */	*	id_dernierComposant /* - nbr_elem_definies */ ) + 1   )
+						longueur_repartition		=  ( longueur - longueur_definies_total  )  	/ (  ( nombre_deRepetitions 	*	id_dernierComposant ) + 1   )
 						
 						
 						---- l espacement de la sequence ----------------------
@@ -1155,6 +1173,7 @@ category:"CP | Bâtiment	| Composant"
 								else decallage_sequence =  longueur_repartition
 						
 						
+						
 						--- le mur séparant les composant 	------------------	
 						local compo_murRepart				=	createInstance cp_facadeCompo_mur
 						compo_murRepart.longueur		=	longueur_repartition + decallage_sequence
@@ -1175,7 +1194,7 @@ category:"CP | Bâtiment	| Composant"
 							
 							--- le composant ----------------
 							local compo_temp 				= 	copy sequence[i]			
-							compo_temp.longueur			=	hauteur	
+							compo_temp.longueur			=	compo_temp.get_longueur()	
 							compo_temp.hauteur			=	hauteur
 							compo_temp.low_poly			=	low_poly			
 
