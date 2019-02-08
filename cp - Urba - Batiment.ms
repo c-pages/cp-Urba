@@ -1005,14 +1005,14 @@ category:"CP | Urba"
 					
 				)
 				
-				
+				/* 
 				---- la derniere dalle --------
 				local compo_planV		=	createInstance	cp_prim_planVertical
 				compo_planV.longueur	=	distance	pt	pt_suivant
 				compo_planV.hauteur	=	dalle_epaisseur		
 				compo_planV.matId		=	matId_mur		
 				mgr_mesh.attacher		mesh		compo_planV	transf:depose_etage
-				
+				 */
 				
 				
 			) ---- fin des facades ------------------
@@ -1024,7 +1024,8 @@ category:"CP | Urba"
 			local altitude_toiture	=	0
 			for etage_courant = 0 to etages_nbre do (
 				
-				altitude_toiture += dalle_epaisseur
+				if etage_courant != etages_nbre do
+					altitude_toiture += dalle_epaisseur
 				
 				---- la hauteur des étages, normal ou specifique -----------------
 				local on_est_sur_etage_spe	=	false

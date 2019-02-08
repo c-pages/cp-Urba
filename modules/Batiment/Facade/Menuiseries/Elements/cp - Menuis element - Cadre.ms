@@ -1,5 +1,5 @@
 
-plugin simpleObject		cp_compo_cadre
+plugin simpleObject		cp_menuisElem_cadre
 name:"Cadre"
 classID:#(0x191d683f, 0x345d8d04)
 category:"CP | Menuiserie	| Composant"
@@ -10,7 +10,7 @@ category:"CP | Menuiserie	| Composant"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_compo_cadre"
+	local 	m_dbgPrefix ="cp_menuisElem_cadre"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	

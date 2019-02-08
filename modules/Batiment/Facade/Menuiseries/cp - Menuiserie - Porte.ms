@@ -1,6 +1,6 @@
 
 
-plugin simpleObject		cp_baieElement_porte
+plugin simpleObject		cp_menuiserie_porte
 name:"Porte"
 classID:#(0x23dc3da5, 0x2b0eb201)
 category:"CP | Baie	| Element"
@@ -11,7 +11,7 @@ category:"CP | Baie	| Element"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_baieElement_porte"
+	local 	m_dbgPrefix ="cp_menuiserie_porte"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
@@ -213,10 +213,9 @@ category:"CP | Baie	| Element"
 		
 		
 		---- creation des composants ------------------
--- 		if compo_cadre 					== undefined	do	compo_cadre				= 	createInstance  cp_compo_cadre
 		if compo_ouvrant_plein 		== undefined	do	compo_ouvrant_plein	= 	createInstance  cp_prim_boite
-		if compo_ouvrant_vitree 		== undefined	do	compo_ouvrant_vitree	= 	createInstance  cp_compo_chassisVitre
-		if compo_poignee					== undefined	do	compo_poignee			= 	createInstance  cp_compo_poignee
+		if compo_ouvrant_vitree 		== undefined	do	compo_ouvrant_vitree	= 	createInstance  cp_menuisElem_chassisVitre
+		if compo_poignee					== undefined	do	compo_poignee			= 	createInstance  cp_menuisElem_poignee
 		
 		local longueur_passage 	=  longueur 
 		local hauteur_passage 		=  hauteur 

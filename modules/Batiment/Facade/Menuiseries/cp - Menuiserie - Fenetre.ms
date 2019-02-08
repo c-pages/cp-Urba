@@ -1,7 +1,6 @@
 
 
-
-plugin simpleObject		cp_baieElement_fenetre
+plugin simpleObject		cp_menuiserie_fenetre
 name:"Fenêtre"
 classID:#(0x58b7dcde, 0x439ca73a)
 category:"CP | Baie	| Element"
@@ -12,7 +11,7 @@ category:"CP | Baie	| Element"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_baieElement_fenetre"
+	local 	m_dbgPrefix ="cp_menuiserie_fenetre"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
@@ -155,8 +154,8 @@ category:"CP | Baie	| Element"
 	fn composants_actualiser	= with redraw off (
 		
 		---- creation des composants ------------------
-		if compo_ouvrant_1 	== undefined	do	compo_ouvrant_1	= 	createInstance  cp_compo_chassisVitre				
-		if compo_ouvrant_2 	== undefined	do	compo_ouvrant_2	= 	createInstance  cp_compo_chassisVitre	
+		if compo_ouvrant_1 	== undefined	do	compo_ouvrant_1	= 	createInstance  cp_menuisElem_chassisVitre				
+		if compo_ouvrant_2 	== undefined	do	compo_ouvrant_2	= 	createInstance  cp_menuisElem_chassisVitre	
 		
 		
 		---- maj ouvrant		----

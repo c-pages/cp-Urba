@@ -1,6 +1,6 @@
 
 
-plugin simpleObject		cp_compo_meneau
+plugin simpleObject		cp_menuisElem_meneau
 name:"Meneau"
 classID:#(0x36a2a73c, 0x48b7a887)
 category:"CP | Menuiserie	| Composant"
@@ -11,7 +11,7 @@ category:"CP | Menuiserie	| Composant"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_compo_meneau"
+	local 	m_dbgPrefix ="cp_menuisElem_meneau"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	

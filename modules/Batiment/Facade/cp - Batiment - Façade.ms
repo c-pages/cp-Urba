@@ -28,7 +28,7 @@ category:"CP | Bâtiment	| Composant"
 	local compo_baie
 	
 	---- manager de mesh -------------------
-	local mgr_mesh 	= str_mgr_mesh ()
+	local mgr_mesh 	= str_mgr_mesh 	()
 	local mgr_shp 	= str_mgr_shape ()
 	
 	

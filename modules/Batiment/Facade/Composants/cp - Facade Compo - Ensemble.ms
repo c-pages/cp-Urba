@@ -257,9 +257,9 @@ category:"CP | Facade	| Composant"
 			if est_instance 	( nv_node.index + 1 )	do nv_node.text += " *"
 			
 			case classof _item_aAjouter of (
-				cp_baieElement_fixe:			nv_node.imageIndex = nv_node.selectedImageIndex	=	0
-				cp_baieElement_fenetre:		nv_node.imageIndex = nv_node.selectedImageIndex	=	1
-				cp_baieElement_porte:			nv_node.imageIndex = nv_node.selectedImageIndex	=	2
+				cp_menuiserie_fixe:			nv_node.imageIndex = nv_node.selectedImageIndex	=	0
+				cp_menuiserie_fenetre:		nv_node.imageIndex = nv_node.selectedImageIndex	=	1
+				cp_menuiserie_porte:		nv_node.imageIndex = nv_node.selectedImageIndex	=	2
 				
 				default:	nv_node.imageIndex = nv_node.selectedImageIndex	=	0
 			)
@@ -413,9 +413,9 @@ category:"CP | Facade	| Composant"
 		)
 		 */
 -- 		on btn_ajouter 		pressed 			do 	creer_RCM_ajouter ()
-		on btn_ajouter_fixe 			pressed 			do 	ajouter_element_menuis 	cp_baieElement_fixe
-		on btn_ajouter_fenetre 	pressed 			do 	ajouter_element_menuis 	cp_baieElement_fenetre
-		on btn_ajouter_porte 		pressed 			do 	ajouter_element_menuis 	cp_baieElement_porte
+		on btn_ajouter_fixe 			pressed 			do 	ajouter_element_menuis 	cp_menuiserie_fixe
+		on btn_ajouter_fenetre 	pressed 			do 	ajouter_element_menuis 	cp_menuiserie_fenetre
+		on btn_ajouter_porte 		pressed 			do 	ajouter_element_menuis 	cp_menuiserie_porte
 		
 		on btn_dupliquer 			pressed 			do	dupliquer_element_menuis 			( tv_sequence.SelectedNode.index + 1 )
 		on btn_instancier 		pressed 			do	instancier_element_menuis 		( tv_sequence.SelectedNode.index + 1 )
@@ -522,11 +522,11 @@ category:"CP | Facade	| Composant"
 	
 	
 	--------- divers ------------------
-	fn est_porte		_compo	=	classof	_compo	==	cp_baieElement_porte
-	fn est_fenetre		_compo	=	classof	_compo	==	cp_baieElement_fenetre
+	fn est_porte		_compo	=	classof	_compo	==	cp_menuiserie_porte
+	fn est_fenetre		_compo	=	classof	_compo	==	cp_menuiserie_fenetre
 	fn est_ouvrable	_compo	=	est_fenetre		_compo	or est_porte		_compo	
 	
-	fn est_fixe			_compo	=	classof	_compo	==	cp_baieElement_fixe
+	fn est_fixe			_compo	=	classof	_compo	==	cp_menuiserie_fixe
 	fn est_copiable			=	 roll_sequence.lbx_sequence.selection != 0
 	fn est_instance	_id		= (
 -- 		if id == unsupplied do id = roll_sequence.lbx_sequence.selection
@@ -732,8 +732,8 @@ category:"CP | Facade	| Composant"
 -- 		seed hasard_seed
 		
 		---- creation des composants ------------------
-		if compo_cadre 		== undefined	do	compo_cadre		= 	createInstance  cp_compo_cadre
-		if compo_meneau		== undefined	do	compo_meneau	= 	createInstance  cp_compo_meneau
+		if compo_cadre 		== undefined	do	compo_cadre		= 	createInstance  cp_menuisElem_cadre
+		if compo_meneau		== undefined	do	compo_meneau	= 	createInstance  cp_menuisElem_meneau
 		if compo_baie			== undefined	do	compo_baie		= 	createInstance  cp_baieElement_baie
 		
 		local hauteur_baie_tmp 		=  baie_hauteur
@@ -793,7 +793,7 @@ category:"CP | Facade	| Composant"
 		
 		--- Si notre sequence est vide
 		if sequence.count == 0 do (
-			local compo_temp = createInstance cp_baieElement_fixe
+			local compo_temp = createInstance cp_menuiserie_fixe
 			
 			append	sequence_tmp  	compo_temp
 			

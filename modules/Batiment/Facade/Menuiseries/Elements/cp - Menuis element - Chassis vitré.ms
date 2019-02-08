@@ -1,6 +1,6 @@
 
 
-plugin simpleObject		cp_compo_chassisVitre
+plugin simpleObject		cp_menuisElem_chassisVitre
 name:"Chassis vitre"
 classID:#(0x7bb20e92, 0x37f7c1e7)
 category:"CP | Menuiserie	| Composant"
@@ -11,7 +11,7 @@ category:"CP | Menuiserie	| Composant"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_compo_chassisVitre"
+	local 	m_dbgPrefix ="cp_menuisElem_chassisVitre"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
@@ -144,8 +144,8 @@ category:"CP | Menuiserie	| Composant"
 	fn actualiser_composants	= with redraw off (
 	
 		----- les composants ----------------
-		if compo_cadre 	== undefined do compo_cadre 	= createInstance	cp_compo_cadre
-		if compo_vitrage	== undefined do compo_vitrage	= createInstance	cp_compo_panneau
+		if compo_cadre 	== undefined do compo_cadre 	= createInstance	cp_menuisElem_cadre
+		if compo_vitrage	== undefined do compo_vitrage	= createInstance	cp_menuisElem_panneau
 		
 		-----	le cadre 	-------------
 		compo_cadre.longueur					=	longueur

@@ -1,5 +1,5 @@
 
-plugin simpleObject		cp_compo_panneau
+plugin simpleObject		cp_menuisElem_panneau
 name:"Panneau"
 classID:#(0x7094146b, 0x7896bea1)
 category:"CP | Menuiserie	| Composant"
@@ -10,7 +10,7 @@ category:"CP | Menuiserie	| Composant"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_compo_panneau"
+	local 	m_dbgPrefix ="cp_menuisElem_panneau"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
