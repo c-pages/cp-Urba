@@ -43,6 +43,7 @@ category:"CP | Urba"
 	local basculer_editeurFacade, ajouter_facade, retirer_facade, monter_facade, descendre_facade, renommer_facade, actualiser_shape
 	local ajouter_etage_spe, supprimer_etage_spe
 	local afficher_longueurs
+	local roll_editeur_facade
 	
 	local definir_toiture
 	
@@ -92,10 +93,12 @@ category:"CP | Urba"
 		
 	)
 	
-	parameters param_facades rollout:roll_facades(
-		facades						type:#maxObjectTab	tabSizeVariable:true
+	parameters param_facades rollout:roll_facades	(
+		facades							type:#maxObjectTab	tabSizeVariable:true
 		
-		affichage_longueurs		type:#boolean 		/* ui:ckb_afficher_longueur	 */			default:true
+-- 		affichage_longueurs		type:#boolean 		/* ui:ckb_afficher_longueur	 */			default:true
+		editeur_facade_ouvert		type:#boolean 		 ui:btn_editer_facade	 			default:false
+		
 	)
 	
 	parameters params_divers rollout:roll_divers	(
@@ -160,6 +163,22 @@ category:"CP | Urba"
 			preset_charger ()
 		
 	) 	---- fin rollout Presets ---------------------------
+	
+	rollout	roll_affichage		"Affichage"		rolledUp:true		(
+		
+		group "Viewport" (
+			checkButton	ckb_afficher_longueur	"Long"	width:35	across:4 	align:#right
+			checkButton	ckb_autre_1	""	width:35	align:#right
+			checkButton	ckb_autre_2	""	width:35	align:#right
+			checkButton	ckb_autre_3	""	width:35	align:#right
+		)
+		
+		on ckb_afficher_longueur changed state do 
+			afficher_longueurs state
+	
+	)
+	
+	
 	
 	rollout roll_surface "Surface" (
 		
@@ -308,50 +327,8 @@ category:"CP | Urba"
 		button 		btn_descendre	"\\/"	--align:#right
 		
 		listBox		lbx_facades		""	height:5
-		
-		group "Viewport" (
-			checkButton	ckb_afficher_longueur	"Long"	width:35	across:4 	align:#right
-			checkButton	ckb_autre_1	""	width:35	align:#right
-			checkButton	ckb_autre_2	""	width:35	align:#right
-			checkButton	ckb_autre_3	""	width:35	align:#right
-		)
-		
-		
+	
 		editText 	edTxt_nom		 	"" 	
-		
-		
-		on ckb_afficher_longueur changed state do 
-			afficher_longueurs state
-		/* 
-		group "Contraintes" (
-			
-			label 		lbl_contrainte_etages 			"Etages :"   height:15 align:#left 
-			checkbox 	chk_contrainte_etages 			"Minimum"   			height:16 enabled:true highlightColor:(color 255 255 0) toolTip:"Etage minimum." align:#left		across:2
-			spinner 	spn_contrainte_etages 			"" 				width:64 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#right
-			checkbox 	chk_contrainte_etagesMax 	"Maximum"  			height:16 highlightColor:(color 255 255 0) toolTip:"Etage maximum." align:#left	across:2
-			spinner 	spn_contrainte_etagesMax 	""  			width:64 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#right
-			
-			label lbl_vide_1 ""
-			
-			label 		lbl_contrainte_longueur 			"Longeur:" width:52 height:15 align:#left			
-			checkbox 	chk_contrainte_longueur_min 	"Minimum" 				height:16 enabled:true highlightColor:(color 255 255 0) toolTip:"Etage minimum." align:#left	across:2
-			spinner 	spn_contrainte_longueur_min 	""  	width:64 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#right
-			checkbox 	chk_contrainte_longueur_max 	"Maximum"  			height:16 highlightColor:(color 255 255 0) toolTip:"Etage maximum." align:#left	across:2
-			spinner 	spn_contrainte_longueur_max		"" 	width:64 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#right
-			
-			label lbl_vide_2 ""
-			
-			label lbl_contrainte_murs 			"Murs:" 	width:32 height:15 align:#left
-			checkbutton ckb_mur_nord 		"Nord"  	width:40 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left	across:4
-			checkbutton ckb_mur_sud 		"Sud"  	width:40 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-			checkbutton ckb_mur_est 		"Est" 		width:40 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-			checkbutton ckb_mur_ouest 	"Ouest"  width:40 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-			
-			dropdownList ddl_contrainte_murs ""  	height:21 selection:3 align:#left
-			
-		) */
-		
-		subrollout	subroll_contraintes		""	height:236
 		
 		checkbutton		btn_editer_facade		"Editer"	width:140 height:25
 		
@@ -363,26 +340,10 @@ category:"CP | Urba"
 			local elements_noms 	= #()
 			for i = 1 to facades.count do (
 				local elem_nom = facades[i].nom
--- 				if est_instance 	id:i 	do elem_nom += " *"
 				append elements_noms	( i as string + " |  " + elem_nom )
 			)	
 			lbx_facades.items 		=  for elem_nom in elements_noms collect elem_nom
-				
 			
--- 			addSubRollout 	roll_editeur_facade.subroll_contraintes		facades[ id_facade_select ].roll_contraintes
-			
-			--- les parametres de l'element (le subrollout)  ---------------			
-			--- on retire les vieux rollouts --------
-			if subroll_contraintes.rollouts.count > 0 do 
-				for subRoll in subroll_contraintes.rollouts  do
-					removeSubRollout subroll_contraintes	subRoll
-				
-			local composant_actif 	
-			---- on ajoute le nouveau -----------------
-			if lbx_facades.selection > 0 then (				
-				composant_actif 		=  facades[  lbx_facades.selection ]
-				addSubRollout 	subroll_contraintes		composant_actif.roll_contraintes
-			)
 			
 			---- les boutons ------
 			btn_retirer.enabled 				= lbx_facades.selection != 0
@@ -390,7 +351,7 @@ category:"CP | Urba"
 			btn_descendre.enabled 		= lbx_facades.selection < facades.count and lbx_facades.selection != 0
 			
 			edTxt_nom.enabled 				= lbx_facades.selection != 0
-			edTxt_nom.text	 				= if lbx_facades.selection != 0	then	composant_actif.nom	else ""
+			edTxt_nom.text	 				= if lbx_facades.selection != 0	then	facades[  lbx_facades.selection ].nom	else ""
 			
 			btn_editer_facade.enabled 	= lbx_facades.selection != 0
 			
@@ -406,8 +367,6 @@ category:"CP | Urba"
 		on lbx_facades	 rightClick 	_id 	do	(
 			lbx_facades.selection = _id
 			actualiser ()
--- 			creer_RCM_edition ()
-			
 		)	
 		on lbx_facades	 doubleClicked  	_id 	do		basculer_editeurFacade 	true
 			
@@ -675,15 +634,12 @@ category:"CP | Urba"
 	fn preset_copier = (
 		
 	)
-	
 	fn preset_coller = (
 		
 	)
-	
 	fn preset_enregistrer = (
 		
 	)
-	
 	fn preset_charger = (
 		
 	)
@@ -694,7 +650,7 @@ category:"CP | Urba"
 	
 	
 	--------------- etages ----------------------------------	
-	fn		ajouter_etage_spe	=(
+	fn	ajouter_etage_spe	=(
 		
 		append	etages_spe_min			0
 		append	etages_spe_max			0
@@ -702,7 +658,6 @@ category:"CP | Urba"
 		
 		actualiser()
 	)
-	
 	fn supprimer_etage_spe 	_id =(
 		deleteItem etages_spe_min		_id
 		deleteItem etages_spe_max		_id
@@ -715,26 +670,69 @@ category:"CP | Urba"
 	
 	
 	--------------- facades ----------------------------------
+	
 	fn basculer_editeurFacade 	_etat			=(
 		
 		
 		----- rollout editeur ---------------------
-		rollout roll_editeur_facade "Facade"	width:480 height:700		--	width:500
+		rollout roll_editeur_facade "Facade"	 height:700	 width:715	--	width:480	--	width:500
 		(
 			
-			subRollout 'subroll_param' "" pos:[13,7] width:224 height:300 align:#left	
+			local facade_cible
+			local batiment_parent
 			
-			subRollout 'subroll_element' "" pos:[246,7] width:224 height:300 align:#left
+			
+			editText 	edTxt_nom		 	"" 	pos:[13,7] width:224
+			
+			subRollout 'subroll_1' "" pos:[13,27] width:224 height:280 align:#left	
+			subRollout 'subroll_2' "" pos:[246,7] width:224 height:300 align:#left
+			subRollout 'subroll_3' "" pos:[479,7] width:224 height:300 align:#left
 			
 			fn resize_rollout	=(
-				subroll_param.height	=	roll_editeur_facade.height - 5
-				subroll_element.height	=	roll_editeur_facade.height - 5
+				subroll_1.height	=	roll_editeur_facade.height - 20
+				subroll_2.height	=	roll_editeur_facade.height - 20
+				subroll_3.height	=	roll_editeur_facade.height - 20
+				
+				if subroll_3.rollouts.count == 0 then
+					roll_editeur_facade.width = 480
+				else
+					roll_editeur_facade.width = 715
+					
+			)
+			
+			fn actualiser 	facade:		=(
+				
+				for subRoll in subroll_1.rollouts  do	removeSubRollout subroll_1	subRoll
+				for subRoll in subroll_2.rollouts  do	removeSubRollout subroll_2	subRoll
+				for subRoll in subroll_3.rollouts  do	removeSubRollout subroll_3	subRoll
+				
+				facade.roll_editeur_facade	=	roll_editeur_facade				
+				facade_cible			=	facade
+				
+				
+				
+				edTxt_nom.text		=	facade.nom
+				
+				addSubRollout 	subroll_1		facade.roll_contraintes
+				addSubRollout 	subroll_1		facade.roll_repartition
+				addSubRollout 	subroll_2		facade.roll_sequence
+				
 			)
 			
 			on roll_editeur_facade open do
 				resize_rollout  ()
+			on roll_editeur_facade close do (
+				facade_cible.roll_editeur_facade = undefined
+				batiment_parent.editeur_facade_ouvert = false
+			)
+			
 			on roll_editeur_facade resized val do
 				resize_rollout  ()
+			on edTxt_nom changed val do (
+				facade_cible.nom = val
+				batiment_parent.actualiser() 
+			)
+			
 		)
 		
 		
@@ -743,14 +741,31 @@ category:"CP | Urba"
 		
 		
 		
-		local	id_facade_select 	= 	roll_facades.lbx_facades.selection
 		
 		case _etat of (
 			true: (
-				createDialog		roll_editeur_facade					/* width:300	 height:670*/	style:#( #style_titlebar , #style_border , #style_sysmenu, #style_resizing) 	lockWidth:true		--facades[ id_facade_select ]
 				
-				addSubRollout 	roll_editeur_facade.subroll_param		facades[ id_facade_select ].roll_parametres
-				addSubRollout 	roll_editeur_facade.subroll_element		facades[ id_facade_select ].roll_parametres_element
+				createDialog		roll_editeur_facade			style:#( #style_titlebar , #style_border , #style_sysmenu, #style_resizing) 	lockWidth:true
+				roll_editeur_facade.batiment_parent	=	this
+				
+				local	id_facade_select 	= 	roll_facades.lbx_facades.selection				
+				roll_editeur_facade.actualiser 	facade:facades[ id_facade_select ]
+				
+				/* 
+				facades[ id_facade_select ].roll_editeur_facade	=	roll_editeur_facade
+				
+				roll_editeur_facade.facade_cible			=	facades[ id_facade_select ]
+				roll_editeur_facade.batiment_parent	=	this
+				
+				
+				
+				roll_editeur_facade.edTxt_nom.text		=	facades[ id_facade_select ].nom
+				
+				addSubRollout 	roll_editeur_facade.subroll_1		facades[ id_facade_select ].roll_contraintes
+				addSubRollout 	roll_editeur_facade.subroll_1		facades[ id_facade_select ].roll_repartition
+				addSubRollout 	roll_editeur_facade.subroll_2		facades[ id_facade_select ].roll_sequence */
+				
+-- 				addSubRollout 	roll_editeur_facade.subroll_element		facades[ id_facade_select ].roll_parametres_element
 			)
 			false: destroyDialog  roll_editeur_facade
 		)
@@ -826,6 +841,7 @@ category:"CP | Urba"
 		---- actualisations -----------
 		actualiser ()
 	)
+	
 	
 	----- gestion des facades ----------------------------------------------------
 	fn get_facades_pourMur		_id_pt	 =(

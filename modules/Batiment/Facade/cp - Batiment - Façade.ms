@@ -16,6 +16,7 @@ category:"CP | Bâtiment	| Composant"
 	
 	
 	local roll_parametres_element
+	local roll_editeur_facade
 	
 	---- fonctions	-----------
 	local corriger_parametres , 		actualiser_composants 
@@ -44,12 +45,14 @@ category:"CP | Bâtiment	| Composant"
 		hauteur	 						type:#worldUnits 	ui:spn_hauteur 					default:0.
 		
 	)
-	parameters params_sequence 		rollout:roll_parametres	(
+	parameters params_repartition 		rollout:roll_repartition	(
 		
 		repartition					type:#integer					ui:ddl_repartition			default:1
 		repart_nombre				type:#integer					ui:spn_repetitions		default:1
 		repart_decallage			type:#worldUnits				ui:spn_decallage			default:0.
 		repart_espacement		type:#worldUnits				ui:spn_espacement		default:0.
+	)
+	parameters params_sequence 		rollout:roll_sequence	(
 		
 		sequence					type:#maxObjectTab		tabSizeVariable:true
 		
@@ -104,7 +107,35 @@ category:"CP | Bâtiment	| Composant"
 		spinner spn_profondeur 			"Profondeur" 			type:#worldunits range:[0,1e20,0]
 		
 	)
-	rollout roll_parametres  				"Façade"		(
+	rollout roll_repartition		"Répartition" (
+				--- UI ----------------------------------------------------------------------------------------------
+		group "Répartition" (
+			dropDownList	ddl_repartition		""	 items:#(	"Répartir",  /* "Répéter", */	"Centrer",	"Aligner à gauche",	"Aligner à droite"		/*,   "Etirer"  */	)	/* width:95	 */align:#left--	across:2
+			
+			spinner spn_repetitions 		"Nombre" 		/* width:50	 */		type:#integer 			range:[0,1000,1]			align:#right
+			spinner spn_decallage		 	"Décallage" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
+			spinner spn_espacement		"Espacement" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
+			
+		)
+		fn actualiser =(
+			
+			----- divers -------------------
+			local repart_options_enabled 		= ddl_repartition.selection != 1
+			spn_repetitions.indeterminate			=	repart_options_enabled
+			spn_repetitions.enabled 				=	not	repart_options_enabled 
+-- 			spn_decallage.indeterminate		=	repart_options_enabled
+-- 			spn_decallage.enabled 				=	not	repart_options_enabled
+			spn_espacement.indeterminate		=	repart_options_enabled
+			spn_espacement.enabled 				=	not	repart_options_enabled
+			
+		)
+			
+		
+		on roll_repartition open do actualiser ()
+		on ddl_repartition selected  val do actualiser ()
+		
+	)
+	rollout roll_sequence  				"Façade"		(
 	
 		------------ TRee view -----------------------------
 		local m_dragDropEffect		=dotNetClass "System.Windows.Forms.DragDropEffects"		
@@ -114,14 +145,14 @@ category:"CP | Bâtiment	| Composant"
 		
 		
 		--- UI ----------------------------------------------------------------------------------------------
-		group "Répartition" (
-			dropDownList	ddl_repartition		""	 items:#(	"Répartir",  /* "Répéter", */	"Centrer",	"Aligner à gauche",	"Aligner à droite"		/*,   "Etirer"  */	)	/* width:95	 */align:#left--	across:2
-			
-			spinner spn_repetitions 		"Nombre" 		/* width:50	 */		type:#integer 			range:[0,1000,1]			align:#right
-			spinner spn_decallage		 	"Décallage" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
-			spinner spn_espacement		"Espacement" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
-			
-		)
+-- 		group "Répartition" (
+-- 			dropDownList	ddl_repartition		""	 items:#(	"Répartir",  /* "Répéter", */	"Centrer",	"Aligner à gauche",	"Aligner à droite"		/*,   "Etirer"  */	)	/* width:95	 */align:#left--	across:2
+-- 			
+-- 			spinner spn_repetitions 		"Nombre" 		/* width:50	 */		type:#integer 			range:[0,1000,1]			align:#right
+-- 			spinner spn_decallage		 	"Décallage" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
+-- 			spinner spn_espacement		"Espacement" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
+-- 			
+-- 		)
 		group "Séquence" (
 			
 			button 		btn_ajouter_mur 			"Mur"			width:50		height:17		across:3		align:#left
@@ -462,37 +493,33 @@ category:"CP | Bâtiment	| Composant"
 			local nd_selec			=	if nd == unsupplied then tv_sequence.SelectedNode  else nd
 			local elem_selec		= get_element 	nd_selec
 			
+			---- le subroll de destination, l'editeur de facade en general -------------
+			local subroll_dest
+			if roll_editeur_facade == undefined then
+				subroll_dest	 = roll_parametres_element.subroll_param
+			else
+				subroll_dest	=	roll_editeur_facade.subroll_3
 			
-			local subroll_dest	 = roll_parametres_element.subroll_param
+			---- on vide le subrolll -----------------
 			if subroll_dest.rollouts.count > 0 do 
 				for subRoll in subroll_dest.rollouts  do
 					removeSubRollout subroll_dest	subRoll
 			
 			
-			
+			--- si on a un element selectionné on ouvre ses parametres dans le subroll, sinon non ^^ ----
 			if elem_selec	!= undefined then (
--- 			debug "elem_selec.nom"	var:elem_selec.nom
 					edTxt_nom.text	=	elem_selec.nom
 					edTxt_nom.enabled = true
 				
 					addSubRollout 	subroll_dest		elem_selec.roll_parametres
 			) else (
--- 			debug "elem_selec.nom"	var:elem_selec
 					edTxt_nom.text	=	""
 					edTxt_nom.enabled = false
 					tv_sequence.SelectedNode = undefined
 			)
 			
-				
-			----- divers -------------------
-			local repart_options_enabled 		= ddl_repartition.selection != 1
-			spn_repetitions.indeterminate			=	repart_options_enabled
-			spn_repetitions.enabled 				=	not	repart_options_enabled 
--- 			spn_decallage.indeterminate		=	repart_options_enabled
--- 			spn_decallage.enabled 				=	not	repart_options_enabled
-			spn_espacement.indeterminate		=	repart_options_enabled
-			spn_espacement.enabled 				=	not	repart_options_enabled
-			
+			---- actualiser la taille de l'editeur s'il est ouvert	---------------------
+			if roll_editeur_facade != undefined do roll_editeur_facade.resize_rollout ()
 			
 			
 			
@@ -558,7 +585,7 @@ category:"CP | Bâtiment	| Composant"
 				if subRoll_nvl_ht >	50 do (
 					subroll_param.height		=	subRoll_nvl_ht
 					btn_resize.pos.y			=	btnResize_pos_init.y		+	changement_ht
-					roll_parametres.height	=	roll_hauteur_init 	+ 	changement_ht
+					roll_sequence.height	=	roll_hauteur_init 	+ 	changement_ht
 				)
 			)
 		)
@@ -567,14 +594,11 @@ category:"CP | Bâtiment	| Composant"
 		
 		
 		----- EVENEMENTS ------------------------------------------------------------------------------ -----------------------
-		on roll_parametres		open 				do 	(
+		on roll_sequence		open 				do 	(
 			initialiser_tv  ()
 			actualiser_tv ()
 			actualiser ()
 		)
-		
-		---- repartition ---------
-		on ddl_repartition selected  val do actualiser ()
 		
 		----- Sequence -----------------		
 		on btn_ajouter_mur	 			pressed 			do 	ajouter_element_facade 	cp_facadeCompo_mur
@@ -585,53 +609,13 @@ category:"CP | Bâtiment	| Composant"
 		
 		
 		--------- le treeView ---------
-		on tv_sequence 	mouseDown 				_arg 	do  	(
+		on tv_sequence 	mouseDown 				_arg 	do  	
 			actualiser nd:( tv_sequence.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y ) ) 
--- 			clq_down  				_arg
-			/* local noeud_selec 	= tv_sequence.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y )
-			local elem_selec 		= get_element	noeud_selec
-			
-			local subroll_dest	 = roll_parametres_element.subroll_param
-			if subroll_dest.rollouts.count > 0 do 
-				for subRoll in subroll_dest.rollouts  do
-					removeSubRollout subroll_dest	subRoll
-				
-			if elem_selec != undefined then (
-				addSubRollout 	subroll_dest		elem_selec.roll_parametres
-				
-				edTxt_nom.text	=	elem_selec.nom
-				edTxt_nom.enabled = true		
-			)	else (
-				tv_sequence.SelectedNode = undefined
-				
-				edTxt_nom.text	=	""
-				edTxt_nom.enabled = false
-			)
-			 */
-		)
+		
 		on tv_sequence 	DragOver 	_sender		_arg	do	drag_checkSurvol  	_arg
 		on tv_sequence 	DragDrop 					_arg 	do	drag_recevoir 			_arg
 		on tv_sequence 	ItemDrag 	_sender		_arg 	do	drag_demarrer 		_arg
-		/* 
-		on tv_sequence 	AfterLabelEdit				_arg 	do  	(
-			
-			if _arg.label != undefined do (
-				local noeud = _arg.Node
-				
-				local element
-				if noeud.level == 0 then	element = sequence[noeud.index + 1 ]
-				else if noeud.level == 1 then	element = sequence[noeud.parent.index + 1 ].elements[ noeud.index  + 1 ]
-				else if noeud.level == 2 do 	element = sequence[noeud.parent.parent.index + 1 ].elements[ noeud.parent.index  + 1 ].elements[ noeud.index  + 1 ]
-				
-				element.nom = _arg.label
-				
-				actualiser ()
-			)
-		)
-		*/
-		
--- 		on tv_sequence 	keyup  						_arg 	do  	key_up					_arg
-		
+
 		
 		
 		--------- Edition ---------
@@ -760,9 +744,9 @@ category:"CP | Bâtiment	| Composant"
 		corriger_parametres ()		
 		actualiser_composants()		
 -- 		if roll_parametres.open do	roll_parametres.actualiser ()
-		if roll_parametres.open do	(
-			roll_parametres.actualiser ()		
-			roll_parametres.actualiser_TV ()		
+		if roll_sequence.open do	(
+			roll_sequence.actualiser ()		
+			roll_sequence.actualiser_TV ()		
 		)
 		redrawViews ()
 		
@@ -815,9 +799,9 @@ category:"CP | Bâtiment	| Composant"
 		---- actualisations -----------
 		actualiser_UI ()
 		
-		if roll_parametres.open do	(
--- 			roll_parametres.tv_sequence.SelectedNode	=	
-			roll_parametres.actualiser ()
+		if roll_sequence.open do	(
+-- 			roll_sequence.tv_sequence.SelectedNode	=	
+			roll_sequence.actualiser ()
 		)
 		
 	)
@@ -838,16 +822,12 @@ category:"CP | Bâtiment	| Composant"
 		---- actualisations -----------
 		actualiser_UI ()
 		
-		if roll_parametres.open do	(
--- 			roll_parametres.lbx_sequence.selection -= 1 
-			roll_parametres.actualiser ()	
+		if roll_sequence.open do	(
+-- 			roll_sequence.lbx_sequence.selection -= 1 
+			roll_sequence.actualiser ()	
 		)
 		
 	)
-	/* fn renommer_element_facade			_id	_nv_nom 		=(
-		sequence[ _id ].nom = _nv_nom
-		if roll_parametres.open do	roll_parametres.actualiser ()
-	) */
 	fn inserer_element						_elementParent_enDrag		_id_aDeplacer		_elementParent_dest			_id_destination		=(
 		
 		local elem_aDeplacer
@@ -887,9 +867,9 @@ category:"CP | Bâtiment	| Composant"
 		---- actualisations -----------
 		actualiser_UI ()
 		
-		if roll_parametres.open do	(
--- 			roll_parametres.lbx_sequence.selection -=  1
-			roll_parametres.actualiser ()	
+		if roll_sequence.open do	(
+-- 			roll_sequence.lbx_sequence.selection -=  1
+			roll_sequence.actualiser ()	
 		)
 	
 	)
@@ -914,9 +894,9 @@ category:"CP | Bâtiment	| Composant"
 			---- actualisations -----------
 			actualiser_UI ()
 			
-			if roll_parametres.open do	(
--- 				roll_parametres.lbx_sequence.selection = (_id+1) 
-				roll_parametres.actualiser ()	
+			if roll_sequence.open do	(
+-- 				roll_sequence.lbx_sequence.selection = (_id+1) 
+				roll_sequence.actualiser ()	
 			)
 		)
 	)
@@ -940,9 +920,9 @@ category:"CP | Bâtiment	| Composant"
 			---- actualisations -----------
 			actualiser_UI ()
 			
-			if roll_parametres.open do	(
--- 				roll_parametres.lbx_sequence.selection = (_id+1) 
-				roll_parametres.actualiser ()	
+			if roll_sequence.open do	(
+-- 				roll_sequence.lbx_sequence.selection = (_id+1) 
+				roll_sequence.actualiser ()	
 			)
 		)
 	)

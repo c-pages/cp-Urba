@@ -24,7 +24,7 @@ filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\cp - Menuis element -
 filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\cp - Menuis element - Chassis vitré.ms"	)
 filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\cp - Menuis element - Meneau.ms"	)
 
-------- elements de base  de facades	-----------
+------- menuiseries-----------
 filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Fixe.ms"	)
 filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Fenetre.ms"	)
 filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Porte.ms"	)

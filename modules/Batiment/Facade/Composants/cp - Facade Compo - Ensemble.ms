@@ -89,7 +89,7 @@ category:"CP | Facade	| Composant"
 	rollout roll_global  "Global"	(
 		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
 	)
-	rollout roll_parametres  "Paramètres"	(		
+	rollout roll_parametres  "Ensemble menuisé"	(		
 		
 		--- UI ------------------------------------------------------------------------------------------------------
 		
