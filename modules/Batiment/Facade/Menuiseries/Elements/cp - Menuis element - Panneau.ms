@@ -60,6 +60,8 @@ category:"CP | Menuiserie	| Composant"
 		------ options --------------
 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
+		
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis		default:1
 		matId_vitrage					type:#integer 			ui:spn_matId_remplis		default:2
@@ -85,6 +87,9 @@ category:"CP | Menuiserie	| Composant"
 	(
 		group "Qualité" (
 			checkbox	shk_lowPoly		"Low poly" 		
+		)
+		group "Qualité" (
+			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
 		group "Material ID" (
 			spinner spn_matId_menuis 	"Menuiseries" 				type:#integer range:[1,1000,1]
@@ -123,8 +128,15 @@ category:"CP | Menuiserie	| Composant"
 		
 		
 		----Données ------------	
-		local posY_remplis		=	- vitrage_epaisseur/2
-		local posY_div			=	- ( div_profondeur/2 )		
+		local posY_remplis	--	=	if qualite != 3 then 	 - vitrage_epaisseur/2	else 0.01
+		local posY_div
+		if qualite != 3 then (
+			posY_remplis		=	- vitrage_epaisseur/2
+			posY_div			=	- ( div_profondeur/2 )		
+		) else	(
+			posY_remplis		=	.01
+			posY_div			=	0	--		- vitrage_epaisseur/2 - .1
+		)
 		
 		local espace_div_H 		= ( longueur - div_montants_nbr * div_largeur ) / ( div_montants_nbr + 1 )
 		local depose_div_H		= [ espace_div_H, 	posY_div,		0	]
@@ -134,26 +146,50 @@ category:"CP | Menuiserie	| Composant"
 		
 		
 		
-		---- le remplis ----------
-		local compo_remplis = if low_poly 	then	 createInstance  cp_prim_planVertical		matId:matId_vitrage
-														else	 createInstance  cp_prim_boite				matId:matId_vitrage		
-		compo_remplis.longueur		=	longueur
+-- 		---- le remplis ----------
+-- 		local compo_remplis = if low_poly 	then	 createInstance  cp_prim_planVertical		matId:matId_vitrage
+-- 														else	 createInstance  cp_prim_boite				matId:matId_vitrage		
+		
+		
+		----- le remplissage (vitrage ) ------------
+		local compo_remplis
+		case qualite	of (
+			1:			compo_remplis	=	 createInstance  cp_prim_boite				matId:matId_vitrage
+			default:	compo_remplis	=	 createInstance  cp_prim_planVertical		matId:matId_vitrage
+		)
+		
+		compo_remplis.longueur			=	longueur
 		compo_remplis.hauteur			=	hauteur
-		if not low_poly 	do compo_remplis.profondeur		=	vitrage_epaisseur		
+		if qualite == 1 	then compo_remplis.profondeur		=	vitrage_epaisseur	
+			
 		mgr_mesh.attacher		mesh		compo_remplis 	transf:[0,posY_remplis,0]
 		
 		
+		
+		
 		-------- divisions  --------------
-		local compo_div = if low_poly 	then	 createInstance  cp_prim_boiteU		matId:matId_menuis
-													else	 createInstance  cp_prim_boite			matId:matId_menuis
+-- 		local compo_div = if low_poly 	then	 createInstance  cp_prim_boiteU		matId:matId_menuis
+-- 													else	 createInstance  cp_prim_boite			matId:matId_menuis
+		
+		local compo_div
+		case qualite	of (
+			1:	compo_div	=	 createInstance  cp_prim_boite				matId:matId_menuis
+			2:	compo_div	=	 createInstance  cp_prim_boiteU				matId:matId_menuis
+			3:	compo_div	=	 createInstance  cp_prim_planVertical		matId:matId_menuis
+		)
+		
+		
+		
 		-------- divisions horizontales --------------
 		for i = 1 to div_montants_nbr do (
 			
 			compo_div.longueur			=	div_largeur
-			compo_div.profondeur		=	div_profondeur
 			compo_div.hauteur			=	hauteur
-			compo_div.symetrie			=	false
-			compo_div.horizontal		=	false
+			if qualite != 3 do	(
+				compo_div.profondeur		=	div_profondeur
+				compo_div.symetrie			=	false
+				compo_div.horizontal		=	false
+			)
 			
 			mgr_mesh.attacher		mesh		compo_div 	transf:depose_div_H
 			
@@ -164,10 +200,12 @@ category:"CP | Menuiserie	| Composant"
 		for i = 1 to div_traverses_nbr do (
 			
 			compo_div.longueur			=	longueur
-			compo_div.profondeur		=	div_profondeur
 			compo_div.hauteur			=	div_largeur
-			compo_div.symetrie			=	false
-			compo_div.horizontal		=	true
+			if qualite != 3 do	(
+				compo_div.profondeur		=	div_profondeur
+				compo_div.symetrie			=	false
+				compo_div.horizontal		=	true
+			)
 			
 			mgr_mesh.attacher		mesh		compo_div 	transf:depose_div_V
 			

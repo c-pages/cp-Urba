@@ -21,6 +21,7 @@ category:"CP | Baie	| Element"
 	
 	--- composant ---
 	local compo_vitrage
+	local compo_cadre
 	
 	---- manager de mesh -------------------
 	local mgr_mesh = str_mgr_mesh ()
@@ -31,6 +32,8 @@ category:"CP | Baie	| Element"
 		hauteur	 				type:#worldUnits 	ui:spn_hauteur 			default:0.
 		profondeur	 			type:#worldUnits 	ui:spn_profondeur		default:5.
 		
+		cadre						type:#boolean 		ui:shk_cadre				default:true
+		cadre_epaisseur		type:#worldUnits 	ui:spn_cadre_ep			default:5.
 	)
 	parameters params_general rollout:roll_parametres	(
 		
@@ -55,6 +58,9 @@ category:"CP | Baie	| Element"
 		------ options --------------
 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
+		
+		
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
 		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
@@ -68,9 +74,13 @@ category:"CP | Baie	| Element"
 	rollout roll_global  "Global"	(
 		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
 		spinner 	spn_profondeur 		"Profondeur" 			type:#worldunits 	range:[0,1e20,0]
+		group "cadre" (
+			checkbox	shk_cadre				"Cadre"
+			spinner 	spn_cadre_ep 			"Epaisseur" 			type:#worldunits 	range:[0,1e20,0]
+		)
 		
 	)
-	rollout roll_parametres  "Paramètres"	(
+	rollout roll_parametres  "Fixe"	(
 		spinner 	spn_longueur 			"Longueur" 				type:#worldunits 	range:[0,1e20,0]
 		group "Divisions" (	
 			spinner		spn_div_largeur			 "Largeur" 		type:#worldunits		range:[0,1e20,0]
@@ -82,6 +92,9 @@ category:"CP | Baie	| Element"
 	rollout roll_divers  "Divers"	(
 		group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly" 		
+		)
+		group "Qualité" (
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
 		group "Material ID" (
 			spinner spn_matId_menuis 		"Menuiseries" 			type:#integer range:[1,1000,1]
@@ -95,22 +108,39 @@ category:"CP | Baie	| Element"
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
 	fn actualiser_composants	= with redraw off (
 		
-		if compo_vitrage 	== undefined	do	compo_vitrage		= createInstance  	cp_menuisElem_panneau
+		if compo_vitrage 	== undefined					do	compo_vitrage		= createInstance  	cp_menuisElem_panneau
+		if cadre and compo_cadre 	== undefined	do	compo_cadre		= createInstance  	cp_menuisElem_cadre
 		
 		-----	le vitrage 	-------------
-		compo_vitrage.longueur						=	longueur
-		compo_vitrage.hauteur							=	hauteur
+		compo_vitrage.longueur						=	if cadre then longueur - cadre_epaisseur*2 else longueur
+		compo_vitrage.hauteur							=	if cadre then hauteur  - cadre_epaisseur*2 else hauteur
 		
 		compo_vitrage.vitrage_epaisseur	 		= vitrage_epaisseur
 		compo_vitrage.div_montants_nbr 			= div_montants_nbr
 		compo_vitrage.div_traverses_nbr 			= div_traverses_nbr
 		compo_vitrage.div_largeur				 		= div_largeur
-		compo_vitrage.div_profondeur			 	= div_profondeur		
+		compo_vitrage.div_profondeur			 	= profondeur	--	div_profondeur		
 		compo_vitrage.div_calage_verti		 		= div_calage_verti		
 		
 		compo_vitrage.low_poly			 			= low_poly		
+		compo_vitrage.qualite			 				= qualite		
 		compo_vitrage.matId_menuis	 				= matId_menuis
 		compo_vitrage.matId_vitrage	 				= matId_vitrage
+		
+		
+		-----	le cadre 	-------------
+		if cadre do	(
+			compo_cadre.longueur						=	longueur
+			compo_cadre.hauteur						=	hauteur
+			compo_cadre.profondeur					=	profondeur
+			compo_cadre.menuis_epaisseur			=	cadre_epaisseur
+			compo_cadre.travBasse					=	true
+			compo_cadre.travBasse_hauteur			=	cadre_epaisseur
+			
+			compo_cadre.qualite			 				= qualite		
+			compo_cadre.matId_menuis	 			= matId_menuis
+		)
+		
 		
 	)  --- fin actualiser_composants  ------------------
 	
@@ -133,7 +163,15 @@ category:"CP | Baie	| Element"
 		delete mesh
 		
 		--- le vitrage --------		
-		mgr_mesh.attacher		mesh		compo_vitrage 	transf:[0, profondeur / 2 , 0 ]
+		local calage_X = if cadre 			then cadre_epaisseur else 0
+		local calage_Y = if qualite != 3	then profondeur / 2 else 0
+		local calage_Z = if cadre 			then cadre_epaisseur else 0
+		mgr_mesh.attacher		mesh		compo_vitrage 	transf:[calage_X, calage_Y , calage_Z ]
+		
+		
+		---- le cadre -------
+		if cadre do	
+			mgr_mesh.attacher		mesh		compo_cadre	-- 	transf:[calage_X, calage_Y , calage_Z ]
 		
 	)  ----- fin on buld mesh -----------------
 	

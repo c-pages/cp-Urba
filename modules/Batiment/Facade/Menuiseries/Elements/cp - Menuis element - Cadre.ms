@@ -33,7 +33,7 @@ category:"CP | Menuiserie	| Composant"
 		hauteur	 				type:#worldUnits 	ui:spn_hauteur 			default:0.
 		
 		----- les menuiseries -------------
-		menuis_largeur	 	type:#worldUnits 	ui:spn_menuis_largeur	default:0.
+		menuis_epaisseur	 	type:#worldUnits 	ui:spn_menuis_epaisseur	default:0.
 		
 		------ options --------------
 		montant_G				type:#boolean 		ui:shk_montant_G		default:true
@@ -42,7 +42,7 @@ category:"CP | Menuiserie	| Composant"
 		travBasse_hauteur	type:#worldUnits 	ui:spn_travBasse_ht		default:0.
 		
 		----- pour rester dans valeurs corrects ------------------------
-		on menuis_largeur 		set val do corriger_parametres ()
+		on menuis_epaisseur 		set val do corriger_parametres ()
 		on longueur 				set val do corriger_parametres ()
 		on hauteur 				set val do corriger_parametres ()
 		
@@ -54,6 +54,8 @@ category:"CP | Menuiserie	| Composant"
 		low_poly					type:#boolean 		ui:shk_lowPoly				default:false
 		matId_menuis			type:#integer 			ui:spn_matId_menuis	default:1
 		
+		qualite					type:#integer 			ui:rdo_qualite				default:1
+		
 	)	-----	fin parametres --------------------
 	
 	rollout roll_general  "Paramètres"
@@ -64,7 +66,7 @@ category:"CP | Menuiserie	| Composant"
 			spinner spn_profondeur 		"Profondeur" 			type:#worldunits range:[0,1e20,0]
 -- 		)
 		group "Menuiserie" (
-			spinner 	spn_menuis_largeur	 "Largeur" 				type:#worldunits range:[0,1e20,0]
+			spinner 	spn_menuis_epaisseur	 "Epaisseur" 				type:#worldunits range:[0,1e20,0]
 			checkbox	shk_montant_G		"Montant gauche" 			
 			checkbox	shk_montant_D		"Montant droit" 		
 			checkbox	shk_traverse_B		"traverse basse" 	
@@ -81,6 +83,9 @@ category:"CP | Menuiserie	| Composant"
 	rollout roll_divers  "Divers" (
 		group "Qualité" (
 			checkbox	shk_lowPoly		"Low poly"
+		)
+		group "Qualité" (
+			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
 		group "Material ID" (
 			spinner spn_matId_menuis 	"Menuiseries" 			type:#integer range:[1,1000,1]
@@ -101,8 +106,8 @@ category:"CP | Menuiserie	| Composant"
 		if not	travBasse do hauteurMax =	hauteur
 		
 		if montant_G	or  montant_D 	do
-			if menuis_largeur >longueurMax do menuis_largeur = longueurMax
-		if menuis_largeur > hauteur -   travBasse_hauteur do menuis_largeur =  hauteur -   travBasse_hauteur 
+			if menuis_epaisseur >longueurMax do menuis_epaisseur = longueurMax
+		if menuis_epaisseur > hauteur -   travBasse_hauteur do menuis_epaisseur =  hauteur -   travBasse_hauteur 
 	)
 	
 	
@@ -117,10 +122,10 @@ category:"CP | Menuiserie	| Composant"
 		local posX_traverses	=	0
 		local long_trav	=	longueur
 		if montant_G	do (
-			long_trav 			-= menuis_largeur
-			posX_traverses 	+= menuis_largeur
+			long_trav 			-= menuis_epaisseur
+			posX_traverses 	+= menuis_epaisseur
 		)
-		if montant_D	do long_trav -= menuis_largeur
+		if montant_D	do long_trav -= menuis_epaisseur
 		
 		
 		
@@ -128,14 +133,25 @@ category:"CP | Menuiserie	| Composant"
 		
 		--- Construction ---------------------------------------------------------------------------------------
 		----- les composants ----------------
-		local composant=	if low_poly 	then	 createInstance  cp_prim_boiteL		matId:matId_menuis
-													else	 createInstance  cp_prim_boite		matId:matId_menuis
+-- 		local composant	=	if low_poly 	then	 createInstance  cp_prim_boiteL		matId:matId_menuis
+-- 													else	 createInstance  cp_prim_boite		matId:matId_menuis
+		
+		
+		local composant
+		case qualite	of (
+			1:	composant	=	 createInstance  cp_prim_boite				matId:matId_menuis
+			2:	composant	=	 createInstance  cp_prim_boiteL				matId:matId_menuis
+			3:	composant	=	 createInstance  cp_prim_planVertical		matId:matId_menuis
+		)
+		
+		
 		
 		--- montant  gauche ----------
 		if montant_G do (
-			composant.longueur			=	menuis_largeur
-			composant.profondeur		=	profondeur
+			composant.longueur			=	menuis_epaisseur
 			composant.hauteur			=	hauteur
+			if qualite != 3 do	
+				composant.profondeur		=	profondeur
 			
 			mgr_mesh.attacher		mesh		composant
 			
@@ -143,33 +159,37 @@ category:"CP | Menuiserie	| Composant"
 		
 		--- montant droite ----------
 		if montant_D do (
-			composant.longueur			=	menuis_largeur
-			composant.profondeur		=	profondeur
+			composant.longueur			=	menuis_epaisseur
 			composant.hauteur			=	hauteur
-			composant.symetrie			=	true
-			
-			mgr_mesh.attacher		mesh		composant 	transf:[longueur - menuis_largeur,0,0]				
+			if qualite != 3 do	(
+				composant.profondeur		=	profondeur
+				composant.symetrie			=	true
+			)
+			mgr_mesh.attacher		mesh		composant 	transf:[longueur - menuis_epaisseur,0,0]				
 		)
 		
 		--- traverse basse ----------
 		if travBasse do (			
 			composant.longueur			=	long_trav
-			composant.profondeur		=	profondeur
 			composant.hauteur			=	travBasse_hauteur
-			composant.symetrie			=	false
-			composant.horizontal		=	true
-			
+			if qualite != 3 do	(
+				composant.profondeur		=	profondeur
+				composant.symetrie			=	false
+				composant.horizontal		=	true
+			)
 			mgr_mesh.attacher		mesh		composant 	transf:[posX_traverses,0,0]				
 		)
 		
 		--- traverse	haute ----------
 		composant.longueur			=	long_trav
-		composant.profondeur		=	profondeur
-		composant.hauteur			=	menuis_largeur
-		composant.symetrie			=	true
-		composant.horizontal		=	true
+		composant.hauteur			=	menuis_epaisseur
+		if qualite != 3 do	 (
+			composant.profondeur		=	profondeur
+			composant.symetrie			=	true
+			composant.horizontal		=	true
+		)
 		
-		mgr_mesh.attacher		mesh		composant 	transf:[posX_traverses,0,hauteur - menuis_largeur]
+		mgr_mesh.attacher		mesh		composant 	transf:[posX_traverses,0,hauteur - menuis_epaisseur]
 		
 		----- le mapping 	--------------
 		meshop.applyUVWMap 	mesh  #box		tm:(scaleMatrix [2,2,2]	)
@@ -219,8 +239,8 @@ category:"CP | Menuiserie	| Composant"
 					pt_epaisseur 			= gridPoint
 				)
 				5: (
-					menuis_largeur 				= length ( gridPoint - pt_epaisseur )
-					travBasse_hauteur 	= menuis_largeur 
+					menuis_epaisseur 				= length ( gridPoint - pt_epaisseur )
+					travBasse_hauteur 	= menuis_epaisseur 
 				)
 			)		
 	) --- fin tool create ---------

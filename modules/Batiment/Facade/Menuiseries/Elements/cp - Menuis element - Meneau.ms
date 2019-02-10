@@ -36,6 +36,8 @@ category:"CP | Menuiserie	| Composant"
 		low_poly					type:#boolean 		ui:shk_lowPoly				default:false
 		matId					type:#integer 			ui:spn_matId				default:1
 		
+		qualite					type:#integer 			ui:rdo_qualite				default:1
+		
 	)	-----	fin parametres --------------------
 	
 	rollout roll_general  "Paramètres"
@@ -48,6 +50,9 @@ category:"CP | Menuiserie	| Composant"
 	rollout roll_divers  "Divers" (
 		group "Qualité" (
 			checkbox	shk_lowPoly		"Low poly"
+		)
+		group "Qualité" (
+			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
 		group "Material ID" (
 			spinner spn_matId			 	"Menuiseries" 			type:#integer range:[1,1000,1]
@@ -68,12 +73,21 @@ category:"CP | Menuiserie	| Composant"
 		
 		
 		--- Construction ---------------------------------------------------------------------------------------
-		local composant=	if low_poly 	then	 createInstance  cp_prim_boiteU		matId:matId
-													else	 createInstance  cp_prim_boite		matId:matId
+-- 		local composant=	if low_poly 	then	 createInstance  cp_prim_boiteU		matId:matId
+-- 													else	 createInstance  cp_prim_boite		matId:matId
+		
+		local composant
+		case qualite	of (
+			1:	composant	=	 createInstance  cp_prim_boite				matId:matId
+			2:	composant	=	 createInstance  cp_prim_boiteU				matId:matId
+			3:	composant	=	 createInstance  cp_prim_planVertical		matId:matId
+		)
+		 
 		
 		composant.longueur			=	longueur
-		composant.profondeur		=	profondeur
 		composant.hauteur			=	hauteur
+		if qualite != 3  do
+			composant.profondeur		=	profondeur
 		
 		mgr_mesh.attacher		mesh		composant
 		

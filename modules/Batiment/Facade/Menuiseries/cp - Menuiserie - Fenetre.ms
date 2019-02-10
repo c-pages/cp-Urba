@@ -21,18 +21,22 @@ category:"CP | Baie	| Element"
 	
 	----- les composants -----------	
 	local	compo_ouvrant_1, compo_ouvrant_2
+	local compo_cadre
 	
 	---- manager de mesh -------------------
 	local mgr_mesh = str_mgr_mesh ()
 	
 	
 	parameters params_dimensions rollout:rol_global	(
-		hauteur	 		type:#worldUnits 	ui:spn_hauteur 			default:0.
-		profondeur	 	type:#worldUnits 									default:5.
+		hauteur	 				type:#worldUnits 	ui:spn_hauteur 			default:0.
+		profondeur	 			type:#worldUnits 	ui:spn_profondeur		default:5.
+		
+		cadre						type:#boolean 		ui:shk_cadre				default:true
+		cadre_epaisseur		type:#worldUnits 	ui:spn_cadre_ep			default:5.
 	)
 	parameters params_general rollout:roll_parametres	(
 		
-		longueur 		type:#worldUnits 	ui:spn_longueur 			default:0.
+		longueur 				type:#worldUnits 	ui:spn_longueur 			default:0.
 		
 		----- les menuiseries -----------
 		vitrage_epaisseur				type:#worldUnits 	default:1.
@@ -55,7 +59,7 @@ category:"CP | Baie	| Element"
 		symetrie							type:#boolean 		ui:shk_symetrie				default:false
 		ouvert_angle_1				type:#float 		/* 	ui:spn_angle_1	 */			default:0.
 		ouvert_angle_2				type:#float 		/* 	ui:spn_angle_2	 */			default:0.
-				
+		
 	)	-----	fin parametres --------------------
 	parameters params_divers rollout:roll_divers	(
 		
@@ -63,6 +67,8 @@ category:"CP | Baie	| Element"
 		
 		------ options --------------
 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
@@ -93,8 +99,13 @@ category:"CP | Baie	| Element"
 	
 	rollout rol_global  "Global"	(
 		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
+		spinner 	spn_profondeur 		"Profondeur" 			type:#worldunits 	range:[0,1e20,0]
+		group "cadre" (
+			checkbox	shk_cadre				"Cadre"
+			spinner 	spn_cadre_ep 			"Epaisseur" 			type:#worldunits 	range:[0,1e20,0]
+		)
 	)
-	rollout roll_parametres  "Paramètres"	(
+	rollout roll_parametres  "Fenêtre"	(
 		
 		spinner 	spn_longueur 			"longueur" 				type:#worldunits 	range:[0,1e20,0]
 		spinner 	spn_ouvrant_cadre_larg	 	"Menuis. larg." 		type:#worldunits range:[0,1e20,0]
@@ -129,6 +140,9 @@ category:"CP | Baie	| Element"
 		group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly" 		
 		)
+		group "Qualité" (
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
+		)
 		group "Material ID" (
 			spinner spn_matId_menuis 		"Menuiseries" 			type:#integer range:[1,1000,1]
 			spinner spn_matId_vitrage 		"Vitrage" 				type:#integer range:[1,1000,1]
@@ -156,35 +170,46 @@ category:"CP | Baie	| Element"
 		---- creation des composants ------------------
 		if compo_ouvrant_1 	== undefined	do	compo_ouvrant_1	= 	createInstance  cp_menuisElem_chassisVitre				
 		if compo_ouvrant_2 	== undefined	do	compo_ouvrant_2	= 	createInstance  cp_menuisElem_chassisVitre	
+		if cadre and compo_cadre 	== undefined	do	compo_cadre		= createInstance  	cp_menuisElem_cadre
 		
 		
 		---- maj ouvrant		----
-		compo_ouvrant_1.profondeur 				= ouvrant_profondeur
-		compo_ouvrant_1.hauteur 					= hauteur
+		compo_ouvrant_1.profondeur 				= profondeur /2	--	ouvrant_profondeur
+-- 		compo_ouvrant_1.hauteur 					= hauteur
+		compo_ouvrant_1.hauteur						=	if cadre then hauteur  - cadre_epaisseur*2 else hauteur
 		compo_ouvrant_1.cadre_largeur 			= ouvrant_cadre_larg
 		compo_ouvrant_1.travBasse_hauteur		= ouvrant_cadre_larg		
 		
 		compo_ouvrant_1.div_montants_nbr 		= div_montants_nbr
 		compo_ouvrant_1.div_traverses_nbr 		= div_traverses_nbr
 		compo_ouvrant_1.div_largeur					= div_largeur
-		compo_ouvrant_1.div_profondeur			= div_profondeur
+		compo_ouvrant_1.div_profondeur			= profondeur /2	--	div_profondeur
 		compo_ouvrant_1.div_calage_verti			= div_calage_verti
 		compo_ouvrant_1.vitrage_epaisseur		= vitrage_epaisseur
 		
 		compo_ouvrant_1.low_poly			 		= low_poly
+		compo_ouvrant_1.qualite				 		= qualite
 		compo_ouvrant_1.matId_menuis	 			= matId_menuis
 		compo_ouvrant_1.matId_vitrage	 			= matId_vitrage		
 	
 		if not ouvrant_double then (
-			compo_ouvrant_1.longueur 				= longueur
+-- 			compo_ouvrant_1.longueur 				= longueur
+			compo_ouvrant_1.longueur				=	if cadre then longueur - cadre_epaisseur*2 else longueur
 		) else (
-			compo_ouvrant_1.longueur 				= longueur 	*  ouvrant_tierce_pourcent / 100 
+-- 			compo_ouvrant_1.longueur 				= longueur 	*  ouvrant_tierce_pourcent / 100 
+			compo_ouvrant_1.longueur				=	if cadre then (longueur 	*  ouvrant_tierce_pourcent / 100 ) - cadre_epaisseur else (longueur 	*  ouvrant_tierce_pourcent / 100 )
 			
 			compo_ouvrant_2 							= copy compo_ouvrant_1
-			compo_ouvrant_2.longueur 				=  longueur	* ( 100 - ouvrant_tierce_pourcent ) / 100
+-- 			compo_ouvrant_2.longueur 				=  longueur	* ( 100 - ouvrant_tierce_pourcent ) / 100
+			compo_ouvrant_2.longueur 				=  if cadre then ( longueur	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) - cadre_epaisseur else	( longueur	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) 
 			compo_ouvrant_2.div_montants_nbr 	=  div_montants_nbr_2
 			
 		)
+		
+		
+		
+		
+		
 		
 		
 		--- hasard	---------------
@@ -194,6 +219,21 @@ category:"CP | Baie	| Element"
 			ouvert_angle_1 = random 0.		fen_ouvMax
 			ouvert_angle_2 = random 0.		fen_ouvMax		
 		)
+		
+		
+		-----	le cadre 	-------------
+		if cadre do	(
+			compo_cadre.longueur						=	longueur
+			compo_cadre.hauteur						=	hauteur
+			compo_cadre.profondeur					=	profondeur
+			compo_cadre.menuis_epaisseur			=	cadre_epaisseur
+			compo_cadre.travBasse					=	true
+			compo_cadre.travBasse_hauteur			=	cadre_epaisseur
+			
+			compo_cadre.qualite			 				= qualite		
+			compo_cadre.matId_menuis	 			= matId_menuis
+		)
+		
 		
 	)  --- fin composants_actualiser  ------------------
 	
@@ -217,43 +257,73 @@ category:"CP | Baie	| Element"
 		
 		
 		----Données ------------	
-		local origine_ouv_1
-		local rotate_ouv_1
-		local recalle_ouv_1
+		local origine_ouv_1, rotate_ouv_1, recalle_ouv_1		
+		local origine_ouv_2, rotate_ouv_2, recalle_ouv_2
 		
-		local origine_ouv_2
-		local rotate_ouv_2
-		local recalle_ouv_2
 		
 		local longueur_ouvrant 	= 	compo_ouvrant_1.longueur 
 		local callage_montant_G 	= 		0
 		local callage_montant_D 	=	callage_montant_G
 		local ouvrant_pos_z 		= 	callage_montant_G
-		local ouvrant_callage_y	= 	profondeur / 2
+		local profondeur_temp		=	if cadre	then profondeur	else 0
+		local ouvrant_prof_tmp		=	profondeur_temp
+		local ouvrant_callage_y	= 	if qualite != 3 then	profondeur_temp  /* + ouvrant_profondeur	 */else 0
+		
+		
+		local recalage_X = if cadre 			then cadre_epaisseur else 0
+		local recalage_Y = if qualite != 3	then profondeur / 2 else 0
+		local recalage_Z = if cadre 			then cadre_epaisseur else 0
+		
+		
 		
 		if  symetrie and not ouvrant_double	then (
-			origine_ouv_1	=	transMatrix	[ -longueur_ouvrant, - ouvrant_profondeur ,	ouvrant_pos_z ]	
-			rotate_ouv_1	=	rotateZMatrix -ouvert_angle_1
-			recalle_ouv_1	=	transMatrix	[longueur - callage_montant_G, ouvrant_callage_y + ouvrant_profondeur ,	0 ]
+			if qualite != 3	then 
+				origine_ouv_1	=	transMatrix	[ -longueur_ouvrant, - profondeur / 2 ,	ouvrant_pos_z ]	
+			else
+				origine_ouv_1	=	transMatrix	[ -longueur_ouvrant, 0 ,	ouvrant_pos_z ]	
+			rotate_ouv_1		=	rotateZMatrix -ouvert_angle_1
+			
+			recalle_ouv_1		=	transMatrix	[longueur - callage_montant_G - recalage_X , ouvrant_callage_y  ,	recalage_Z ]
+			
+			
 		) else (
-			origine_ouv_1	=	transMatrix	[ 0, -ouvrant_profondeur,	ouvrant_pos_z ]
+			if qualite != 3	then 
+				origine_ouv_1	=	transMatrix	[ 0, - profondeur / 2  ,	ouvrant_pos_z ]
+			else
+				origine_ouv_1	=	transMatrix	[ 0, 0,	ouvrant_pos_z ]
 			rotate_ouv_1	=	rotateZMatrix 	ouvert_angle_1 
-			recalle_ouv_1	=	transMatrix	[callage_montant_G, ouvrant_callage_y + ouvrant_profondeur,	0 ]
-		)
-		if  ouvrant_double do (			
-			origine_ouv_2	=	transMatrix	[ -compo_ouvrant_2.longueur, -ouvrant_profondeur ,	ouvrant_pos_z ]
-			rotate_ouv_2 	=  rotateZMatrix -ouvert_angle_2
-			recalle_ouv_2	=	transMatrix	[longueur - callage_montant_D, ouvrant_callage_y + ouvrant_profondeur,	0 ]
+			recalle_ouv_1	=	transMatrix		[callage_montant_G + recalage_X , ouvrant_callage_y ,	recalage_Z ]
 		)
 		
+		
+		
+		
+		if  ouvrant_double do (
+			if qualite != 3	then 
+				origine_ouv_2	=	transMatrix	[ -compo_ouvrant_2.longueur, - profondeur / 2 ,	ouvrant_pos_z ]
+			else
+				origine_ouv_2	=	transMatrix	[ -compo_ouvrant_2.longueur, 0,	ouvrant_pos_z ]
+			rotate_ouv_2 		=  rotateZMatrix -ouvert_angle_2
+			recalle_ouv_2		=	transMatrix	[longueur - callage_montant_D - recalage_X , ouvrant_callage_y ,	recalage_Z ]
+		)
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		---- le cadre -------
+		if cadre do	
+			mgr_mesh.attacher		mesh		compo_cadre
 		
 		
 		---- 1er ouvrant ------------
-		local transf_ouvrant_1	=	origine_ouv_1 * rotate_ouv_1 * recalle_ouv_1		
+		local transf_ouvrant_1	=	origine_ouv_1 * rotate_ouv_1 * recalle_ouv_1
 		mgr_mesh.attacher		mesh		compo_ouvrant_1 	transf:transf_ouvrant_1
-		
-		try debug"compo_ouvrant_1" 	var:compo_ouvrant_1.ouvrant_cadre_larg	catch ()
-		
+				
 		---- 2nd ouvrant	------------
 		if  ouvrant_double do (
 			

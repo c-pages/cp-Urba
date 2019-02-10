@@ -330,7 +330,7 @@ category:"CP | Urba"
 	
 		editText 	edTxt_nom		 	"" 	
 		
-		checkbutton		btn_editer_facade		"Editer"	width:140 height:25
+		checkbutton		btn_editer_facade		"Editeur de façade"	width:140 height:25
 		
 		
 		fn actualiser =(
@@ -454,9 +454,18 @@ category:"CP | Urba"
 		on 	ddl_toiture_type		selected val		do actualiser()
 	) ----- fin rollout toiture -----------------------
 	
+	
+	
+	
 	rollout roll_divers  "Divers"	(
 		 group "Qualité" (
-			checkbox	shk_lowPoly			"Low poly" 		
+			checkbox	shk_lowPoly			"Low poly"
+		 )
+		 group "Qualité" (
+			label lbl_viewport 	"Viewport"  align:#left	 across:2
+			label lbl_render 		"Render"   align:#left
+			radioButtons rdo_viewport	""  labels:#("Full", "Medium","Low poly", "Volume") align:#left 	across:2
+			radioButtons rdo_render 		"" labels:#("Full", "Medium", "Low poly", "Volume") align:#left
 		) 
 		group "Material ID" (
 			spinner spn_matId_menuis 		"Menuiseries" 			type:#integer range:[1,1000,1]
@@ -465,6 +474,9 @@ category:"CP | Urba"
 			spinner spn_matId_mur 			"Mur" 					type:#integer range:[1,1000,1]
 		)
 	) 	---- fin rollout	-----------------------
+	
+	
+	
 	
 	rollout roll_hasard  "Hasard"	(
 		
@@ -675,7 +687,7 @@ category:"CP | Urba"
 		
 		
 		----- rollout editeur ---------------------
-		rollout roll_editeur_facade "Facade"	 height:700	 width:715	--	width:480	--	width:500
+		rollout roll_editeur_facade "Editeur de façade"	 height:700	 width:715	--	width:480	--	width:500
 		(
 			
 			local facade_cible
@@ -687,17 +699,22 @@ category:"CP | Urba"
 			subRollout 'subroll_1' "" pos:[13,27] width:224 height:280 align:#left	
 			subRollout 'subroll_2' "" pos:[246,7] width:224 height:300 align:#left
 			subRollout 'subroll_3' "" pos:[479,7] width:224 height:300 align:#left
+			subRollout 'subroll_4' "" pos:[712,7] width:224 height:300 align:#left
 			
 			fn resize_rollout	=(
+				
 				subroll_1.height	=	roll_editeur_facade.height - 20
 				subroll_2.height	=	roll_editeur_facade.height - 20
 				subroll_3.height	=	roll_editeur_facade.height - 20
+				subroll_4.height	=	roll_editeur_facade.height - 20
 				
 				if subroll_3.rollouts.count == 0 then
 					roll_editeur_facade.width = 480
-				else
+				else 	if subroll_4.rollouts.count == 0 then
 					roll_editeur_facade.width = 715
-					
+				else
+					roll_editeur_facade.width = 950
+				
 			)
 			
 			fn actualiser 	facade:		=(
