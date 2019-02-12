@@ -13,12 +13,12 @@ struct	str_geometrie	(
 		
 	---- Material IDs -----------------
 		fn get_id_materialType  _type =(
-			local matID = include	  "$userScripts\cp-Urba\Modules\Batiment\divers\Batiment - material IDs.ms"
-			local ids_propnames = getpropnames matID
+-- 			local matID = include	  "$userScripts\cp-Urba\Modules\Batiment\divers\Batiment - material IDs.ms"
+-- 			local ids_propnames = getpropnames matID
 			local result = 1
-			for propNom in ids_propnames do
-				if _type as name == propNom do
-					result = getproperty 	matID	propNom
+-- 			for propNom in ids_propnames do
+-- 				if _type as name == propNom do
+-- 					result = getproperty 	matID	propNom
 			result
 		),
 		fn set_matID _faces	_matID 	cible:m_plug.delegate 	=(
