@@ -1,9 +1,9 @@
 
 
-plugin simpleObject		cp_baieElement_baie
+plugin simpleObject		cp_facadeElem_baie
 name:"Baie"
 classID:#(0x51488ca0, 0x39e98401)
-category:"CP | Facade	| Composant"
+category:"CP | Facade	| Element"
 -- invisible:true
 (
 	
@@ -23,7 +23,7 @@ category:"CP | Facade	| Composant"
 	local mgr_mesh = str_mgr_mesh ()
 	
 	----- les composants -----------	
-
+	local compo_menuis
 	
 	parameters params_dimensions rollout:rol_global	(
 		
@@ -31,11 +31,13 @@ category:"CP | Facade	| Composant"
 		
 	)
 	parameters params_general rollout:roll_parametres	(
-	
+		
 		longueur 				type:#worldUnits 	ui:spn_longueur 				default:120.
 		baie_hauteur			type:#worldUnits 	ui:spn_baie_hauteur			default:-50.
 		profondeur	 			type:#worldUnits 	ui:spn_profondeur			default:15.
 		allege_hauteur			type:#worldUnits 	ui:spn_allege_hauteur		default:100.
+		
+		menuiserie				type:#maxObject
 		
 	)	-----	fin parametres --------------------
 	parameters params_divers rollout:roll_divers	(
@@ -44,6 +46,8 @@ category:"CP | Facade	| Composant"
 		
 		------ options --------------
 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
@@ -97,6 +101,9 @@ category:"CP | Facade	| Composant"
 		group "Qualité" (
 			checkbox	shk_lowPoly				"Low poly" 		
 		)
+		group "Qualité" (
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
+		)
 		group "Material ID" (
 			spinner spn_matId_menuis 			"Menuiseries" 			type:#integer 			range:[1,1000,1]
 			spinner spn_matId_vitrage 			"Vitrage" 				type:#integer 			range:[1,1000,1]
@@ -120,8 +127,14 @@ category:"CP | Facade	| Composant"
 	---- les composants ---------------------
 	fn actualiser_composants	= with redraw off (
 		
-		
-		
+		if menuiserie != undefined do (
+			compo_menuis	=	copy menuiserie
+			compo_menuis.longueur		=	longueur
+			local hauteur_menuis	=	if baie_hauteur <0 	then		hauteur + baie_hauteur - allege_hauteur
+																			else		baie_hauteur - allege_hauteur
+			compo_menuis.hauteur		=	hauteur_menuis
+			compo_menuis.qualite		=	qualite
+		)
 		
 	)  --- fin composants_actualiser  ------------------
 	
@@ -148,7 +161,6 @@ category:"CP | Facade	| Composant"
 		local hauteur_baie_tmp 		= allege_hauteur + baie_hauteur
 		if baie_hauteur <= 0 do hauteur_baie_tmp = hauteur +	baie_hauteur
 		
-		
 		---- Allege -----
 		local pt_1	=	[0,					0,					0]
 		local pt_2	=	[longueur,			0,					0]
@@ -159,9 +171,6 @@ category:"CP | Facade	| Composant"
 		local pt_5	=	[longueur,			profondeur,		allege_hauteur]
 		local pt_6	=	[0,					profondeur,		allege_hauteur]
 		
-		
-		
-		
 		----- tableau gauche ------
 		local pt_7	=	[0,					profondeur,		hauteur_baie_tmp]
 		local pt_8	=	[0,					0,					hauteur_baie_tmp]
@@ -170,26 +179,19 @@ category:"CP | Facade	| Composant"
 		local pt_9	=	[longueur,			0,					hauteur_baie_tmp]
 		local pt_10	=	[longueur,			profondeur,		hauteur_baie_tmp]
 		
-		
-		
-		
 		----- Imposte ------
 		local pt_11	=	[longueur,			0,					hauteur]
 		local pt_12	=	[0,					0,					hauteur]
 		
 		local pts 	= #(pt_1, pt_2, pt_3, pt_4, pt_5, pt_6, pt_7, pt_8, pt_9, pt_10, pt_11, pt_12) 
 		
+		----- on crée  les faces ----------------------------------------------------
+		local faces = #(	[1,2,4], [1,4,3],		[3,4,5], [3,5,6],		[3,6,7], [3,7,8],		[5,4,9], [5,9,10],				[7,10,8], [8,10,9],		[8,9,11], [8,11,12] )
 		
-		
-		
-		
-		----- on creer les faces ----------------------------------------------------
-		local faces = #(	[1,2,4], [1,4,3],		[3,4,5], [3,5,6],		[3,6,7], [3,7,8]  ,		[5,4,9], [5,9,10],				[7,10,8], [8,10,9],		[8,9,11], [8,11,12] )
-	
 		--- mat ID ------
 		local matIDs	= for i in faces collect matId_mur
 		
-		--- on creer les vertex ---------
+		--- on crée les vertex ---------
 		setMesh 	mesh 	verts:pts	faces:faces	materialIDs:matIDs
 		
 		----- On clean le mesh 	--------------
@@ -202,6 +204,13 @@ category:"CP | Facade	| Composant"
 		
 		
 		
+		
+		
+		
+		
+		---- la menuiserie	-------------------		
+		if menuiserie != undefined do 
+			mgr_mesh.attacher		mesh		compo_menuis 	transf:[0,profondeur,allege_hauteur]
 		
 		
 		

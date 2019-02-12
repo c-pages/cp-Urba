@@ -1,15 +1,15 @@
 
-plugin simpleObject		cp_facadeCompo_ensemble
+plugin simpleObject		cp_facadeElem_ensemble
 name:"Ensemble menuisé"
 classID:#(0x5e14b205, 0x12910401)
-category:"CP | Facade	| Composant"
+category:"CP | Facade	| Element"
 -- invisible:true
 (
 	
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_facadeCompo_ensemble"
+	local 	m_dbgPrefix ="cp_facadeElem_ensemble"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
@@ -994,7 +994,7 @@ category:"CP | Facade	| Composant"
 		---- creation des composants ------------------
 		if compo_cadre 		== undefined	do	compo_cadre		= 	createInstance  cp_menuisElem_cadre
 		if compo_meneau		== undefined	do	compo_meneau	= 	createInstance  cp_menuisElem_meneau
-		if compo_baie			== undefined	do	compo_baie		= 	createInstance  cp_baieElement_baie
+		if compo_baie			== undefined	do	compo_baie		= 	createInstance  cp_facadeElem_baie
 		
 		local hauteur_baie_tmp 		=  baie_hauteur
 		if baie_hauteur <= 0 do hauteur_baie_tmp = hauteur -	( -baie_hauteur + allege_hauteur )

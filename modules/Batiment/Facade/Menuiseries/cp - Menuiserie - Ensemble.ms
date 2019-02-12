@@ -9,7 +9,7 @@ category:"CP | Menuiserie"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_facadeCompo_ensemble"
+	local 	m_dbgPrefix ="cp_menuiserie_ensemble"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	

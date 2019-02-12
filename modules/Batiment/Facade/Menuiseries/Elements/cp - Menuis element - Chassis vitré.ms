@@ -3,7 +3,7 @@
 plugin simpleObject		cp_menuisElem_chassisVitre
 name:"Chassis vitre"
 classID:#(0x7bb20e92, 0x37f7c1e7)
-category:"CP | Menuiserie	| Composant"
+category:"CP | Menuiserie	| Element"
 -- invisible:true
 (
 	

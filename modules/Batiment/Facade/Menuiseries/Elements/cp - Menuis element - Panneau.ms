@@ -2,7 +2,7 @@
 plugin simpleObject		cp_menuisElem_panneau
 name:"Panneau"
 classID:#(0x7094146b, 0x7896bea1)
-category:"CP | Menuiserie	| Composant"
+category:"CP | Menuiserie	| Element"
 -- invisible:true
 (
 	

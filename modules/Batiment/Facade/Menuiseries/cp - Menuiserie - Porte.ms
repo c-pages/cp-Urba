@@ -223,6 +223,7 @@ category:"CP | Menuiserie"
 		fen_ouvMax 		= _fen_ouvMax
 		fen_proba_ouv 	= _fen_proba_ouv
 	)
+	fn get_longueur	=	longueur
 	
 	---- les composants ---------------------
 	fn actualiser_composants	= with redraw off (

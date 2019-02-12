@@ -793,7 +793,7 @@ category:"CP | Urba"
 		local	id_elem_select 	= 	roll_facades.lbx_facades.selection
 		local	id_elem_insert		= 	id_elem_select + 1
 		
-		local nvl_facade			= createinstance		batiment_composant_facade
+		local nvl_facade			= createinstance		cp_batimentElem_facade
 		
 		if id_elem_select != 0 and id_elem_select	!= facades.count	then	
 			insertItem nvl_facade					facades 					id_elem_insert
@@ -945,7 +945,7 @@ category:"CP | Urba"
 -- 		debug "definir_toiture" var:_id_type
 		case _id_type of (
 			1:		toiture		=	undefined
-			5:		toiture 		= createInstance		batiment_composant_toiture_nPans
+			5:		toiture 		= createInstance		cp_batimentElem_toiture_nPans
 		)
 -- 		debug "toiture" var:toiture
 	)

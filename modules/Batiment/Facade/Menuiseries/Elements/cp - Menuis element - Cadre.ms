@@ -2,7 +2,7 @@
 plugin simpleObject		cp_menuisElem_cadre
 name:"Cadre"
 classID:#(0x191d683f, 0x345d8d04)
-category:"CP | Menuiserie	| Composant"
+category:"CP | Menuiserie	| Element"
 -- invisible:true
 (
 	

@@ -1,8 +1,8 @@
 
-plugin simpleObject		batiment_composant_facade
+plugin simpleObject		cp_batimentElem_facade
 name:"Façade"
 classID:#(0x52a049eb, 0xc56c437)
-category:"CP | Bâtiment	| Composant"
+category:"CP | Bâtiment	| Element"
 -- invisible:true
 (
 	
@@ -10,7 +10,7 @@ category:"CP | Bâtiment	| Composant"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="batiment_composant_facade"
+	local 	m_dbgPrefix ="cp_batimentElem_facade"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
@@ -45,14 +45,14 @@ category:"CP | Bâtiment	| Composant"
 		hauteur	 						type:#worldUnits 	ui:spn_hauteur 					default:0.
 		
 	)
-	parameters params_repartition 		rollout:roll_repartition	(
+	parameters params_repartition 	rollout:roll_repartition	(
 		
 		repartition					type:#integer					ui:ddl_repartition			default:1
 		repart_nombre				type:#integer					ui:spn_repetitions		default:1
 		repart_decallage			type:#worldUnits				ui:spn_decallage			default:0.
 		repart_espacement		type:#worldUnits				ui:spn_espacement		default:0.
 	)
-	parameters params_sequence 		rollout:roll_sequence	(
+	parameters params_sequence 		rollout:roll_sequence		(
 		
 		sequence					type:#maxObjectTab		tabSizeVariable:true
 		
@@ -76,16 +76,16 @@ category:"CP | Bâtiment	| Composant"
 		etages_min_use		type:#boolean 		ui:chk_etages_min			default:false
 		etages_min				type:#integer			ui:spn_etages_min			default:0
 		etages_max_use		type:#boolean 		ui:chk_etages_max			default:false
-		etages_max				type:#integer			ui:spn_etages_max			default:0
+		etages_max			type:#integer			ui:spn_etages_max			default:0
 		
 		longueur_min_use		type:#boolean 		ui:chk_longueur_min			default:false
 		longueur_min			type:#integer			ui:spn_longueur_min			default:0
-		longueur_max_use	type:#boolean 		ui:chk_longueur_max			default:false
-		longueur_max			type:#integer			ui:spn_longueur_max			default:0
+		longueur_max_use	type:#boolean 		ui:chk_longueur_max		default:false
+		longueur_max			type:#integer			ui:spn_longueur_max		default:0
 		
 		mur_nord			type:#boolean 		ui:ckb_mur_nord			default:false
 		mur_sud				type:#boolean 		ui:ckb_mur_sud			default:false
-		mur_est				type:#boolean 		ui:ckb_mur_est				default:false
+		mur_est				type:#boolean 		ui:ckb_mur_est			default:false
 		mur_ouest			type:#boolean 		ui:ckb_mur_ouest			default:false
 		
 		murs				type:#integer			ui:ddl_murs					default:1
@@ -107,7 +107,7 @@ category:"CP | Bâtiment	| Composant"
 		spinner spn_profondeur 			"Profondeur" 			type:#worldunits range:[0,1e20,0]
 		
 	)
-	rollout roll_repartition		"Répartition" (
+	rollout roll_repartition					"Répartition" 	(
 				--- UI ----------------------------------------------------------------------------------------------
 		group "Répartition" (
 			dropDownList	ddl_repartition		""	 items:#(	"Répartir",  /* "Répéter", */	"Centrer",	"Aligner à gauche",	"Aligner à droite"		/*,   "Etirer"  */	)	/* width:95	 */align:#left--	across:2
@@ -135,7 +135,7 @@ category:"CP | Bâtiment	| Composant"
 		on ddl_repartition selected  val do actualiser ()
 		
 	)
-	rollout roll_sequence  				"Façade"		(
+	rollout roll_sequence  					"Façade"		(
 	
 		------------ TRee view -----------------------------
 		local m_dragDropEffect		=dotNetClass "System.Windows.Forms.DragDropEffects"		
@@ -145,33 +145,30 @@ category:"CP | Bâtiment	| Composant"
 		
 		
 		--- UI ----------------------------------------------------------------------------------------------
--- 		group "Répartition" (
--- 			dropDownList	ddl_repartition		""	 items:#(	"Répartir",  /* "Répéter", */	"Centrer",	"Aligner à gauche",	"Aligner à droite"		/*,   "Etirer"  */	)	/* width:95	 */align:#left--	across:2
--- 			
--- 			spinner spn_repetitions 		"Nombre" 		/* width:50	 */		type:#integer 			range:[0,1000,1]			align:#right
--- 			spinner spn_decallage		 	"Décallage" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
--- 			spinner spn_espacement		"Espacement" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
--- 			
--- 		)
 		group "Séquence" (
 			
+-- 			label			lbl_pleins	""	align:#left
 			button 		btn_ajouter_mur 			"Mur"			width:50		height:17		across:3		align:#left
 			button 		btn_ajouter_poteau 		"Poteau"			width:50		height:17		align:#left	enabled:false
 			button 		btn_ajouter_chainage 		"Chainage"		width:50	height:17			align:#left		enabled:false
 			
--- 			label			lbl_baies	"Baies:"	align:#left
-			button 		btn_ajouter_fenetre 		"Fenêtre"		width:50		height:17	align:#left	/* enabled:false */	across:3		
+-- 			label			lbl_baies	""	align:#left
+			button 		btn_ajouter_fixe		 		"Fixe"				width:50		height:17	align:#left	/* enabled:false */	across:3		
+			button 		btn_ajouter_fenetre 		"Fenêtre"		width:50		height:17	align:#left	/* enabled:false */	
 			button 		btn_ajouter_porte 	"Porte"			width:50		height:17		align:#left		/* enabled:false */
-			button 		btn_ajouter_ensemble 		"Ens. men."				width:50	height:17			align:#left
+			button 		btn_ajouter_ensemble 		"Ens. men."				width:50	height:17			align:#left	across:3	
 			
--- 			label			lbl_divers	"Divers:"	align:#left
+			button 		btn_ajouter_vide1 	""			width:50	height:17			align:#left		enabled:false
+			button 		btn_ajouter_vide2 	""			width:50		height:17		align:#left		enabled:false
+			
+-- 			label			lbl_divers	""	align:#left
 			button 		btn_ajouter_balcon 	"Balcon"			width:50		height:17		align:#left		across:3	
 			button 		btn_ajouter_corniche 	"Corniche"			width:50	height:17			align:#left		enabled:false
 			button 		btn_ajouter_porche 	"Porche"			width:50		height:17		align:#left		enabled:false
 			
 			button 		btn_ajouter_groupe 	"Groupe"			width:50		height:17		align:#left		across:3	
-			button 		btn_ajouter_vide1 	""			width:50	height:17			align:#left		enabled:false
-			button 		btn_ajouter_vide2 	""			width:50		height:17		align:#left		enabled:false
+			button 		btn_ajouter_vide3 	""			width:50	height:17			align:#left		enabled:false
+			button 		btn_ajouter_vide4	""			width:50		height:17		align:#left		enabled:false
 			
 			dotNetControl tv_sequence	 "treeview" /* width:145 */ height:360 --align:#left
 			
@@ -250,11 +247,6 @@ category:"CP | Bâtiment	| Composant"
 			
 		)
 		
-		
-		
-		
-		
-		
 		---------------- Tests ----------------------------------------------
 		fn a_unParent_balcon		_noeud 	=(
 			
@@ -314,7 +306,6 @@ category:"CP | Bâtiment	| Composant"
 			result
 			
 		)
-		
 		
 		------- drag and drop -------------------------
 		fn valider_drop	_node_dest =(
@@ -395,8 +386,6 @@ category:"CP | Bâtiment	| Composant"
 			
 		)
 		
-		
-		
 		------- treeview -------------------------
 		fn ajouter_TV_item	_item_aAjouter	_itemParent	=(
 			
@@ -410,10 +399,10 @@ category:"CP | Bâtiment	| Composant"
 			if est_instance 	_item_aAjouter	( nv_node.index + 1 )	(get_element_parent nv_node)	do nv_node.text += " *"
 				
 			case classof _item_aAjouter of (
-				cp_facadeCompo_mur:			nv_node.imageIndex = nv_node.selectedImageIndex	=	1
-				cp_facadeCompo_ensemble:	nv_node.imageIndex = nv_node.selectedImageIndex	=	2
-				cp_facadeCompo_balcon:		nv_node.imageIndex = nv_node.selectedImageIndex	=	3
-				cp_facadeCompo_groupe:		nv_node.imageIndex = nv_node.selectedImageIndex	=	4
+				cp_facadeElem_mur:			nv_node.imageIndex = nv_node.selectedImageIndex	=	1
+				cp_facadeElem_ensemble:	nv_node.imageIndex = nv_node.selectedImageIndex	=	2
+				cp_facadeElem_balcon:		nv_node.imageIndex = nv_node.selectedImageIndex	=	3
+				cp_facadeElem_groupe:		nv_node.imageIndex = nv_node.selectedImageIndex	=	4
 				
 				default:	nv_node.imageIndex = nv_node.selectedImageIndex	=	0
 			)
@@ -434,7 +423,6 @@ category:"CP | Bâtiment	| Composant"
 			nv_node.expand ()
 			nv_node
 		)
-		
 		fn initialiser_tv = (
 			
 			---- TRee view ----
@@ -467,9 +455,6 @@ category:"CP | Bâtiment	| Composant"
 			
 		)
 		
-		
-		
-
 		----- UI	divers ----------------------------------------------------------------------------------------------------
 		fn actualiser_TV 	=(
 			
@@ -525,7 +510,6 @@ category:"CP | Bâtiment	| Composant"
 			
 		) --- fin actualiser -----------
 
-		
 		---- clavier ----		
 		fn key_up				_arg =(
 			
@@ -600,23 +584,25 @@ category:"CP | Bâtiment	| Composant"
 			actualiser ()
 		)
 		
-		----- Sequence -----------------		
-		on btn_ajouter_mur	 			pressed 			do 	ajouter_element_facade 	cp_facadeCompo_mur
-		on btn_ajouter_ensemble		pressed 			do 	ajouter_element_facade 	cp_facadeCompo_ensemble
-		on btn_ajouter_balcon			pressed 			do 	ajouter_element_facade 	cp_facadeCompo_balcon
-		on btn_ajouter_groupe			pressed 			do 	ajouter_element_facade 	cp_facadeCompo_groupe
-		
-		
-		
 		--------- le treeView ---------
 		on tv_sequence 	mouseDown 				_arg 	do  	
 			actualiser nd:( tv_sequence.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y ) ) 
-		
 		on tv_sequence 	DragOver 	_sender		_arg	do	drag_checkSurvol  	_arg
 		on tv_sequence 	DragDrop 					_arg 	do	drag_recevoir 			_arg
 		on tv_sequence 	ItemDrag 	_sender		_arg 	do	drag_demarrer 		_arg
 
 		
+		
+		----- Sequence ------------------------------------------------------------------
+		on btn_ajouter_mur	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_mur
+		
+		on btn_ajouter_fixe				pressed 			do 	ajouter_element_facade 	cp_menuiserie_fixe
+		on btn_ajouter_fenetre			pressed 			do 	ajouter_element_facade 	cp_menuiserie_fenetre
+		on btn_ajouter_porte			pressed 			do 	ajouter_element_facade 	cp_menuiserie_porte
+		on btn_ajouter_ensemble		pressed 			do 	ajouter_element_facade 	cp_menuiserie_ensemble
+			
+		on btn_ajouter_balcon			pressed 			do 	ajouter_element_facade 	cp_facadeElem_balcon
+		on btn_ajouter_groupe			pressed 			do 	ajouter_element_facade 	cp_facadeElem_groupe
 		
 		--------- Edition ---------
 		on btn_dupliquer 			pressed 			do	dupliquer_element_facade 			( get_element_parent	tv_sequence.SelectedNode	)				( tv_sequence.SelectedNode.index + 1 )
@@ -731,9 +717,10 @@ category:"CP | Bâtiment	| Composant"
 	
 	
 	--------- tests ------------------
-	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeCompo_ensemble --or classof	_compo	==	cp_facadeCompo_ensemble
-	fn est_unBalcon		_compo	=	classof	_compo	==	cp_facadeCompo_balcon
-	
+	fn est_ouvrable				_compo	=	classof	_compo	==	cp_facadeElem_ensemble
+	fn est_unBalcon				_compo	=	classof	_compo	==	cp_facadeElem_balcon	
+	fn est_une_menuiserie		_compo	=	matchPattern ( ( classof	_compo ) as string ) pattern:"cp_menuiserie*"
+
 	
 	
 	--------- divers ------------------
@@ -793,16 +780,11 @@ category:"CP | Bâtiment	| Composant"
 	--------------- sequence ----------------------------------
 	fn ajouter_element_facade			_element_plug	 		=(
 		
-		local nvl_element 		= createinstance	_element_plug
+		local nvl_element 		= createinstance		_element_plug
 		append sequence			nvl_element
 		
 		---- actualisations -----------
 		actualiser_UI ()
-		
-		if roll_sequence.open do	(
--- 			roll_sequence.tv_sequence.SelectedNode	=	
-			roll_sequence.actualiser ()
-		)
 		
 	)
 	fn retirer_element_facade				_element_parent		_id		 	=(
@@ -1004,7 +986,7 @@ category:"CP | Bâtiment	| Composant"
 		--- Si notre sequence est vide ------------------------------------
 		if sequence.count == 0 then (
 			
-			local compo_temp = createInstance cp_facadeCompo_mur
+			local compo_temp = createInstance cp_facadeElem_mur
 			
 			compo_temp.hauteur			=	hauteur 
 			compo_temp.profondeur		=	profondeur
@@ -1087,7 +1069,7 @@ category:"CP | Bâtiment	| Composant"
 						
 						
 						--- le mur séparant les composant 	------------------	
-						local compo_murRepart				=	createInstance cp_facadeCompo_mur
+						local compo_murRepart				=	createInstance cp_facadeElem_mur
 						compo_murRepart.longueur		=	longueur_repartition + espacement_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
@@ -1155,7 +1137,7 @@ category:"CP | Bâtiment	| Composant"
 						
 						
 						--- le mur séparant les composant 	------------------	
-						local compo_murRepart				=	createInstance cp_facadeCompo_mur
+						local compo_murRepart				=	createInstance cp_facadeElem_mur
 						compo_murRepart.longueur		=	longueur_repartition + decallage_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
@@ -1216,7 +1198,7 @@ category:"CP | Bâtiment	| Composant"
 						
 						
 						--- le mur séparant les composant 	------------------	
-						local compo_murRepart				=	createInstance cp_facadeCompo_mur
+						local compo_murRepart				=	createInstance cp_facadeElem_mur
 						compo_murRepart.longueur		=	decallage_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
@@ -1279,7 +1261,7 @@ category:"CP | Bâtiment	| Composant"
 						
 						
 						--- le mur séparant les composant 	------------------	
-						local compo_murRepart				=	createInstance cp_facadeCompo_mur
+						local compo_murRepart				=	createInstance cp_facadeElem_mur
 						compo_murRepart.longueur		=	longueur_repartition - decallage_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
@@ -1347,7 +1329,7 @@ category:"CP | Bâtiment	| Composant"
 			---- si on a pas la place alors on fait juste un mur ----------------
 			) else (
 				
-				local compo_mur				=	createInstance cp_facadeCompo_mur
+				local compo_mur				=	createInstance cp_facadeElem_mur
 				compo_mur.longueur			=	longueur
 				compo_mur.hauteur			=	hauteur 
 				compo_mur.profondeur		=	profondeur

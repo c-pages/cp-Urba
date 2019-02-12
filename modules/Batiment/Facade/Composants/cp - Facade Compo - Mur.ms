@@ -1,8 +1,8 @@
 
-plugin simpleObject		cp_facadeCompo_mur
+plugin simpleObject		cp_facadeElem_mur
 name:"Mur"
 classID:#(0xd6ac532, 0x76610b21)
-category:"CP | Facade	| Composant"
+category:"CP | Facade	| Element"
 -- invisible:true
 (
 	
@@ -10,7 +10,7 @@ category:"CP | Facade	| Composant"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_facadeCompo_mur"
+	local 	m_dbgPrefix ="cp_facadeElem_mur"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	

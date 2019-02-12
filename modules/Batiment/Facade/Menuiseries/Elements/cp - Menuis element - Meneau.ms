@@ -3,7 +3,7 @@
 plugin simpleObject		cp_menuisElem_meneau
 name:"Meneau"
 classID:#(0x36a2a73c, 0x48b7a887)
-category:"CP | Menuiserie	| Composant"
+category:"CP | Menuiserie	| Element"
 -- invisible:true
 (
 	

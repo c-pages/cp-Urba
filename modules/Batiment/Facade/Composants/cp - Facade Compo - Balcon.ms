@@ -1,15 +1,15 @@
 
-plugin simpleObject		cp_facadeCompo_balcon
+plugin simpleObject		cp_facadeElem_balcon
 name:"Balcon"
 classID:#(0x5b4e91a1, 0x66f01359)
-category:"CP | Facade	| Composant"
+category:"CP | Facade	| Element"
 -- invisible:true
 (
 	
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_facadeCompo_balcon"
+	local 	m_dbgPrefix ="cp_facadeElem_balcon"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
@@ -141,7 +141,7 @@ category:"CP | Facade	| Composant"
 	
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
-	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeCompo_ensemble
+	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeElem_ensemble
 	
 	
 	

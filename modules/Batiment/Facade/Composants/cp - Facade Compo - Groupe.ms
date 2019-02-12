@@ -1,15 +1,15 @@
 
-plugin 		simpleObject		cp_facadeCompo_groupe
+plugin 		simpleObject		cp_facadeElem_groupe
 name:		"Groupe"
 classID:		#(0x91ef199, 0x43204119)
-category:	"CP | Facade	| Composant"
+category:	"CP | Facade	| Element"
 -- invisible:true
 (
 	
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_facadeCompo_groupe"
+	local 	m_dbgPrefix ="cp_facadeElem_groupe"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
@@ -147,7 +147,7 @@ category:	"CP | Facade	| Composant"
 	
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
-	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeCompo_ensemble
+	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeElem_ensemble
 	
 
 	fn get_longueur	=	(

@@ -2,7 +2,7 @@
 plugin simpleObject		cp_menuisElem_poignee
 name:"Poignée"
 classID:#(0x277c59b6, 0x7c0f72eb)
-category:"CP | Menuiserie	| Composant"
+category:"CP | Menuiserie	| Element"
 -- invisible:true
 (
 	

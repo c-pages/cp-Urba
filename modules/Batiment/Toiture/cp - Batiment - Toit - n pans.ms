@@ -1,9 +1,9 @@
 
 
-plugin simpleObject		batiment_composant_toiture_nPans
+plugin simpleObject		cp_batimentElem_toiture_nPans
 name:"Toit n pans"
 classID:#(0x484f89fb, 0x546888a1)
-category:"CP | Bâtiment	| Composant"
+category:"CP | Bâtiment	| Element"
 -- invisible:true
 (
 	
@@ -11,7 +11,7 @@ category:"CP | Bâtiment	| Composant"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="batiment_composant_toiture_nPans"
+	local 	m_dbgPrefix ="cp_batimentElem_toiture_nPans"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	

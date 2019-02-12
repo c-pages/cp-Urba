@@ -37,7 +37,7 @@ category:"CP | Menuiserie"
 	)
 	parameters params_general rollout:roll_parametres	(
 		
-		longueur 				type:#worldUnits 	ui:spn_longueur 			default:0.
+		longueur 				type:#worldUnits 	ui:spn_longueur 			default:100.
 		
 		----- les menuiseries 	-----------------------
 		vitrage_epaisseur				type:#worldUnits 	default:1.
@@ -144,9 +144,8 @@ category:"CP | Menuiserie"
 		
 	)  --- fin actualiser_composants  ------------------
 	
-	fn	est_ouvrant = false
-	
-	
+	fn	est_ouvrant 	= false
+	fn get_longueur	=	longueur
 	fn set_hasard	_fen_ouvMax	_fen_proba_ouv =()
 	
 	
