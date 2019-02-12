@@ -3,7 +3,7 @@
 plugin simpleObject		cp_baieElement_baie
 name:"Baie"
 classID:#(0x51488ca0, 0x39e98401)
-category:"CP | Baie	| Element"
+category:"CP | Facade	| Composant"
 -- invisible:true
 (
 	

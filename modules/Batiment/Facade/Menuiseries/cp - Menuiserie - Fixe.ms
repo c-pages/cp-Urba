@@ -3,7 +3,7 @@
 plugin simpleObject		cp_menuiserie_fixe
 name:"Fixe"
 classID:#(0x17beccdd, 0x1eb11699)
-category:"CP | Baie	| Element"
+category:"CP | Menuiserie"
 -- invisible:true
 (
 	

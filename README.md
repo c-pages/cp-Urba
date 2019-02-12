@@ -63,6 +63,8 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
 #### __Bâtiment__
   - [x] Gestion des hauteurs d'étages spécifiques. (07/02/2019)
   - [x] Prise en compte des contrainte d'orientation cardinale des façades.
+  - [x] Mise au propre des menuiseries.
+  - [x] Prise en compte de 3 niveaux de détails des géometries (full, medium et low).
   - [ ] Début de l'intégration des presets, il y a questionnement sur enregistrement ou plutot sur la lecture des parametres des maxObjects inclus dans des parametres (tableau) de nos preset a sauvegarder...
 
 

@@ -3,7 +3,7 @@
 plugin simpleObject		cp_menuiserie_fenetre
 name:"Fenêtre"
 classID:#(0x58b7dcde, 0x439ca73a)
-category:"CP | Baie	| Element"
+category:"CP | Menuiserie"
 -- invisible:true
 (
 	
@@ -265,8 +265,7 @@ category:"CP | Baie	| Element"
 		local callage_montant_G 	= 		0
 		local callage_montant_D 	=	callage_montant_G
 		local ouvrant_pos_z 		= 	callage_montant_G
-		local profondeur_temp		=	if cadre	then profondeur	else 0
-		local ouvrant_prof_tmp		=	profondeur_temp
+		local profondeur_temp		=	profondeur	--		if cadre	then profondeur	else 0
 		local ouvrant_callage_y	= 	if qualite != 3 then	profondeur_temp  /* + ouvrant_profondeur	 */else 0
 		
 		

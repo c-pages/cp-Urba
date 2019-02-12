@@ -3,7 +3,7 @@
 plugin simpleObject		cp_menuiserie_porte
 name:"Porte"
 classID:#(0x23dc3da5, 0x2b0eb201)
-category:"CP | Baie	| Element"
+category:"CP | Menuiserie"
 -- invisible:true
 (
 	
