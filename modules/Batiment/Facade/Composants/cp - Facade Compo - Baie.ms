@@ -130,8 +130,8 @@ category:"CP | Facade	| Element"
 		if menuiserie != undefined do (
 			compo_menuis	=	copy menuiserie
 			compo_menuis.longueur		=	longueur
-			local hauteur_menuis	=	if baie_hauteur <0 	then		hauteur + baie_hauteur - allege_hauteur
-																			else		baie_hauteur - allege_hauteur
+			local hauteur_menuis		=	if baie_hauteur <0 	then		hauteur + baie_hauteur - allege_hauteur
+																				else		baie_hauteur
 			compo_menuis.hauteur		=	hauteur_menuis
 			compo_menuis.qualite		=	qualite
 		)
