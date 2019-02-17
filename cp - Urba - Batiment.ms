@@ -19,6 +19,31 @@ global	urba_clipboard_batiment		---	clipboard pour copier/coller des presets
 
 
 
+
+-------- pour changer les qualites des geometries si besoin, avant rendu, et remettre en qualite viewport apres --------------------------
+---- PRERENDU	-----------
+callbacks.removescripts 	id:	#urbaBat_preRender
+
+global batiments_asProxy =#()
+txt_pre ="with redraw off (\n"
+txt_pre +="	batiments_asProxy =#()\n"
+txt_pre +="	for bat in objects where classof bat == cp_batiment and bat.renderable  and not bat.isHidden do (\n"
+txt_pre +="		if bat.qualite_courante != bat.qualite_render do (\n	bat.qualite_courante = bat.qualite_render\n"
+txt_pre +="			append	batiments_asProxy		bat\n"
+txt_pre +="		) \n	)	\n )	\n	"
+callbacks.addscript 	#preRender 	txt_pre 		id:#urbaBat_preRender
+
+---- POST RENDU	-----------
+callbacks.removescripts 	id:#urbaBat_postRender
+txt_post ="	for bat in batiments_asProxy do (\n"
+txt_post +="			if bat.qualite_courante != bat.qualite_viewport do bat.qualite_courante = bat.qualite_viewport\n"
+txt_post +="		)\n"
+callbacks.addscript 	#postRender 	txt_post 		id:#urbaBat_postRender
+
+
+
+
+
 	
 --------------- le plugin himself ------------------------------------------------------------------------------------
 plugin simpleObject		cp_batiment
@@ -104,14 +129,20 @@ category:"CP | Urba"
 	parameters params_divers rollout:roll_divers	(
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+		
+		qualite_courante				type:#integer 			default:1
+		qualite_viewport				type:#integer 			ui:rdo_qualite_viewport				default:1
+		qualite_render					type:#integer 			ui:rdo_qualite_render				default:1
 		
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
 		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
-		matId_huisserie				type:#integer 			ui:spn_matId_huisserie	default:3
+		matId_huisserie					type:#integer 			ui:spn_matId_huisserie	default:3
 		matId_mur						type:#integer 			ui:spn_matId_mur		default:4
 		
+		on qualite_viewport set val do qualite_courante = val
+			
 	)	-----	fin parametres --------------------
 	
 	parameters params_hasard rollout:roll_hasard	(
@@ -177,8 +208,6 @@ category:"CP | Urba"
 			afficher_longueurs state
 	
 	)
-	
-	
 	
 	rollout roll_surface "Surface" (
 		
@@ -454,18 +483,15 @@ category:"CP | Urba"
 		on 	ddl_toiture_type		selected val		do actualiser()
 	) ----- fin rollout toiture -----------------------
 	
-	
-	
-	
 	rollout roll_divers  "Divers"	(
-		 group "Qualité" (
-			checkbox	shk_lowPoly			"Low poly"
-		 )
+-- 		group "Qualité" (
+-- 			checkbox	shk_lowPoly			"Low poly"
+-- 		)
 		 group "Qualité" (
 			label lbl_viewport 	"Viewport"  align:#left	 across:2
 			label lbl_render 		"Render"   align:#left
-			radioButtons rdo_viewport	""  labels:#("Full", "Medium","Low poly", "Volume") align:#left 	across:2
-			radioButtons rdo_render 		"" labels:#("Full", "Medium", "Low poly", "Volume") align:#left
+			radioButtons rdo_qualite_viewport	""  labels:#("Full", "Medium","Low poly", "Volume") align:#left 	across:2
+			radioButtons rdo_qualite_render 		"" labels:#("Full", "Medium", "Low poly", "Volume") align:#left
 		) 
 		group "Material ID" (
 			spinner spn_matId_menuis 		"Menuiseries" 			type:#integer range:[1,1000,1]
@@ -474,9 +500,6 @@ category:"CP | Urba"
 			spinner spn_matId_mur 			"Mur" 					type:#integer range:[1,1000,1]
 		)
 	) 	---- fin rollout	-----------------------
-	
-	
-	
 	
 	rollout roll_hasard  "Hasard"	(
 		
@@ -499,9 +522,9 @@ category:"CP | Urba"
 	
 	-------------- Initialisation -------------------------
 	fn initialiser =(
-		mgr_shp 	= str_mgr_shape ()
-		mgr_mesh 	= str_mgr_mesh ()
-	)
+		mgr_shp 				= str_mgr_shape ()
+		mgr_mesh 			= str_mgr_mesh ()
+)
 	
 	
 	------------- actualiser --------------------------
@@ -861,7 +884,7 @@ category:"CP | Urba"
 	
 	
 	----- gestion des facades ----------------------------------------------------
-	fn get_facades_pourMur		_id_pt	 =(
+	fn get_facades_pourMur		_id_pt	 		=(
 		
 		local result		= #()
 		
@@ -869,69 +892,102 @@ category:"CP | Urba"
 		
 		local pt 			= pts_surface[ _id_pt ]
 		local pt_suivant 	= if _id_pt != pts_surface.count then pts_surface[ _id_pt + 1 ] else pts_surface[ 1 ]
+		/* 
+		--- si rendu en volume --------------------------
+		if qualite_courante == 4 then (
+			
+			
+			
+			
+		---- si pas en volume, alors Pour chaque etages------------------
+		) else (
+			 */
+			---- on calcul la hauteur de la facade ----------
+			local hauteur_facade_total = 0
 		
-		---- Pour chaque etages------------------
-		for etage_courant = 0 to etages_nbre do (
-			local facade_trouve 			= false
-			local facade_pasDeResultat	=	facades.count == 0
-			local id_facade = 1
-			
-			
-			---- la hauteur des étages, normal ou specifique -----------------
-			local on_est_sur_etage_spe	=	false
-			local hauteur_etage 			=	etages_hauteur_global
-			for i = 1 to  etages_spe_min.count do (
-				local etageSpe_min 		= etages_spe_min[i]
-				local etageSpe_max 	= etages_spe_max[i]
-				local etageSpe_ht 		= etages_spe_hauteur[i]
-				if not on_est_sur_etage_spe and etageSpe_min <= etage_courant and etageSpe_max >= etage_courant	do (
-					on_est_sur_etage_spe = true
-					hauteur_etage	=	etageSpe_ht
-				)
-			)
-			
-			
-			while not facade_trouve	and not facade_pasDeResultat  do (
+		
+		
+			for etage_courant = 0 to etages_nbre do (
+				local facade_trouve 			= false
+				local facade_pasDeResultat	=	facades.count == 0
+				local id_facade = 1
 				
-				local facade_aTester = copy facades[ id_facade ]
 				
-				if facade_aTester.est_facadeValide		pt		pt_suivant		etage_courant 		etages_nbre		then (
-				
-					facade_aTester.longueur			=	distance	pt	pt_suivant
-					facade_aTester.hauteur			=	hauteur_etage
-					facade_aTester.low_poly			=	low_poly
-					facade_aTester.fen_ouvMax		=	fen_ouvMax
-					facade_aTester.fen_proba_ouv	=	fen_proba_ouv
-					
-					facade_aTester.matId_menuis	=	matId_menuis
-					facade_aTester.matId_vitrage	=	matId_vitrage
-					facade_aTester.matId_huisserie	=	matId_huisserie
-					facade_aTester.matId_mur		=	matId_mur
-					
-					
-					append 	result		facade_aTester
-					facade_trouve = true
-					
+				---- la hauteur des étages, normal ou specifique -----------------
+				local on_est_sur_etage_spe	=	false
+				local hauteur_etage 			=	etages_hauteur_global
+				for i = 1 to  etages_spe_min.count do (
+					local etageSpe_min 		= etages_spe_min[i]
+					local etageSpe_max 		= etages_spe_max[i]
+					local etageSpe_ht 		= etages_spe_hauteur[i]
+					if not on_est_sur_etage_spe and etageSpe_min <= etage_courant and etageSpe_max >= etage_courant	do (
+						on_est_sur_etage_spe = true
+						hauteur_etage	=	etageSpe_ht
+					)
 				)
 				
-				id_facade +=1
-				if id_facade > facades.count and not facade_trouve  do
-					facade_pasDeResultat = true
+	-- 			local qualite = qualite_viewport
 				
+		--- si PAS rendu en volume --------------------------
+		if qualite_courante != 4 then (
+				while not facade_trouve	and not facade_pasDeResultat  do (
+					
+					local facade_aTester = copy facades[ id_facade ]
+					
+					if facade_aTester.est_facadeValide		pt		pt_suivant		etage_courant 		etages_nbre		then (
+					
+						facade_aTester.longueur				=	distance	pt	pt_suivant
+						facade_aTester.hauteur				=	hauteur_etage
+						facade_aTester.qualite				=	qualite_courante
+						facade_aTester.fen_ouvMax		=	fen_ouvMax
+						facade_aTester.fen_proba_ouv	=	fen_proba_ouv
+						
+						facade_aTester.matId_menuis	=	matId_menuis
+						facade_aTester.matId_vitrage		=	matId_vitrage
+						facade_aTester.matId_huisserie	=	matId_huisserie
+						facade_aTester.matId_mur			=	matId_mur
+						
+						
+						append 	result		facade_aTester
+						facade_trouve = true
+						
+					)
+					
+					id_facade +=1
+					if id_facade > facades.count and not facade_trouve  do
+						facade_pasDeResultat = true
+					
+				)
+				
+				if facade_pasDeResultat do (
+					
+					local compo_planV		=	createInstance	cp_prim_planVertical
+					compo_planV.longueur	=	distance	pt	pt_suivant
+					compo_planV.hauteur	=	hauteur_etage
+					compo_planV.matId		=	matId_mur
+					
+					append 	result		compo_planV
+					
+				)
+			)else (
+				hauteur_facade_total	+=	hauteur_etage + dalle_epaisseur
 			)
+				
+				
+			) ---- fin for etages ------------
 			
-			if facade_pasDeResultat do (
-				
-				local compo_planV		=	createInstance	cp_prim_planVertical
-				compo_planV.longueur	=	distance	pt	pt_suivant
-				compo_planV.hauteur	=	hauteur_etage
-				compo_planV.matId		=	matId_mur
-				
-				append 	result		compo_planV
-				
-			)
-		) 
-		
+		if qualite_courante == 4 do (
+			
+			
+					local compo_planV		=	createInstance	cp_prim_planVertical
+					compo_planV.longueur	=	distance	pt	pt_suivant
+					compo_planV.hauteur	=	hauteur_facade_total
+					compo_planV.matId		=	matId_mur
+					
+					append 	result		compo_planV
+		)
+			
+-- 		)
 		result
 		
 	) ---- fin choisir facade ------------
@@ -999,8 +1055,6 @@ category:"CP | Urba"
 				local transf_facade 		= rotateZmatrix	angle_facade	*	transMatrix pt
 				
 				
-				
-				
 				---- le soubassement --------
 				local compo_planV		=	createInstance	cp_prim_planVertical
 				compo_planV.longueur	=	distance	pt	pt_suivant
@@ -1010,34 +1064,48 @@ category:"CP | Urba"
 				
 				
 				
-				
-				----- les facades ---------------------
-				local depose_etage 				= 	transf_facade* transMatrix [0,0, -dalle_epaisseur  ]
-				local facades_murCourant		=	get_facades_pourMur	i	
-				
-				for i = 1 to facades_murCourant.count do (
+				if qualite_courante == 4 then (
 					
-					---- l'epaisseur de la dalle --------
-					local compo_planV		=	createInstance	cp_prim_planVertical
-					compo_planV.longueur	=	distance	pt	pt_suivant
-					compo_planV.hauteur	=	dalle_epaisseur		
-					compo_planV.matId		=	matId_mur		
-					mgr_mesh.attacher		mesh		compo_planV	transf:depose_etage
-					
-					---- maj depose-----
-					depose_etage *= transMatrix [0,0,dalle_epaisseur]
-					
-					
+					local depose_etage 				= 	transf_facade* transMatrix [0,0, -dalle_epaisseur  ]
+					local facades_murCourant		=	get_facades_pourMur	i	
 					
 					---- la facade ----
-					local fcd 				= facades_murCourant[i]
+					local fcd 				= facades_murCourant[1]
 					mgr_mesh.attacher		mesh		fcd	transf:depose_etage
 					
-					---- maj depose-----
-					depose_etage 		*=  transMatrix [0,0,  fcd.hauteur ]
+				
+				) else (
+				
+					
+					
+					----- les facades ---------------------
+					local depose_etage 				= 	transf_facade* transMatrix [0,0, -dalle_epaisseur  ]
+					local facades_murCourant		=	get_facades_pourMur	i	
+					
+					for i = 1 to facades_murCourant.count do (
+						
+						---- l'epaisseur de la dalle --------
+						local compo_planV		=	createInstance	cp_prim_planVertical
+						compo_planV.longueur	=	distance	pt	pt_suivant
+						compo_planV.hauteur	=	dalle_epaisseur		
+						compo_planV.matId		=	matId_mur		
+						mgr_mesh.attacher		mesh		compo_planV	transf:depose_etage
+						
+						---- maj depose-----
+						depose_etage *= transMatrix [0,0,dalle_epaisseur]
+						
+						
+						
+						---- la facade ----
+						local fcd 				= facades_murCourant[i]
+						mgr_mesh.attacher		mesh		fcd	transf:depose_etage
+						
+						---- maj depose-----
+						depose_etage 		*=  transMatrix [0,0,  fcd.hauteur ]
+						
+					)
 					
 				)
-				
 				/* 
 				---- la derniere dalle --------
 				local compo_planV		=	createInstance	cp_prim_planVertical
@@ -1103,6 +1171,7 @@ category:"CP | Urba"
 				
 					local compo_toiture = copy toiture
 					compo_toiture.set_points		pts_toiture
+					compo_toiture.qualite	=	qualite_courante
 					mgr_mesh.attacher		mesh		compo_toiture	
 					
 				)
@@ -1151,7 +1220,7 @@ category:"CP | Urba"
 	
 	on update 	do initialiser ()
 	on create  	do initialiser ()
-	on load  	do initialiser ()
+	on load  		do initialiser ()
 	
 ) --------- fin plugin -------------------------------------------------------------------------------------------
 

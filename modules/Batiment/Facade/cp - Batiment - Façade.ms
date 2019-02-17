@@ -62,7 +62,9 @@ category:"CP | Bâtiment	| Element"
 		nom	 							type:#string 			default:"Facade"
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		qualite							type:#boolean 		ui:shk_lowPoly				default:false
+		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
@@ -147,15 +149,28 @@ category:"CP | Bâtiment	| Element"
 		--- UI ----------------------------------------------------------------------------------------------
 		group "Séquence" (
 			
+			button 		btn_ajouter_mur 			"Mur"			width:50		height:17		across:3		align:#left
+			button 		btn_ajouter_baie 			"Baie"			width:50		height:17		align:#left		--	enabled:false
+			button 		btn_ajouter_vide1 	""			width:50	height:17			align:#left		enabled:false
+			
+			button 		btn_ajouter_balcon 	"Balcon"			width:50		height:17		align:#left		across:3	
+			button 		btn_ajouter_corniche 	"Corniche"			width:50	height:17			align:#left		enabled:false
+			button 		btn_ajouter_porche 	"Porche"			width:50		height:17		align:#left		enabled:false
+			/* 
+			button 		btn_ajouter_groupe 	"Groupe"			width:50		height:17		align:#left		across:3	
+			button 		btn_ajouter_vide3 	""			width:50	height:17			align:#left		enabled:false
+			button 		btn_ajouter_vide4	""			width:50		height:17		align:#left		enabled:false
+			 */
+			/* 
 -- 			label			lbl_pleins	""	align:#left
 			button 		btn_ajouter_mur 			"Mur"			width:50		height:17		across:3		align:#left
 			button 		btn_ajouter_poteau 		"Poteau"			width:50		height:17		align:#left	enabled:false
 			button 		btn_ajouter_chainage 		"Chainage"		width:50	height:17			align:#left		enabled:false
 			
 -- 			label			lbl_baies	""	align:#left
-			button 		btn_ajouter_fixe		 		"Fixe"				width:50		height:17	align:#left	/* enabled:false */	across:3		
-			button 		btn_ajouter_fenetre 		"Fenêtre"		width:50		height:17	align:#left	/* enabled:false */	
-			button 		btn_ajouter_porte 	"Porte"			width:50		height:17		align:#left		/* enabled:false */
+			button 		btn_ajouter_fixe		 		"Fixe"				width:50		height:17	align:#left		across:3		
+			button 		btn_ajouter_fenetre 		"Fenêtre"		width:50		height:17	align:#left	
+			button 		btn_ajouter_porte 	"Porte"			width:50		height:17		align:#left		
 			button 		btn_ajouter_ensemble 		"Ens. men."				width:50	height:17			align:#left	across:3	
 			
 			button 		btn_ajouter_vide1 	""			width:50	height:17			align:#left		enabled:false
@@ -170,12 +185,16 @@ category:"CP | Bâtiment	| Element"
 			button 		btn_ajouter_vide3 	""			width:50	height:17			align:#left		enabled:false
 			button 		btn_ajouter_vide4	""			width:50		height:17		align:#left		enabled:false
 			
+			 */
+			
+			
 			dotNetControl tv_sequence	 "treeview" /* width:145 */ height:360 --align:#left
 			
-			button 		btn_dupliquer	 		"Dup."			width:27	height:17	across:4	align:#center
+			button 		btn_dupliquer	 		"Dup."			width:27	height:17	across:5	align:#center
 			button 		btn_instancier	 		"Ins."				width:27	height:17			align:#center
 			button 		btn_rendreUnique	 	"Uni."				width:27	height:17			align:#center
-			button 		btn_retirer	 			"Sup."			width:27	height:17			align:#center
+			button 		btn_retirer	 				"Sup."			width:27	height:17			align:#center
+			button 		btn_ajouter_groupe	 "Grp."			width:27	height:17			align:#center
 			
 			editText 	edTxt_nom		 	"Nom:" 	
 		
@@ -400,9 +419,10 @@ category:"CP | Bâtiment	| Element"
 				
 			case classof _item_aAjouter of (
 				cp_facadeElem_mur:			nv_node.imageIndex = nv_node.selectedImageIndex	=	1
-				cp_facadeElem_ensemble:	nv_node.imageIndex = nv_node.selectedImageIndex	=	2
+				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	2
 				cp_facadeElem_balcon:		nv_node.imageIndex = nv_node.selectedImageIndex	=	3
 				cp_facadeElem_groupe:		nv_node.imageIndex = nv_node.selectedImageIndex	=	4
+-- 				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	5
 				
 				default:	nv_node.imageIndex = nv_node.selectedImageIndex	=	0
 			)
@@ -442,12 +462,15 @@ category:"CP | Bâtiment	| Element"
 			
 			tv_imageList.imageSize 	= 	dotNetObject "System.Drawing.Size" 32 32
 			
+			
+			local dossier_images = ( GetDir #userScripts ) + "\\cp-Urba\\img\\"
 			tv_imageList.Images.Clear ()
-			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile("C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\img\\tv - vide.png"))
-			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile("C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\img\\tv - mur.png"))
-			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile("C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\img\\tv - ensemble menuis.png"))
-			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile("C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\img\\tv - balcon.png"))
-			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile("C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\img\\tv - groupe.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - vide.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - mur.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - baie.png"))
+-- 			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - ensemble menuis.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - balcon.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - groupe.png"))
 		
 			tv_sequence.ImageList =	tv_imageList
 
@@ -596,6 +619,9 @@ category:"CP | Bâtiment	| Element"
 		----- Sequence ------------------------------------------------------------------
 		on btn_ajouter_mur	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_mur
 		
+		on btn_ajouter_baie	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_baie
+			
+		
 		on btn_ajouter_fixe				pressed 			do 	ajouter_element_facade 	cp_menuiserie_fixe
 		on btn_ajouter_fenetre			pressed 			do 	ajouter_element_facade 	cp_menuiserie_fenetre
 		on btn_ajouter_porte			pressed 			do 	ajouter_element_facade 	cp_menuiserie_porte
@@ -668,8 +694,11 @@ category:"CP | Bâtiment	| Element"
 		
 	) --- fin roll_contraintes-------------------------
 	rollout roll_divers  			"Divers"			(
+-- 		group "Qualité" (
+-- 			checkbox	shk_lowPoly		"Low poly" 		
+-- 		)
 		group "Qualité" (
-			checkbox	shk_lowPoly		"Low poly" 		
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
 		group "Material ID" (
 			spinner spn_matId_menuis 		"Menuiseries" 			type:#integer range:[1,1000,1]
@@ -990,7 +1019,7 @@ category:"CP | Bâtiment	| Element"
 			
 			compo_temp.hauteur			=	hauteur 
 			compo_temp.profondeur		=	profondeur
-			compo_temp.low_poly			=	low_poly
+			compo_temp.qualite			=	qualite
 			compo_temp.longueur			=	longueur
 			compo_temp.matId				=	matId_mur
 			
@@ -1073,7 +1102,7 @@ category:"CP | Bâtiment	| Element"
 						compo_murRepart.longueur		=	longueur_repartition + espacement_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
-						compo_murRepart.low_poly		=	low_poly
+						compo_murRepart.qualite		=	qualite
 						compo_murRepart.matId			=	matId_mur		
 						
 						
@@ -1092,7 +1121,7 @@ category:"CP | Bâtiment	| Element"
 							local compo_temp 				= 	copy sequence[i]
 							compo_temp.longueur 			= 	compo_temp.get_longueur()
 							compo_temp.hauteur			=	hauteur
-							compo_temp.low_poly			=	low_poly
+							compo_temp.qualite			=	qualite
 							
 							compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv
 							
@@ -1141,7 +1170,7 @@ category:"CP | Bâtiment	| Element"
 						compo_murRepart.longueur		=	longueur_repartition + decallage_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
-						compo_murRepart.low_poly		=	low_poly
+						compo_murRepart.qualite		=	qualite
 						compo_murRepart.matId			=	matId_mur	
 						
 						---- le premier mur ---------------
@@ -1158,7 +1187,7 @@ category:"CP | Bâtiment	| Element"
 							local compo_temp 				= 	copy sequence[i]			
 							compo_temp.longueur			=	compo_temp.get_longueur()	
 							compo_temp.hauteur			=	hauteur
-							compo_temp.low_poly			=	low_poly			
+							compo_temp.qualite			=	qualite			
 
 							compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv	
 							append sequence_aConstruire		compo_temp
@@ -1202,7 +1231,7 @@ category:"CP | Bâtiment	| Element"
 						compo_murRepart.longueur		=	decallage_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
-						compo_murRepart.low_poly		=	low_poly
+						compo_murRepart.qualite		=	qualite
 						compo_murRepart.matId			=	matId_mur	
 						
 						---- le premier mur ---------------
@@ -1219,7 +1248,7 @@ category:"CP | Bâtiment	| Element"
 							local compo_temp 				= 	copy sequence[i]				
 							compo_temp.longueur 			= 	compo_temp.get_longueur()
 							compo_temp.hauteur			=	hauteur
-							compo_temp.low_poly			=	low_poly						
+							compo_temp.qualite			=	qualite						
 							
 							compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv
 							append sequence_aConstruire		compo_temp
@@ -1265,7 +1294,7 @@ category:"CP | Bâtiment	| Element"
 						compo_murRepart.longueur		=	longueur_repartition - decallage_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
-						compo_murRepart.low_poly		=	low_poly
+						compo_murRepart.qualite			=	qualite
 						compo_murRepart.matId			=	matId_mur	
 						
 						---- le premier mur ---------------
@@ -1281,7 +1310,7 @@ category:"CP | Bâtiment	| Element"
 							--- le composant ----------------
 							local compo_temp 				= 	copy sequence[i]				
 							compo_temp.hauteur			=	hauteur
-							compo_temp.low_poly			=	low_poly						
+							compo_temp.qualite			=	qualite						
 							
 							compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv
 							
@@ -1333,7 +1362,7 @@ category:"CP | Bâtiment	| Element"
 				compo_mur.longueur			=	longueur
 				compo_mur.hauteur			=	hauteur 
 				compo_mur.profondeur		=	profondeur
-				compo_mur.low_poly			=	low_poly
+				compo_mur.qualite			=	qualite
 				compo_mur.matId			=	matId_mur
 				
 				append sequence_aConstruire		compo_mur

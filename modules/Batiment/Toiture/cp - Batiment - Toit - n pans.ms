@@ -49,7 +49,9 @@ category:"CP | Bâtiment	| Element"
 		nom	 							type:#string 			default:"Facade"
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
 		matId_toiture					type:#integer 			ui:spn_toiture				default:5
@@ -93,8 +95,11 @@ category:"CP | Bâtiment	| Element"
 	)
 	
 	rollout roll_divers  			"Divers"			(
+-- 		group "Qualité" (
+-- 			checkbox	shk_lowPoly		"Low poly" 		
+-- 		)
 		group "Qualité" (
-			checkbox	shk_lowPoly		"Low poly" 		
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly", "Volume"	) align:#left
 		)
 		group "Material ID" (
 			spinner spn_toiture 		"Toiture" 			type:#integer range:[1,1000,1]
@@ -195,56 +200,83 @@ category:"CP | Bâtiment	| Element"
 			
 			local pts_toiture
 			
-			-----	la corniche	------------------------------------------
-			local pts_corniche 	= for pt in  points_surface collect pt			
-			local pts_sousFace 	= mgr_shape.retrecir_polygone	pts_corniche	-debord_longueur
-			local pts_epaisseur 	= deepcopy pts_sousFace
-			pts_epaisseur.z +=	debord_hauteur
-			local pts_toiture 	
+			---- si on est PAS 	en volume ------------------------------
+			if qualite != 4 then (
 			
-			if debord_use then pts_toiture	= mgr_shape.retrecir_polygone	pts_epaisseur	decallage
-			else pts_toiture	= mgr_shape.retrecir_polygone	pts_corniche	decallage
-			
-			for i = 1 to points_surface.count do (
+				-----	la corniche	------------------------------------------
+				local pts_corniche 	= for pt in  points_surface collect pt			
+				local pts_sousFace 	= mgr_shape.retrecir_polygone	pts_corniche	-debord_longueur
+				local pts_epaisseur 	= deepcopy pts_sousFace
+				pts_epaisseur.z +=	debord_hauteur
+	-- 			local pts_toiture 	
 				
-				local j= if i == points_surface.count then 1 else i + 1
+				if debord_use then pts_toiture	= mgr_shape.retrecir_polygone	pts_epaisseur	decallage
+				else pts_toiture	= mgr_shape.retrecir_polygone	pts_corniche	decallage
 				
-				if debord_use then (
-					---- la sous face ------------
-					pts 		+= #( pts_corniche[i], pts_corniche[j], pts_sousFace[j], pts_sousFace[i]	)
-					faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-					matIds	+=	#( matId_corniche, matId_corniche )
+				for i = 1 to points_surface.count do (
 					
-					id_pt 	+=	4
+					local j= if i == points_surface.count then 1 else i + 1
 					
-					
-					---- l'epaisseur --------------
-					pts 		+= 	#( pts_sousFace[i], pts_sousFace[j], pts_epaisseur[j], pts_epaisseur[i]	)
-					faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-					matIds	+=	#( matId_corniche, matId_corniche )
-					
-					id_pt 	+=	4
+					if debord_use then (
+						---- la sous face ------------
+						pts 		+= #( pts_corniche[i], pts_corniche[j], pts_sousFace[j], pts_sousFace[i]	)
+						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
+						matIds	+=	#( matId_corniche, matId_corniche )
 						
-					---- decallage toiture --------------
-					pts 		+= 	#( pts_epaisseur[i], pts_epaisseur[j], pts_toiture[j], pts_toiture[i]	)
-					faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-					matIds	+=	#( matId_corniche, matId_corniche )
+						id_pt 	+=	4
+						
+						
+						---- l'epaisseur --------------
+						pts 		+= 	#( pts_sousFace[i], pts_sousFace[j], pts_epaisseur[j], pts_epaisseur[i]	)
+						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
+						matIds	+=	#( matId_corniche, matId_corniche )
+						
+						id_pt 	+=	4
+						
+						---- decallage toiture --------------
+						pts 		+= 	#( pts_epaisseur[i], pts_epaisseur[j], pts_toiture[j], pts_toiture[i]	)
+						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
+						matIds	+=	#( matId_corniche, matId_corniche )
+						
+						id_pt 	+=	4
+						
+						
+					) else (
 					
-					id_pt 	+=	4
+						---- decallage toiture --------------
+						pts 		+= 	#( pts_corniche[i], pts_corniche[j], pts_toiture[j], pts_toiture[i]	)
+						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
+						matIds	+=	#( matId_corniche, matId_corniche )
+						
+						id_pt 	+=	4
 					
-					
-				) else (
-					---- decallage toiture --------------
-					pts 		+= 	#( pts_corniche[i], pts_corniche[j], pts_toiture[j], pts_toiture[i]	)
-					faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-					matIds	+=	#( matId_corniche, matId_corniche )
-					
-					id_pt 	+=	4
-				
+					)
 				)
-			)
 			
+			---- si on est en volume ------------------------------
+			) else (
 				
+				local pts_corniche 	= for pt in  points_surface collect pt	
+				local pts_epaisseur 	= deepcopy pts_corniche
+				pts_epaisseur.z +=	debord_hauteur
+
+				
+				for i = 1 to points_surface.count do (
+					
+					local j= if i == points_surface.count then 1 else i + 1
+					
+					if debord_use then (
+						---- l'epaisseur --------------
+						pts 		+= 	#( pts_corniche[i], pts_corniche[j], pts_epaisseur[j], pts_epaisseur[i]	)
+						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
+						matIds	+=	#( matId_corniche, matId_corniche )
+						
+						id_pt 	+=	4
+					)
+				)
+-- 				points_surface.
+				pts_toiture = pts_epaisseur
+			)
 			
 			
 			

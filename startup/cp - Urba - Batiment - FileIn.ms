@@ -33,7 +33,6 @@ filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Ensemble.ms"	
 ----- les facades ----------
 filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Baie.ms"	)
 filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Mur.ms"	)
-filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Ensemble.ms"	)
 filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Balcon.ms"	)
 filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Groupe.ms"	)
 

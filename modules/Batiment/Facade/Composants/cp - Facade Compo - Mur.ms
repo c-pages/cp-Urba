@@ -43,8 +43,9 @@ category:"CP | Facade	| Element"
 	parameters params_divers rollout:roll_divers	(
 		
 		------ options --------------
-		low_poly				type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly				type:#boolean 		ui:shk_lowPoly				default:false
 		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
 		------ mat ID ----------
 		matId				type:#integer 			ui:spn_matId	default:4
 		
@@ -75,9 +76,12 @@ category:"CP | Facade	| Element"
 -- 		on shk_etirable		changed state  	do actualiser ()
 	)
 	rollout roll_divers  "Divers"	(
-		 group "Qualité" (
+		/*  group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly" 		
-		) 
+		)  */
+		group "Qualité" (
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
+		)
 		group "Material ID" (
 			spinner spn_matId 		"Mur" 		type:#integer range:[1,1000,1]
 		)

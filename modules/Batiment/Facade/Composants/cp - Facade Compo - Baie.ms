@@ -25,6 +25,13 @@ category:"CP | Facade	| Element"
 	----- les composants -----------	
 	local compo_menuis
 	
+	----- les classes de menuiserie ---------------------
+	local menuis_classes
+	
+	
+	
+	
+	
 	parameters params_dimensions rollout:rol_global	(
 		
 		hauteur	 		type:#worldUnits 	ui:spn_hauteur 			default:250.
@@ -35,17 +42,25 @@ category:"CP | Facade	| Element"
 		longueur 				type:#worldUnits 	ui:spn_longueur 				default:120.
 		baie_hauteur			type:#worldUnits 	ui:spn_baie_hauteur			default:-50.
 		profondeur	 			type:#worldUnits 	ui:spn_profondeur			default:15.
-		allege_hauteur			type:#worldUnits 	ui:spn_allege_hauteur		default:100.
+		allege_hauteur			type:#worldUnits 	ui:spn_allege_hauteur	default:100.
 		
-		menuiserie				type:#maxObject
+		tablette					type:#boolean 		ui:shk_tablette					default:true
+		
 		
 	)	-----	fin parametres --------------------
+	
+	parameters params_menuiserie rollout:roll_menuiserie	(
+		
+		menuiserie_type			type:#integer 			ui:ddl_type_menuiserie				default:3
+		menuiserie_objet			type:#maxObject		
+		
+	)
 	parameters params_divers rollout:roll_divers	(
 		
-		nom	 							type:#string 			default:"Porte"
+		nom	 							type:#string 			default:"Baie"
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
@@ -79,7 +94,6 @@ category:"CP | Facade	| Element"
 	
 	rollout rol_global  "Global"	(
 		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
-		
 	)
 	
 	rollout roll_parametres  "Paramètres"	(		
@@ -87,9 +101,16 @@ category:"CP | Facade	| Element"
 		group "Dimensions" (
 -- 			checkbox	shk_etirable			"Etirable" 	
 			spinner 	spn_longueur 			"Longueur" 			type:#worldunits 	range:[0,1e20,0]
-			spinner 	spn_baie_hauteur 	"Hauteur" 			type:#worldunits 	range:[-1e20,1e20,0]
-			spinner 	spn_profondeur		"Profondeur" 		type:#worldunits 	range:[0,1e20,0]
+			spinner 	spn_baie_hauteur 		"Hauteur" 			type:#worldunits 	range:[-1e20,1e20,0]
+			spinner 	spn_profondeur			"Profondeur" 		type:#worldunits 	range:[0,1e20,0]
 			spinner 	spn_allege_hauteur 	"Allège" 		type:#worldunits 	range:[0,1e20,0]
+		)
+		
+		group "Divers" (
+			checkbox	shk_tablette			"Tablette" 	
+-- 		)
+-- 		group "Volets" (
+			dropDownList	ddl_volet		"Volets"	 items:#("Aucun", "Battant", "Roulant")
 		)
 		
 		fn actualiser =(
@@ -97,20 +118,49 @@ category:"CP | Facade	| Element"
 		on roll_parametres	open 					do actualiser ()
 	)
 	
-	rollout roll_divers  "Divers"	(
-		group "Qualité" (
-			checkbox	shk_lowPoly				"Low poly" 		
+	
+	rollout roll_menuiserie "Menuiserie" width:162 height:136
+	(
+		dropDownList ddl_type_menuiserie	""  align:#left
+		
+		
+		
+		fn actualiser = (
+			
+			local liste_nomsMenuis = #()
+			for classe in menuis_classes do (
+				local tmp_instance = createinstance 	classe
+				append liste_nomsMenuis	tmp_instance.nom
+			)
+			ddl_type_menuiserie.items = liste_nomsMenuis
+			
 		)
+		
+		
+		
+		on roll_menuiserie open do actualiser ()
+		on ddl_type_menuiserie		selected val	do (
+			menuiserie_objet = createInstance menuis_classes[val ]
+			redrawViews ()
+		)
+	)
+	
+	
+	
+	
+	rollout roll_divers  "Divers"	(
+	/* 	group "Qualité" (
+			checkbox	shk_lowPoly				"Low poly" 		
+		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
 		group "Material ID" (
-			spinner spn_matId_menuis 			"Menuiseries" 			type:#integer 			range:[1,1000,1]
+			spinner spn_matId_menuis 			"Menuiseries" 		type:#integer 			range:[1,1000,1]
 			spinner spn_matId_vitrage 			"Vitrage" 				type:#integer 			range:[1,1000,1]
 			spinner spn_matId_poignee 			"Poignée" 				type:#integer 			range:[1,1000,1]
 			spinner spn_matId_mur	 			"Mur" 					type:#integer 			range:[1,1000,1]
 		)
-		
 	) 	---- fin rollout	-----------------------
 	
 	
@@ -119,16 +169,41 @@ category:"CP | Facade	| Element"
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
 
+	fn initialiser	=(
+		
+		----- initialiser la liste des menuiseries	-----------------
+		fn classer_ordeAlphabetique 	classe1 	classe2 =		( 
+			case of				(
+				(classe1 as string < classe2 as string): -1
+				(classe1 as string > classe2 as string): 1
+				default: 0
+			)
+		)
+		menuis_classes = for classe in GeometryClass.classes where matchPattern ( classe as string ) pattern:"cp_menuiserie*" collect classe
+		qsort menuis_classes	 classer_ordeAlphabetique
+		
+		
+		
+		
+		---- si pas encore de mnuiserie on applique la menuiserie par defaut	------------------
+		if menuiserie_objet == undefined do (
+			menuiserie_objet = createInstance menuis_classes[menuiserie_type ]			
+		)
+	)
+	
+	
+	
 	fn set_hasard	_fen_ouvMax	_fen_proba_ouv =(
 		fen_ouvMax 		= _fen_ouvMax
 		fen_proba_ouv 	= _fen_proba_ouv
 	)
+	fn get_longueur	=	longueur
 	
 	---- les composants ---------------------
 	fn actualiser_composants	= with redraw off (
 		
-		if menuiserie != undefined do (
-			compo_menuis	=	copy menuiserie
+		if menuiserie_objet != undefined do (
+			compo_menuis	=	copy menuiserie_objet
 			compo_menuis.longueur		=	longueur
 			local hauteur_menuis		=	if baie_hauteur <0 	then		hauteur + baie_hauteur - allege_hauteur
 																				else		baie_hauteur
@@ -196,7 +271,7 @@ category:"CP | Facade	| Element"
 		
 		----- On clean le mesh 	--------------
 		meshop.autoSmooth		mesh 	#{1..mesh.numfaces} 		10
-		meshop.autoEdge 		mesh 	#{1..mesh.Edges.count}	10	
+		meshop.autoEdge 			mesh 	#{1..mesh.Edges.count}	10	
 		
 		----- le mapping 	--------------
 		meshop.applyUVWMap 	mesh  #box		tm:(scaleMatrix [2,2,2]	)
@@ -204,12 +279,24 @@ category:"CP | Facade	| Element"
 		
 		
 		
-		
+		---- la tablette	-------------------		
+		if tablette do (
+			local compo_tablette 		
+			if qualite != 3 then 
+				compo_tablette	= createInstance  cp_prim_boite	matId:matId_menuis		--	cp_prim_planVertical
+			else 
+				compo_tablette	= createInstance  cp_prim_boiteL	matId:matId_menuis		symetrie:false	horizontal:true
+			
+			compo_tablette.longueur 	= longueur
+			compo_tablette.profondeur = profondeur + 5.
+			compo_tablette.hauteur 	= 5.
+			mgr_mesh.attacher		mesh		compo_tablette 	transf:[0, -5. , allege_hauteur - 4.  ]
+		)
 		
 		
 		
 		---- la menuiserie	-------------------		
-		if menuiserie != undefined do 
+		if menuiserie_objet != undefined do 
 			mgr_mesh.attacher		mesh		compo_menuis 	transf:[0,profondeur,allege_hauteur]
 		
 		
@@ -254,6 +341,22 @@ category:"CP | Facade	| Element"
 				)
 			)		
 	) --- fin tool create ---------
+	
+	
+	
+	
+	------ events ----------------------------------------------------------
+	on create do (
+		initialiser ()
+	)
+	on load do (
+		initialiser ()
+	)
+	on update do (
+		initialiser ()
+	)
+	
+	
 	
 	
 ) ------- fin plugin ---------------------

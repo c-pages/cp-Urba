@@ -32,16 +32,21 @@ category:"CP | Menuiserie	| Element"
 		symetrie				type:#boolean 		ui:shk_symetrie		default:false
 		
 		------ options --------------
-		low_poly				type:#boolean 		ui:shk_lowPoly		default:false
+-- 		low_poly				type:#boolean 		ui:shk_lowPoly		default:false
+		qualite							type:#integer 			ui:rdo_qualite				default:1
+		
 		matId				type:#integer 			ui:spn_matId		default:3
 	)	-----	fin parametres --------------------
 	
-	rollout roll_general  "Cadre"
+	rollout roll_general  "Poignee"
 	(
 		
 			checkbox	shk_symetrie_sens	"symetrie_sens"
 			checkbox	shk_symetrie			"symetrie"
-			checkbox	shk_lowPoly			"Low poly"
+-- 			checkbox	shk_lowPoly			"Low poly"
+		group "Qualité" (
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
+		)
 			spinner 	spn_matId 				"MatID" 			type:#integer range:[1,1000,1]
 		
 	) ---- fin rollout	----------
@@ -58,24 +63,24 @@ category:"CP | Menuiserie	| Element"
 		--- vider le mesh --------
 		delete mesh
 			
-		local compo_base = if  low_poly then  cp_prim_planVertical	 else cp_prim_boite
+		local compo_base = if  qualite == 3  then  cp_prim_planVertical	 else cp_prim_boite
 		composant_boite =createinstance	compo_base 	matId:matId
 
 		---- plaque	----------
 		composant_boite.longueur			=	4	
 		composant_boite.hauteur			=	18	
-		if not low_poly  do	composant_boite.profondeur		=	0.5
+		if not  qualite == 3   do	composant_boite.profondeur		=	0.5
 		local posY = if symetrie then  posY = -.5	else 0
 		
 		mgr_mesh.attacher mesh composant_boite 	transf:[0, posY, 0]
 		
 		---- poignée part 1	----------
-		composant_boite.longueur		=	if not low_poly  then	1		else 2.5
+		composant_boite.longueur		=	if not  qualite == 3   then	1		else 2.5
 		composant_boite.hauteur		=	1
-		if not low_poly  do	composant_boite.profondeur		=	2.5
+		if not  qualite == 3   do	composant_boite.profondeur		=	2.5
 		local posY = if symetrie then  posY = -3	else 0.5
 		
-		if not low_poly then 
+		if not  qualite == 3  then 
 			mgr_mesh.attacher mesh composant_boite 	transf:[1.5, posY, 11.5]
 		else (
 			local transfo	=	if not symetrie_sens 	then	rotateZMatrix 	90	*	transMatrix	[2.5, posY, 11.5] 
@@ -90,7 +95,7 @@ category:"CP | Menuiserie	| Element"
 		if	not symetrie_sens then	decalle_x = -7.5		
 		composant_boite.longueur			=	10
 		composant_boite.hauteur			=	1
-		if not low_poly  do	composant_boite.profondeur		=	1
+		if not qualite == 3  do	composant_boite.profondeur		=	1
 		local posY = if symetrie then  posY = -3	else 3
 		
 		mgr_mesh.attacher mesh composant_boite 	transf:[ decalle_x , posY, 11.5]

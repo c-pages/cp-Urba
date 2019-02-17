@@ -53,7 +53,7 @@ category:"CP | Menuiserie"
 	(
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
@@ -94,9 +94,6 @@ category:"CP | Menuiserie"
 			spinner 	spn_menuis_profondeur 	"Profondeur" 		type:#worldunits 	range:[0,1e20,0]
 -- 			button		btn_editer_sequence		"Editer séquence"	width:110 height:25
 		)
-		group "Volets" (
-			dropDownList	ddl_volet		""	 items:#("Aucun", "Battant", "Roulant")
-		)
 		
 		
 		------------ TRee view -----------------------------
@@ -112,7 +109,7 @@ category:"CP | Menuiserie"
 			
 			
 			
-			dotNetControl tv_sequence	 "treeview" /* width:145 */ height:200 --align:#left
+			dotNetControl tv_sequence	 "treeview" /* width:145 */ height:120 --align:#left
 			
 			
 			button 		btn_dupliquer	 		"Dup."			width:27	height:17				align:#left	across:4
@@ -281,11 +278,12 @@ category:"CP | Menuiserie"
 			
 			
 			
+			local dossier_images = ( GetDir #userScripts ) + "\\cp-Urba\\img\\"
 			tv_imageList.imageSize 	= 	dotNetObject "System.Drawing.Size" 32 32			
 			tv_imageList.Images.Clear ()
-			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile("C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\img\\tv - fixe.png"))
-			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile("C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\img\\tv - fenetre.png"))
-			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile("C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\img\\tv - porte.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - fixe.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - fenetre.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - porte.png"))
 			tv_sequence.ImageList =	tv_imageList
 
 			
@@ -405,9 +403,9 @@ category:"CP | Menuiserie"
 	
 	
 	rollout roll_divers  "Divers"	(
-		 group "Qualité" (
+		/*  group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly" 		
-		) 
+		)  */
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -664,7 +662,7 @@ category:"CP | Menuiserie"
 		compo_cadre.hauteur 						= hauteur	
 		compo_cadre.profondeur 					= menuis_profondeur
 		compo_cadre.menuis_epaisseur	 		= menuis_epaisseur	
-		compo_cadre.low_poly			 			= low_poly		
+-- 		compo_cadre.low_poly			 			= low_poly		
 		compo_cadre.qualite			 				= qualite		
 		compo_cadre.matId_menuis	 			= matId_menuis
 		compo_cadre.travBasse					=	false
@@ -673,7 +671,7 @@ category:"CP | Menuiserie"
 		compo_meneau.longueur 					= menuis_epaisseur
 		compo_meneau.profondeur 				= menuis_profondeur
 		compo_meneau.hauteur 					= hauteur	-  menuis_epaisseur
-		compo_meneau.low_poly			 		= low_poly		
+-- 		compo_meneau.low_poly			 		= low_poly		
 		compo_meneau.qualite			 			= qualite		
 		
 		
@@ -691,7 +689,7 @@ category:"CP | Menuiserie"
 													else		compo_temp.hauteur	=		hauteur - 2*menuis_epaisseur
 			
 			compo_temp.profondeur		=	menuis_profondeur
-			compo_temp.low_poly			=	low_poly
+-- 			compo_temp.low_poly			=	low_poly
 			compo_temp.qualite			 	= qualite		
 			compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv
 			compo_temp.cadre 				= false
@@ -709,7 +707,7 @@ category:"CP | Menuiserie"
 			
 			compo_temp.hauteur			=	hauteur 	- 2*menuis_epaisseur
 			compo_temp.profondeur		=	menuis_profondeur
-			compo_temp.low_poly			=	low_poly
+-- 			compo_temp.low_poly			=	low_poly
 			compo_temp.qualite				=	qualite
 			compo_temp.longueur			=	longueur 		- 2*menuis_epaisseur
 		)
@@ -738,7 +736,7 @@ category:"CP | Menuiserie"
 		mgr_mesh.attacher		mesh		compo_cadre 	--	transf:[0, profondeur  , 0 ]
 		
 		---- la sequence	-----
-		local compo_travBas		= 	if low_poly	then	createInstance  cp_prim_boiteL  horizontal:true	else createInstance 	cp_prim_boite
+		local compo_travBas		= 	if qualite ==3	then	createInstance  cp_prim_boiteL  horizontal:true	else createInstance 	cp_prim_boite
 		local depos_composant 	= [ menuis_epaisseur, 0  , 0 ]
 		
 		for i = 1 to	sequence_tmp.count do (

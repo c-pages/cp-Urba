@@ -66,7 +66,7 @@ category:"CP | Menuiserie"
 		nom	 							type:#string 			default:"Fenêtre"
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
@@ -137,9 +137,9 @@ category:"CP | Menuiserie"
 		on shk_tierce	 		changed state 	do actualiser ()
 	)
 	rollout roll_divers  "Divers"	(
-		group "Qualité" (
+		/* group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly" 		
-		)
+		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -188,7 +188,7 @@ category:"CP | Menuiserie"
 		compo_ouvrant_1.div_calage_verti			= div_calage_verti
 		compo_ouvrant_1.vitrage_epaisseur		= vitrage_epaisseur
 		
-		compo_ouvrant_1.low_poly			 		= low_poly
+-- 		compo_ouvrant_1.low_poly			 		= low_poly
 		compo_ouvrant_1.qualite				 		= qualite
 		compo_ouvrant_1.matId_menuis	 			= matId_menuis
 		compo_ouvrant_1.matId_vitrage	 			= matId_vitrage		

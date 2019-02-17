@@ -54,7 +54,7 @@ category:"CP | Menuiserie	| Element"
 	parameters params_divers rollout:roll_divers
 	(
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
@@ -89,9 +89,9 @@ category:"CP | Menuiserie	| Element"
 	)
 	rollout roll_divers  "Divers"
 	(
-		group "Qualité" (
+		/* group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly"
-		)
+		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -117,7 +117,7 @@ category:"CP | Menuiserie	| Element"
 		compo_cadre.menuis_epaisseur			=	cadre_largeur
 		compo_cadre.travBasse_hauteur		=	travBasse_hauteur		
 		compo_cadre.matId_menuis			=	matId_menuis
-		compo_cadre.low_poly					=	low_poly
+-- 		compo_cadre.low_poly					=	low_poly
 		compo_cadre.qualite						=	qualite
 		
 		local longueur_passage 	=	if cadre_use 	then longueur - 2* cadre_largeur 	else 	longueur

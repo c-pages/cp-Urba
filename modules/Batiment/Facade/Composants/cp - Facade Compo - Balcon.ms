@@ -63,7 +63,9 @@ category:"CP | Facade	| Element"
 	(
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
 		matId_huisserie				type:#integer 			ui:spn_matId_huisserie	default:3
@@ -127,9 +129,10 @@ category:"CP | Facade	| Element"
 	)
 	
 	rollout roll_divers  "Divers"	(
-		 group "Qualité" (
-			checkbox	shk_lowPoly		"Low poly" 		
-		) 
+		
+		group "Qualité" (
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
+		)
 		group "Material ID" (
 			spinner spn_matId_huisserie 	"Huisserie" 				type:#integer range:[1,1000,1]
 			spinner spn_matId_mur 			"Mur" 					type:#integer range:[1,1000,1]
@@ -186,7 +189,7 @@ category:"CP | Facade	| Element"
 			--- le composant ----------------
 			local compo_temp 				= 	copy elem				
 			compo_temp.hauteur			=	hauteur
-			compo_temp.low_poly			=	low_poly
+			compo_temp.qualite			=	qualite
 			compo_temp.set_hasard	fen_ouvMax	fen_proba_ouv 
 			append sequence_aConstruire		compo_temp
 			

@@ -85,8 +85,9 @@ category:	"CP | Facade	| Element"
 	(
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
+		qualite							type:#integer 			ui:rdo_qualite				default:1
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
 		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
@@ -116,9 +117,12 @@ category:	"CP | Facade	| Element"
 	
 	
 	rollout roll_divers  "Divers"	(
-		 group "Qualité" (
+		/*  group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly" 		
-		) 
+		)  */
+		group "Qualité" (
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
+		)
 		group "Material ID" (
 			spinner spn_matId_menuis 		"Menuiseries" 			type:#integer range:[1,1000,1]
 			spinner spn_matId_vitrage 		"Vitrage" 				type:#integer range:[1,1000,1]
@@ -196,7 +200,7 @@ category:	"CP | Facade	| Element"
 			--- le composant ----------------
 			local compo_temp 				= 	copy elem				
 			compo_temp.hauteur			=	hauteur
-			compo_temp.low_poly			=	low_poly
+			compo_temp.qualite			=	qualite
 			compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv
 -- 			if est_ouvrable	 compo_temp do (		--- hasard ------
 -- 				compo_temp.fen_ouvMax		=	fen_ouvMax

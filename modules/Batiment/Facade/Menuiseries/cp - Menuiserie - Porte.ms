@@ -35,7 +35,7 @@ category:"CP | Menuiserie"
 		
 		cadre						type:#boolean 		ui:shk_cadre				default:true
 		cadre_epaisseur		type:#worldUnits 	ui:spn_cadre_ep			default:5.
-		travBasse				type:#boolean 		ui:shk_traverse_B		default:true
+		travBasse				type:#boolean 		ui:shk_traverse_B		default:false
 -- 		ouvrant_callage	 	type:#worldUnits ui:spn_ouvrant_calage	default:0
 	)
 	parameters params_general rollout:roll_parametres	(
@@ -83,7 +83,7 @@ category:"CP | Menuiserie"
 		nom	 							type:#string 			default:"Porte"
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
@@ -199,9 +199,9 @@ category:"CP | Menuiserie"
 	)
 	
 	rollout roll_divers  "Divers"	(
-		group "Qualité" (
+		/* group "Qualité" (
 			checkbox	shk_lowPoly				"Low poly" 		
-		)
+		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -243,7 +243,7 @@ category:"CP | Menuiserie"
 		
 		if cadre and compo_cadre 	== undefined	do	compo_cadre		= createInstance  	cp_menuisElem_cadre
 		
-		local longueur_passage 	= /*  if cadre then longueur - cadre_epaisseur*2	else  */longueur
+		local longueur_passage 	=   if cadre then longueur - cadre_epaisseur*2	else  longueur
 		local hauteur_passage 		 = if cadre and travBasse	then hauteur  - cadre_epaisseur*2	
 												else if cadre then  hauteur  - cadre_epaisseur
 												else	hauteur
@@ -260,7 +260,7 @@ category:"CP | Menuiserie"
 		
 		compo_ouvrant_vitree.cadre_largeur 			= ouvrant_cadre_larg
 		compo_ouvrant_vitree.travBasse_hauteur		= ouvrant_cadre_travB_ht		
-		compo_ouvrant_vitree.low_poly			 		= low_poly
+-- 		compo_ouvrant_vitree.low_poly			 		= low_poly
 		compo_ouvrant_vitree.matId_menuis	 		= matId_menuis
 		compo_ouvrant_vitree.matId_vitrage	 		= matId_vitrage		
 		compo_ouvrant_vitree.div_montants_nbr 		= div_montants_nbr
@@ -412,8 +412,8 @@ category:"CP | Menuiserie"
 				
 	-- 			local longueur_passage = compo_ouvrant.longueur
 				
-				compo_poignee.low_poly 			= low_poly
-				compo_poignee.matID				=	matId_poignee
+				compo_poignee.qualite 			= qualite
+				compo_poignee.matID			=	matId_poignee
 				if   symetrie  and  not ouvrant_double  then (
 					
 					compo_poignee.symetrie 			= true

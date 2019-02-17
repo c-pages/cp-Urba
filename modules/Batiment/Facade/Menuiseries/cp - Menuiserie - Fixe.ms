@@ -56,7 +56,7 @@ category:"CP | Menuiserie"
 		nom	 							type:#string 			default:"Fixe"
 		
 		------ options --------------
-		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
@@ -90,9 +90,9 @@ category:"CP | Menuiserie"
 		)
 	)
 	rollout roll_divers  "Divers"	(
-		group "Qualité" (
+		/* group "Qualité" (
 			checkbox	shk_lowPoly			"Low poly" 		
-		)
+		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -122,7 +122,7 @@ category:"CP | Menuiserie"
 		compo_vitrage.div_profondeur			 	= profondeur	--	div_profondeur		
 		compo_vitrage.div_calage_verti		 		= div_calage_verti		
 		
-		compo_vitrage.low_poly			 			= low_poly		
+-- 		compo_vitrage.low_poly			 			= low_poly		
 		compo_vitrage.qualite			 				= qualite		
 		compo_vitrage.matId_menuis	 				= matId_menuis
 		compo_vitrage.matId_vitrage	 				= matId_vitrage

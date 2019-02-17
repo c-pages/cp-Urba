@@ -33,7 +33,7 @@ category:"CP | Menuiserie	| Element"
 	parameters params_divers rollout:roll_divers
 	(
 		------ mat ID ----------
-		low_poly					type:#boolean 		ui:shk_lowPoly				default:false
+-- 		low_poly					type:#boolean 		ui:shk_lowPoly				default:false
 		matId					type:#integer 			ui:spn_matId				default:1
 		
 		qualite					type:#integer 			ui:rdo_qualite				default:1
@@ -48,9 +48,9 @@ category:"CP | Menuiserie	| Element"
 		
 	)
 	rollout roll_divers  "Divers" (
-		group "Qualité" (
+		/* group "Qualité" (
 			checkbox	shk_lowPoly		"Low poly"
-		)
+		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
