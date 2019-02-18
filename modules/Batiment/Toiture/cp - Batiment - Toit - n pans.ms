@@ -296,15 +296,25 @@ category:"CP | Bâtiment	| Element"
 				matIds	+=	#( matId_toiture, matId_toiture )
 				
 				id_pt 	+=	4
+				
 			)
 			
 			
 			
 			setMesh 	mesh 	verts:pts	faces:faces	materialIDs:matIds
 			
-			for i = 1 to	faces.count do
+			for i = 1 to	faces.count do (
 				setFaceSmoothGroup mesh i 0
-			
+			/* 
+-- 				local faceNormal = in coordsys theObj (getFaceNormal theObj theFace)
+				local faceNormal 			= getFaceNormal  mesh 	i
+				local worldUpVector 		= [0,0,1]
+				local	rightVector 			= normalize (cross worldUpVector faceNormal)
+				local upVector 				= normalize ( cross rightVector faceNormal )
+				local theMappingMatrix 	= matrix3 rightVector upVector faceNormal [0,0,0]
+				 */
+				
+			)
 			
 			meshop.autoEdge mesh (#{1..mesh.Edges.count} as array )  2.
 			

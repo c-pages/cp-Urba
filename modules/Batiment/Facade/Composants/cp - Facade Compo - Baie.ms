@@ -46,13 +46,13 @@ category:"CP | Facade	| Element"
 		
 		tablette					type:#boolean 		ui:shk_tablette					default:true
 		
+		menuiserie_type			type:#integer 			ui:ddl_type_menuiserie				default:3
+		menuiserie_objet			type:#maxObject		
 		
 	)	-----	fin parametres --------------------
 	
 	parameters params_menuiserie rollout:roll_menuiserie	(
 		
-		menuiserie_type			type:#integer 			ui:ddl_type_menuiserie				default:3
-		menuiserie_objet			type:#maxObject		
 		
 	)
 	parameters params_divers rollout:roll_divers	(
@@ -90,13 +90,70 @@ category:"CP | Facade	| Element"
 	
 	
 	
+	rollout roll_baie "Baie" width:268 height:221
+	(
+		edittext 'edt_nom' "" pos:[5,2] width:170 height:17 align:#left
+		
+		GroupBox 'grp_dimensions' "Dimensions" pos:[5,22] width:170 height:90 align:#left
+		
+		label 'lbl_longueur' "Longueur:" pos:[20,42] width:60 height:19 align:#left
+		spinner 'spn_longueur' "" pos:[90,42] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_hauteur' "Hauteur:" pos:[20,57] width:55 height:19 align:#left
+		spinner 'spn_hauteur' "" pos:[90,57] width:75 height:16 range:[-1e+20,1e+20,0] type:#worldunits align:#left
+		label 'lbl_profondeur' "Profondeur:" pos:[20,72] width:69 height:19 align:#left
+		spinner 'spn_profondeur' "" pos:[90,72] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_allegePleine' "Allège pleine:" pos:[20,87] width:75 height:19 align:#left
+		spinner 'spn_allegePleine' "" pos:[90,87] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		
+		
+		
+		GroupBox 'grp_occultation' "Occultation" pos:[5,120] width:170 height:46 align:#left
+		
+		dropdownList 'ddl_occultation' "" pos:[15,139] width:150 height:21 align:#left
+	)
+	
+	
+	
+	rollout roll_menuiserie_2 "Menuiserie" width:188 height:285
+	(
+		button 'btn29' "Fixe" pos:[5,5] width:48 height:17 align:#left
+		button 'btn30' "Fenêtre" pos:[52,5] width:48 height:17 align:#left
+		button 'btn31' "Porte" pos:[99,5] width:48 height:17 align:#left
+		
+		dotNetControl 'tv_sequence' "treeview" pos:[5,25] width:141 height:89 align:#left
+		
+		button 'btn32' "Dup" pos:[150,25] width:25 height:17 align:#left	tooltip:"Dupliquer."
+		button 'btn33' "Inst" pos:[150,41] width:25 height:17 align:#left	tooltip:"Instancier."
+		button 'btn34' "Uni" pos:[150,57] width:25 height:17 align:#left	tooltip:"Rendre unique."
+		button 'btn35' "Sup" pos:[150,73] width:25 height:17 align:#left	tooltip:"Supprimer."
+		
+		GroupBox 'grp45' "Elément" pos:[5,121] width:170 height:121 align:#left
+		
+		spinner 'spn99' "" pos:[90,141] width:75 height:16 range:[0,100,0] type:#worldunits align:#left
+		label 'lbl95' "Longueur:" pos:[20,139] width:75 height:19 align:#left
+		spinner 'spn100' "" pos:[90,156] width:75 height:16 range:[0,100,0] type:#integer align:#left
+		label 'lbl96' "Montants:" pos:[20,155] width:75 height:19 align:#left
+		spinner 'spn101' "" pos:[90,171] width:75 height:16 range:[0,100,0] type:#integer align:#left
+		label 'lbl97' "Traverses:" pos:[20,169] width:75 height:19 align:#left
+		
+		checkbox 'chk75' "Inverser sens" pos:[18,188] width:104 height:16 align:#left
+		checkbox 'chk74' "Double" pos:[18,202] width:133 height:16 align:#left
+		checkbox 'chk76' "Vitrée" pos:[18,216] width:133 height:16 align:#left
+		
+		spinner 'spn119' "" pos:[90,250] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
+		spinner 'spn120' "" pos:[90,265] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
+		checkbox 'chk91' "Imposte:" pos:[10,249] width:76 height:16 align:#left
+		checkbox 'chk92' "Allège:" pos:[10,263] width:60 height:16 align:#left
+	)
+	
+	
 	
 	
 	rollout rol_global  "Global"	(
 		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
 	)
 	
-	rollout roll_parametres  "Paramètres"	(		
+	rollout roll_parametres  "Baie"	(		
 		
 		group "Dimensions" (
 -- 			checkbox	shk_etirable			"Etirable" 	
@@ -105,28 +162,18 @@ category:"CP | Facade	| Element"
 			spinner 	spn_profondeur			"Profondeur" 		type:#worldunits 	range:[0,1e20,0]
 			spinner 	spn_allege_hauteur 	"Allège" 		type:#worldunits 	range:[0,1e20,0]
 		)
-		
+		group " Menuiserie" (
+			dropDownList ddl_type_menuiserie	""  align:#left
+		)
 		group "Divers" (
 			checkbox	shk_tablette			"Tablette" 	
--- 		)
--- 		group "Volets" (
 			dropDownList	ddl_volet		"Volets"	 items:#("Aucun", "Battant", "Roulant")
 		)
 		
 		fn actualiser =(
-		)
-		on roll_parametres	open 					do actualiser ()
-	)
-	
-	
-	rollout roll_menuiserie "Menuiserie" width:162 height:136
-	(
-		dropDownList ddl_type_menuiserie	""  align:#left
-		
-		
-		
-		fn actualiser = (
 			
+			
+			--- le dropdownlist	--------------
 			local liste_nomsMenuis = #()
 			for classe in menuis_classes do (
 				local tmp_instance = createinstance 	classe
@@ -135,14 +182,37 @@ category:"CP | Facade	| Element"
 			ddl_type_menuiserie.items = liste_nomsMenuis
 			
 		)
+		on roll_parametres	open 					do actualiser ()
+		on ddl_type_menuiserie		selected val	do (
+			menuiserie_objet = createInstance menuis_classes[val ]
+			redrawViews ()
+			actualiser()
+		)
+	)
+	
+	
+	rollout roll_menuiserie "Menuiserie" 
+	(
+-- 		dropDownList ddl_type_menuiserie	""  align:#left
+		
+		subrollout		subRoll_param	""		height:250	align:#left
+		
+		fn actualiser = (
+			
+			
+			
+			--- le subroll	--------------
+			if subRoll_param.rollouts.count > 0 do 
+				for subRoll in subRoll_param.rollouts  do
+					removeSubRollout subRoll_param	subRoll
+			
+			addSubRollout 	subRoll_param		menuiserie_objet.roll_parametres
+			
+		)
 		
 		
 		
 		on roll_menuiserie open do actualiser ()
-		on ddl_type_menuiserie		selected val	do (
-			menuiserie_objet = createInstance menuis_classes[val ]
-			redrawViews ()
-		)
 	)
 	
 	
@@ -205,7 +275,7 @@ category:"CP | Facade	| Element"
 		if menuiserie_objet != undefined do (
 			compo_menuis	=	copy menuiserie_objet
 			compo_menuis.longueur		=	longueur
-			local hauteur_menuis		=	if baie_hauteur <0 	then		hauteur + baie_hauteur - allege_hauteur
+			local hauteur_menuis		=	if baie_hauteur <=0 	then		hauteur + baie_hauteur - allege_hauteur
 																				else		baie_hauteur
 			compo_menuis.hauteur		=	hauteur_menuis
 			compo_menuis.qualite		=	qualite
@@ -360,5 +430,3 @@ category:"CP | Facade	| Element"
 	
 	
 ) ------- fin plugin ---------------------
-
-

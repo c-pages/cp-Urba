@@ -12,7 +12,7 @@ include	 "$userScripts\\cp-Urba\\Startup\\cp - Urba - Batiment - FileIn.ms"
 
 
 	
---------------------------------------------------------------------------------------------------------
+---------- quelque variables et fonctions globales	----------------------------------------------------------------------------------------------
 global 	urba_fn_afficheur_longueurs	--- fonction pour affichage viewport 
 global	urba_clipboard_batiment		---	clipboard pour copier/coller des presets
 
@@ -716,7 +716,6 @@ category:"CP | Urba"
 			local facade_cible
 			local batiment_parent
 			
-			
 			editText 	edTxt_nom		 	"" 	pos:[13,7] width:224
 			
 			subRollout 'subroll_1' "" pos:[13,27] width:224 height:280 align:#left	
@@ -748,8 +747,6 @@ category:"CP | Urba"
 				
 				facade.roll_editeur_facade	=	roll_editeur_facade				
 				facade_cible			=	facade
-				
-				
 				
 				edTxt_nom.text		=	facade.nom
 				
@@ -791,21 +788,6 @@ category:"CP | Urba"
 				local	id_facade_select 	= 	roll_facades.lbx_facades.selection				
 				roll_editeur_facade.actualiser 	facade:facades[ id_facade_select ]
 				
-				/* 
-				facades[ id_facade_select ].roll_editeur_facade	=	roll_editeur_facade
-				
-				roll_editeur_facade.facade_cible			=	facades[ id_facade_select ]
-				roll_editeur_facade.batiment_parent	=	this
-				
-				
-				
-				roll_editeur_facade.edTxt_nom.text		=	facades[ id_facade_select ].nom
-				
-				addSubRollout 	roll_editeur_facade.subroll_1		facades[ id_facade_select ].roll_contraintes
-				addSubRollout 	roll_editeur_facade.subroll_1		facades[ id_facade_select ].roll_repartition
-				addSubRollout 	roll_editeur_facade.subroll_2		facades[ id_facade_select ].roll_sequence */
-				
--- 				addSubRollout 	roll_editeur_facade.subroll_element		facades[ id_facade_select ].roll_parametres_element
 			)
 			false: destroyDialog  roll_editeur_facade
 		)

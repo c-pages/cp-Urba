@@ -40,7 +40,7 @@ category:"CP | Menuiserie"
 	)
 	parameters params_general rollout:roll_parametres	(
 		
-		longueur 		type:#worldUnits 	ui:spn_longueur 			default:90.
+		longueur 		type:#worldUnits 	ui:spn_longueur 			default:0.
 		
 		----- les menuiseries -----------
 -- 		cadre_largeur	 				type:#worldUnits 	default:3.5
@@ -252,7 +252,7 @@ category:"CP | Menuiserie"
 		
 		
 		---- maj ouvrant		----
-		local ouvrant_longueur_tmp	=	if not ouvrant_double then  longueur_passage		else longueur_passage / 2
+		local ouvrant_longueur_tmp	=	if not ouvrant_double then  longueur_passage		else longueur_passage / 2 
 	
 		compo_ouvrant_vitree.longueur 					= ouvrant_longueur_tmp	
 		compo_ouvrant_vitree.profondeur 				= profondeur / 2 -- 		ouvrant_profondeur
@@ -285,10 +285,10 @@ category:"CP | Menuiserie"
 			compo_ouvrant_1.longueur 				= longueur_passage
 		) else (
 			
-			compo_ouvrant_1.longueur				=	if cadre then (longueur_passage 	*  ouvrant_tierce_pourcent / 100 ) - cadre_epaisseur else (longueur_passage 	*  ouvrant_tierce_pourcent / 100 )
+			compo_ouvrant_1.longueur				=	if cadre then (longueur_passage 	*  ouvrant_tierce_pourcent / 100 ) /* - cadre_epaisseur  */else (longueur_passage 	*  ouvrant_tierce_pourcent / 100 )
 			
 			compo_ouvrant_2 							= copy compo_ouvrant_1
-			compo_ouvrant_2.longueur 				=  if cadre then ( longueur_passage	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) - cadre_epaisseur else	( longueur_passage	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) 
+			compo_ouvrant_2.longueur 				=  if cadre then ( longueur_passage	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) /* - cadre_epaisseur  */else	( longueur_passage	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) 
 			
 			if ouvrant_vitree  do
 				compo_ouvrant_2.div_montants_nbr 	=  div_montants_nbr_2

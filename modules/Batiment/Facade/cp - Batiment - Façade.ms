@@ -22,11 +22,11 @@ category:"CP | Bâtiment	| Element"
 	local corriger_parametres , 		actualiser_composants 
 	local	ajouter_element_facade, 	retirer_element_facade, 	dupliquer_element_facade, instancier_element_facade, rendreUnique_element_facade, monter_element_facade, descendre_element_facade, renommer_element_facade, ouvrir_parametres
 	local inserer_element
-	local est_instance, est_unBalcon
+	local est_instance, est_unBalcon, est_uneBaie
 	
 	---- la sequence à construire issue de la sequence	------------------------
 	local sequence_aConstruire
-	local compo_baie
+	
 	
 	---- manager de mesh -------------------
 	local mgr_mesh 	= str_mgr_mesh 	()
@@ -48,8 +48,8 @@ category:"CP | Bâtiment	| Element"
 	parameters params_repartition 	rollout:roll_repartition	(
 		
 		repartition					type:#integer					ui:ddl_repartition			default:1
-		repart_nombre				type:#integer					ui:spn_repetitions		default:1
-		repart_decallage			type:#worldUnits				ui:spn_decallage			default:0.
+		repart_repetitions				type:#integer					ui:spn_repetitions		default:1
+		repart_decalage			type:#worldUnits				ui:spn_decalage			default:0.
 		repart_espacement		type:#worldUnits				ui:spn_espacement		default:0.
 	)
 	parameters params_sequence 		rollout:roll_sequence		(
@@ -75,7 +75,7 @@ category:"CP | Bâtiment	| Element"
 	)	-----	fin parametres --------------------
 	parameters params_contraintes 	rollout:roll_contraintes	(
 		
-		etages_min_use		type:#boolean 		ui:chk_etages_min			default:false
+		etages_min_use		type:#boolean 		ui:chk_etages_min			default:false	
 		etages_min				type:#integer			ui:spn_etages_min			default:0
 		etages_max_use		type:#boolean 		ui:chk_etages_max			default:false
 		etages_max			type:#integer			ui:spn_etages_max			default:0
@@ -109,33 +109,41 @@ category:"CP | Bâtiment	| Element"
 		spinner spn_profondeur 			"Profondeur" 			type:#worldunits range:[0,1e20,0]
 		
 	)
-	rollout roll_repartition					"Répartition" 	(
+	rollout roll_repartition "Répartition" width:180 height:140
+	(
 				--- UI ----------------------------------------------------------------------------------------------
-		group "Répartition" (
-			dropDownList	ddl_repartition		""	 items:#(	"Répartir",  /* "Répéter", */	"Centrer",	"Aligner à gauche",	"Aligner à droite"		/*,   "Etirer"  */	)	/* width:95	 */align:#left--	across:2
+		GroupBox grp1 "Répartition" pos:[4,7] width:170 height:97 align:#left
+		dropdownList ddl_repartition "" pos:[13,26] width:154 height:21 items:#("Répartir", "Centrer", "Aligner à gauche", "Aligner à droite") align:#left--	across:2
+--	across:2
+--	across:2
 			
-			spinner spn_repetitions 		"Nombre" 		/* width:50	 */		type:#integer 			range:[0,1000,1]			align:#right
-			spinner spn_decallage		 	"Décallage" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
-			spinner spn_espacement		"Espacement" 	/* 	width:80	 */		type:#worldunits 	range:[-1e20,1e20,0]	align:#right
-			
-		)
+		label lbl_decalage "Décallage:" pos:[20,49] width:55 height:19 align:#left
+		spinner spn_decalage "" pos:[90,49] width:75 height:16 range:[-1e+20,1e+20,0] type:#worldunits align:#left
+		label lbl_repetitions "Répétitions:" pos:[20,64] width:60 height:19 align:#left
+		spinner spn_repetitions "" pos:[90,64] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label lbl_espacement "Espacement:" pos:[20,79] width:69 height:19 align:#left
+		spinner spn_espacement "" pos:[90,79] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		fn actualiser =(
 			
 			----- divers -------------------
 			local repart_options_enabled 		= ddl_repartition.selection != 1
+			
 			spn_repetitions.indeterminate			=	repart_options_enabled
 			spn_repetitions.enabled 				=	not	repart_options_enabled 
--- 			spn_decallage.indeterminate		=	repart_options_enabled
--- 			spn_decallage.enabled 				=	not	repart_options_enabled
+			lbl_repetitions.enabled 				=	not	repart_options_enabled 
+			
 			spn_espacement.indeterminate		=	repart_options_enabled
 			spn_espacement.enabled 				=	not	repart_options_enabled
+			lbl_espacement.enabled 				=	not	repart_options_enabled
 			
 		)
 			
 		
-		on roll_repartition open do actualiser ()
-		on ddl_repartition selected  val do actualiser ()
 		
+		on roll_repartition open do
+			actualiser ()
+		on ddl_repartition selected val do
+			actualiser ()
 	)
 	rollout roll_sequence  					"Façade"		(
 	
@@ -151,11 +159,16 @@ category:"CP | Bâtiment	| Element"
 			
 			button 		btn_ajouter_mur 			"Mur"			width:50		height:17		across:3		align:#left
 			button 		btn_ajouter_baie 			"Baie"			width:50		height:17		align:#left		--	enabled:false
-			button 		btn_ajouter_vide1 	""			width:50	height:17			align:#left		enabled:false
+			button 		btn_ajouter_balcon 	"Balcon"			width:50		height:17		align:#left		
+-- 			button 		btn_ajouter_vide1 	""			width:50	height:17			align:#left		enabled:false
 			
-			button 		btn_ajouter_balcon 	"Balcon"			width:50		height:17		align:#left		across:3	
+			button 		btn_ajouter_chainage 	"Chaînage"			width:50		height:17		align:#left		enabled:false	across:3	
 			button 		btn_ajouter_corniche 	"Corniche"			width:50	height:17			align:#left		enabled:false
-			button 		btn_ajouter_porche 	"Porche"			width:50		height:17		align:#left		enabled:false
+			button 		btn_ajouter_porche 		"Porche"			width:50		height:17		align:#left		enabled:false
+			
+			button 		btn_ajouter_groupe	 "Groupe"			width:50	height:17			align:#left			across:3	
+			button 		btn_ajouter_vide2 	""			width:50	height:17			align:#left		enabled:false
+			button 		btn_ajouter_vide3 	""			width:50	height:17			align:#left		enabled:false
 			/* 
 			button 		btn_ajouter_groupe 	"Groupe"			width:50		height:17		align:#left		across:3	
 			button 		btn_ajouter_vide3 	""			width:50	height:17			align:#left		enabled:false
@@ -188,13 +201,12 @@ category:"CP | Bâtiment	| Element"
 			 */
 			
 			
-			dotNetControl tv_sequence	 "treeview" /* width:145 */ height:360 --align:#left
+			dotNetControl tv_sequence	 "treeview" /* width:145 */ height:160 --align:#left
 			
-			button 		btn_dupliquer	 		"Dup."			width:27	height:17	across:5	align:#center
+			button 		btn_dupliquer	 		"Dup."			width:27	height:17	across:4	align:#center
 			button 		btn_instancier	 		"Ins."				width:27	height:17			align:#center
 			button 		btn_rendreUnique	 	"Uni."				width:27	height:17			align:#center
 			button 		btn_retirer	 				"Sup."			width:27	height:17			align:#center
-			button 		btn_ajouter_groupe	 "Grp."			width:27	height:17			align:#center
 			
 			editText 	edTxt_nom		 	"Nom:" 	
 		
@@ -376,7 +388,7 @@ category:"CP | Bâtiment	| Element"
 			)
 		)
 		fn drag_recevoir 	_arg =(
-			debug "drag_recevoir"
+-- 			debug "drag_recevoir"
 			
 			local posDrop		= tv_sequence.PointToClient 	tv_sequence.MousePosition
 			local noeudDest 	= tv_sequence.GetNodeAt (dotNetObject "System.Drawing.Point" posDrop.x 	posDrop.y )
@@ -501,7 +513,7 @@ category:"CP | Bâtiment	| Element"
 			local nd_selec			=	if nd == unsupplied then tv_sequence.SelectedNode  else nd
 			local elem_selec		= get_element 	nd_selec
 			
-			---- le subroll de destination, l'editeur de facade en general -------------
+			---- le subroll de destination, lediteur de facade en general -------------
 			local subroll_dest
 			if roll_editeur_facade == undefined then
 				subroll_dest	 = roll_parametres_element.subroll_param
@@ -520,13 +532,23 @@ category:"CP | Bâtiment	| Element"
 					edTxt_nom.enabled = true
 				
 					addSubRollout 	subroll_dest		elem_selec.roll_parametres
+				
+				-- si on a une baie on ouvreles parametres de la menuiserie de la baie en plus ---------
+				if est_uneBaie	elem_selec	do (
+					
+					if roll_editeur_facade == undefined then
+						addSubRollout 	subroll_dest		elem_selec.roll_menuiserie
+					else
+						addSubRollout 	subroll_dest		elem_selec.menuiserie_objet.roll_parametres
+				)
+				
 			) else (
 					edTxt_nom.text	=	""
 					edTxt_nom.enabled = false
 					tv_sequence.SelectedNode = undefined
 			)
 			
-			---- actualiser la taille de l'editeur s'il est ouvert	---------------------
+			---- actualiser la taille de lediteur sil est ouvert	---------------------
 			if roll_editeur_facade != undefined do roll_editeur_facade.resize_rollout ()
 			
 			
@@ -621,12 +643,12 @@ category:"CP | Bâtiment	| Element"
 		
 		on btn_ajouter_baie	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_baie
 			
-		
+		/* 
 		on btn_ajouter_fixe				pressed 			do 	ajouter_element_facade 	cp_menuiserie_fixe
 		on btn_ajouter_fenetre			pressed 			do 	ajouter_element_facade 	cp_menuiserie_fenetre
 		on btn_ajouter_porte			pressed 			do 	ajouter_element_facade 	cp_menuiserie_porte
 		on btn_ajouter_ensemble		pressed 			do 	ajouter_element_facade 	cp_menuiserie_ensemble
-			
+			 */
 		on btn_ajouter_balcon			pressed 			do 	ajouter_element_facade 	cp_facadeElem_balcon
 		on btn_ajouter_groupe			pressed 			do 	ajouter_element_facade 	cp_facadeElem_groupe
 		
@@ -647,27 +669,39 @@ category:"CP | Bâtiment	| Element"
 		
 	)
 	
-	rollout roll_contraintes 	"Contraintes"	(
-		group "Etages" (
-			checkbox 	chk_etages_min	"Min."   		width:47	height:16 enabled:true highlightColor:(color 255 255 0) toolTip:"Etage minimum." align:#left		across:2
-			spinner 	spn_etages_min	"" 				width:57	height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#right
-			checkbox 	chk_etages_max 	"Max."  		width:47	height:16 highlightColor:(color 255 255 0) toolTip:"Etage maximum." align:#left	across:2
-			spinner 	spn_etages_max 	""  			width:57 	height:16 range:[0,1e+13,0] type:#integer scale:1 align:#right
-		)
-		group "Longeur" (		
-			checkbox 	chk_longueur_min 	"Min." 	width:47	height:16 enabled:true highlightColor:(color 255 255 0) toolTip:"Etage minimum." align:#left	across:2
-			spinner 	spn_longueur_min 	""  		width:57	height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#right
-			checkbox 	chk_longueur_max 	"Max."  	width:47	height:16 highlightColor:(color 255 255 0) toolTip:"Etage maximum." align:#left	across:2
-			spinner 	spn_longueur_max		"" 		width:57 	height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#right
-		)
-		group "Murs" (
-			checkbutton ckb_mur_nord 		"N."  		width:27 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left	across:4
-			checkbutton ckb_mur_sud 		"S."  		width:27 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-			checkbutton ckb_mur_est 		"E." 		width:27 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-			checkbutton ckb_mur_ouest 	"O."		width:27 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-			
-			dropdownList ddl_murs ""  height:21 selection:3 align:#left	items:#("Tous", "Pignons", "Gouttereaux" )
-		)
+	rollout roll_contraintes "Contraintes" width:180 height:318
+	(
+		label 'lbl_etages' "Etages:" pos:[15,7] width:55 height:16 align:#left
+		
+		
+		
+		
+		label 'lbl6' "Façades:" pos:[14,109] width:78 height:16 align:#left
+		spinner 'spn_etages_min' "" pos:[31,23] width:50 height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#left
+		label 'lbl9' ">" pos:[85,24] width:12 height:15 align:#left
+		checkbutton 'chk_etages_min' "" pos:[16,23] width:16 height:16 align:#left
+		spinner 'spn_etages_max' "" pos:[110,23] width:50 height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#left
+		checkbutton 'chk_etages_max' "" pos:[95,23] width:16 height:16 align:#left
+		label 'lbl28' "Longueurs:" pos:[15,41] width:55 height:16 align:#left
+		spinner 'spn_longueur_min' "" pos:[31,57] width:50 height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#left
+		label 'lbl29' ">" pos:[85,58] width:12 height:15 align:#left
+		checkbutton 'chk_longueur_min' "" pos:[16,57] width:16 height:16 align:#left
+		spinner 'spn_longueur_max' "" pos:[110,57] width:50 height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#left
+		checkbutton 'chk_longueur_max' "" pos:[95,57] width:16 height:16 align:#left
+		
+		
+		
+		
+		
+		
+		
+		checkbutton 'ckb_mur_nord' "N." pos:[15,90] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
+		checkbutton 'ckb_mur_sud' "S." pos:[52,90] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_est' "E." pos:[89,90] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_ouest' "O." pos:[125,90] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		
+		dropdownList 'ddl_murs' "" pos:[15,122] width:150 height:21 items:#("Tous", "Pignons", "Gouttereaux") align:#left
+		label 'lbl5' "Orientation:" pos:[15,75] width:78 height:14 align:#left
 		
 		fn actualiser= (
 			spn_etages_min.indeterminate		=	not etages_min_use
@@ -683,16 +717,16 @@ category:"CP | Bâtiment	| Element"
 			spn_longueur_max.enabled 			=	longueur_max_use 
 			
 		)
-		on roll_contraintes open do actualiser ()
-			
-		on chk_etages_min 		changed state do actualiser ()
-		on chk_etages_max 	changed state do actualiser ()
-		on chk_longueur_min 	changed state do actualiser ()
-		on chk_longueur_max	changed state do actualiser ()
-			
-			
+					
 		
-	) --- fin roll_contraintes-------------------------
+		
+		on roll_contraintes open do
+			actualiser ()
+		on chk_etages_min changed state do	actualiser()
+		on chk_etages_max changed state do	actualiser()
+		on chk_longueur_min changed state do	actualiser()
+		on chk_longueur_max changed state do	actualiser()
+	)
 	rollout roll_divers  			"Divers"			(
 -- 		group "Qualité" (
 -- 			checkbox	shk_lowPoly		"Low poly" 		
@@ -728,7 +762,7 @@ category:"CP | Bâtiment	| Element"
 -- 		if align_prof > profondeur do align_prof = profondeur
 		
 		/* 
-		--- longueur de l'ensemble ----------
+		--- longueur de lensemble ----------
 		local longueur_est_contrainte = true
 		local longueur_contrainte = 0
 		for elem_long in sequence_elem_long do
@@ -749,6 +783,7 @@ category:"CP | Bâtiment	| Element"
 	fn est_ouvrable				_compo	=	classof	_compo	==	cp_facadeElem_ensemble
 	fn est_unBalcon				_compo	=	classof	_compo	==	cp_facadeElem_balcon	
 	fn est_une_menuiserie		_compo	=	matchPattern ( ( classof	_compo ) as string ) pattern:"cp_menuiserie*"
+	fn est_uneBaie					_compo	=	classof	_compo	==	cp_facadeElem_baie
 
 	
 	
@@ -821,7 +856,7 @@ category:"CP | Bâtiment	| Element"
 -- 		deleteItem sequence 				_id
 		
 		
-		----- on retire l'element à deplacer de son origine -------------
+		----- on retire lelement à deplacer de son origine -------------
 		if _element_parent != undefined then 
 			deleteItem 	_element_parent.elements 			_id
 		else 
@@ -843,7 +878,7 @@ category:"CP | Bâtiment	| Element"
 		
 		local elem_aDeplacer
 		
-		----- on retire l'element à deplacer de son origine -------------
+		----- on retire lelement à deplacer de son origine -------------
 		if _elementParent_enDrag != undefined then (
 			elem_aDeplacer	=	 	_elementParent_enDrag.elements 		[_id_aDeplacer]
 			deleteItem 	_elementParent_enDrag.elements 			_id_aDeplacer
@@ -977,7 +1012,7 @@ category:"CP | Bâtiment	| Element"
 		
 		
 		---- Orientation N, S, E, O -------------------
-		--- si une des contrainte d'orientation est active, on check, sinon on passe, tout est bon ----
+		--- si une des contrainte dorientation est active, on check, sinon on passe, tout est bon ----
 		if mur_nord	 or mur_ouest or mur_sud	or 	mur_est do (
 			
 			local angle_orientation	=	mgr_shp.get_angle_oriente 	(pt_2 - pt_1 )
@@ -1036,12 +1071,12 @@ category:"CP | Bâtiment	| Element"
 			
 			
 			---- si repetitions == 0 alors on en met le maximum -------------------
-			local nombre_deRepetitions		=	repart_nombre
+			local nombre_deRepetitions		=	repart_repetitions
 			local longueur_definies 			=	0
 			if repartition == 1 then (
 				for i = 1 to sequence.count do 
 					longueur_definies	+= sequence[i].get_longueur()
-				if repart_nombre == 0 do 
+				if repart_repetitions == 0 do 
 					nombre_deRepetitions = floor ( longueur / longueur_definies )
 			) else  nombre_deRepetitions = 1
 			
@@ -1088,7 +1123,7 @@ category:"CP | Bâtiment	| Element"
 						
 						---- le decallage de la sequence ----------------------
 						local decallage_espacement	=	espacement_sequence * (  ( nombre_deRepetitions * id_dernierComposant - 1 ) )  / 2					
-						local decallage_sequence = copy repart_decallage 
+						local decallage_sequence = copy repart_decalage 
 						if decallage_sequence > longueur_repartition - decallage_espacement do
 							decallage_sequence = longueur_repartition - decallage_espacement 
 						if decallage_sequence < ( - longueur_repartition + decallage_espacement ) do
@@ -1158,7 +1193,7 @@ category:"CP | Bâtiment	| Element"
 						
 						
 						---- le decallage de la sequence ----------------------
-						local decallage_sequence = copy repart_decallage
+						local decallage_sequence = copy repart_decalage
 						if 	abs decallage_sequence > longueur_repartition do
 							if decallage_sequence <0 then decallage_sequence = - longueur_repartition
 								else decallage_sequence =  longueur_repartition
@@ -1218,7 +1253,7 @@ category:"CP | Bâtiment	| Element"
 						
 						
 						---- le decallage de la sequence ----------------------
-						local decallage_sequence = copy repart_decallage
+						local decallage_sequence = copy repart_decalage
 						if 	 decallage_sequence > longueur_repartition do
 							decallage_sequence =  longueur_repartition
 						if decallage_sequence <0 do
@@ -1281,7 +1316,7 @@ category:"CP | Bâtiment	| Element"
 						
 						
 						---- le decallage de la sequence ----------------------
-						local decallage_sequence = copy repart_decallage
+						local decallage_sequence = copy repart_decalage
 						if 	 decallage_sequence > longueur_repartition do
 							decallage_sequence =  longueur_repartition
 						if decallage_sequence <0 do
@@ -1346,7 +1381,7 @@ category:"CP | Bâtiment	| Element"
 				
 				
 				---- le hasard -----------------------------------------------------------------------------------------
-				--  on rend unique le compo qui a besoin d'etre ouvert, c'est plus rapide que de faire tout les composants uniques -------------
+				--  on rend unique le compo qui a besoin detre ouvert, cest plus rapide que de faire tout les composants uniques -------------
 				for i = 1 to sequence_aConstruire.count do (
 					if est_ouvrable	 sequence_aConstruire[i] do (
 						local est_ouverte =   ( random 0.  100. ) < fen_proba_ouv 
@@ -1399,9 +1434,6 @@ category:"CP | Bâtiment	| Element"
 		
 		--- vider le mesh --------
 		delete mesh
-		
--- 		--- la baie ------------
--- 		mgr_mesh.attacher		mesh		compo_baie	
 		
 		
 		---- la sequence	-----		
