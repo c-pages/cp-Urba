@@ -56,7 +56,7 @@ category:"CP | Menuiserie"
 -- 		ouvrant_tierce					type:#boolean 		ui:shk_tierce								default:false
 		ouvrant_tierce_pourcent	type:#float		 		ui:spn_tierce_pourcent					default:50.
 		
-		ouvrant_vitree					type:#boolean 		ui:shk_vitree								default:false		
+		ouvrant_vitree					type:#boolean 		ui:shk_vitree								default:true		
 		ouvrant_cadre_larg		 	type:#worldUnits 	ui:spn_ouvrant_cadre_larg				default:7.	
 		ouvrant_cadre_travB_ht	type:#worldUnits 	ui:spn_ouvrant_cadre_travB_ht		default:12.		
 		

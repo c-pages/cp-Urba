@@ -33,35 +33,32 @@ category:"CP | Menuiserie"
 	
 	
 	parameters params_global rollout:roll_global	(
-		hauteur	 				type:#worldUnits 	ui:spn_hauteur 				default:0.
-		longueur 				type:#worldUnits 	ui:spn_longueur 				default:120.
+		hauteur	 					type:#worldUnits 	ui:spn_hauteur 						default:0.
+		longueur 					type:#worldUnits 	ui:spn_longueur 					default:120.
 		
-		menuis_epaisseur		type:#worldUnits 	ui:spn_menuis_largeur			default:5.
-		menuis_profondeur	type:#worldUnits 	ui:spn_menuis_profondeur		default:7.
+		menuis_epaisseur		type:#worldUnits 	ui:spn_menuis_largeur				default:7.
+-- 		menuis_ouvrant_ep	type:#worldUnits 	ui:spn_menuis_ouvrLargeur		default:7.
+		menuis_profondeur	type:#worldUnits 	ui:spn_menuis_profondeur			default:5.
 	)
 	parameters params_general rollout:roll_parametres	(
 		
 		nom	 					type:#string 		/* 	ui:edTxt_nom		 */			default:"Ens. menuisé"
 		
-		
-		
 		sequence				type:#maxObjectTab	tabSizeVariable:true
-		
-		parent					type:#maxObject	
+-- 		
+-- 		parent					type:#maxObject	
 	)
 	parameters params_divers rollout:roll_divers
 	(
 		
 		------ options --------------
--- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
-		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
-		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
-		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
+		matId_menuis				type:#integer 			ui:spn_matId_menuis	default:1
+		matId_vitrage				type:#integer 			ui:spn_matId_vitrage	default:2
 		matId_huisserie				type:#integer 			ui:spn_matId_huisserie	default:3
-		matId_mur						type:#integer 			ui:spn_matId_mur		default:4
+		matId_mur					type:#integer 			ui:spn_matId_mur			default:4
 		
 	)	-----	fin parametres --------------------
 	
@@ -75,19 +72,25 @@ category:"CP | Menuiserie"
 	
 	
 	
-	rollout roll_global  "Global"	(
+	rollout roll_global "Global" width:180 height:161
+	(
 		
-		group "Dimensions" (
-		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
-			spinner 	spn_longueur 			"Longueur" 			type:#worldunits 	range:[0,1e20,0]
-			
-		)
-		group "Menuiserie" (
-			spinner 	spn_menuis_largeur 			"Largeur" 			type:#worldunits 	range:[0,1e20,0]
-			spinner 	spn_menuis_profondeur 	"Profondeur" 		type:#worldunits 	range:[0,1e20,0]
-			
-		)
+		GroupBox 'grp_dimensions' "Dimensions" pos:[5,0] width:170 height:53 align:#left
 		
+		spinner 'spn_longueur' "" pos:[90,15] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_longueur' "Longueur:" pos:[20,15] width:67 height:16 align:#left
+		spinner 'spn_hauteur' "" pos:[90,30] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_hauteur' "Hauteur:" pos:[20,30] width:67 height:16 align:#left
+		
+		GroupBox 'grp_menuiserie' "Menuiseries" pos:[5,55] width:170 height:53 align:#left
+		
+		
+		spinner 'spn_menuis_largeur' "" pos:[90,71] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_largeur' "Largeur" pos:[20,71] width:67 height:16 align:#left
+-- 		spinner 'spn_menuis_ouvrLargeur' "" pos:[90,93] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+-- 		label 'lbl_ouvr_larg' "Ouvr. larg." pos:[20,93] width:67 height:16 align:#left
+		spinner 'spn_menuis_profondeur' "" pos:[90,86] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_menuis_profondeur' "Profondeur:" pos:[20,86] width:67 height:16 align:#left
 	)
 	
 	
@@ -102,38 +105,43 @@ category:"CP | Menuiserie"
 		
 		
 		--- UI ------------------------------------------------------------------------------------------------------
-		button 'btn_ajouter_fixe' "Fixe" pos:[5,5] width:48 height:17 align:#left
-		button 'btn_ajouter_fenetre' "Fenêtre" pos:[52,5] width:48 height:17 align:#left
-		button 'btn_ajouter_porte' "Porte" pos:[99,5] width:48 height:17 align:#left
+		button 'btn_ajouter_fixe' "Fixe" pos:[7,0] width:48 height:17 align:#left
+		button 'btn_ajouter_fenetre' "Fenêtre" pos:[54,0] width:48 height:17 align:#left
+		button 'btn_ajouter_porte' "Porte" pos:[101,0] width:48 height:17 align:#left
 		
-		dotNetControl 'tv_sequence' "treeview" pos:[5,25] width:141 height:89 align:#left
+		dotNetControl 'tv_sequence' "treeview" pos:[7,19] width:141 height:89 align:#left
 		
-		button 'btn_dupliquer' "Dup" pos:[150,25] width:25 height:17 toolTip:"Dupliquer." align:#left
-		button 'btn_instancier' "Inst" pos:[150,41] width:25 height:17 toolTip:"Instancier." align:#left
-		button 'btn_rendreUnique' "Uni" pos:[150,57] width:25 height:17 toolTip:"Rendre unique." align:#left
-		button 'btn_supprimer' "Sup" pos:[150,73] width:25 height:17 toolTip:"Supprimer." align:#left
+		button 'btn_dupliquer' "Dup" pos:[150,17] width:25 height:17 toolTip:"Dupliquer." align:#left
+		button 'btn_instancier' "Inst" pos:[150,33] width:25 height:17 toolTip:"Instancier." align:#left
+		button 'btn_rendreUnique' "Uni" pos:[150,49] width:25 height:17 toolTip:"Rendre unique." align:#left
+		button 'btn_supprimer' "Sup" pos:[150,65] width:25 height:17 toolTip:"Supprimer." align:#left
 		
-		GroupBox 'grp_element' "Elément" pos:[5,121] width:170 height:121 align:#left
+		GroupBox 'grp_element' "Elément" pos:[5,115] width:170 height:108 align:#left
 		
-		spinner 'spn_elem_longueur' "" pos:[90,141] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
-		label 'lbl_elem_longueur' "Longueur:" pos:[20,139] width:67 height:19 align:#left
-		spinner 'spn_elem_montants' "" pos:[90,156] width:75 height:16 range:[0,10,0] type:#integer align:#left
-		label 'lbl_elem_montants' "Montants:" pos:[20,155] width:64 height:19 align:#left
-		spinner 'spn_elem_traverses' "" pos:[90,171] width:75 height:16 range:[0,10,0] type:#integer align:#left
-		label 'lbl_elem_traverses' "Traverses:" pos:[20,169] width:63 height:19 align:#left
+		spinner 'spn_elem_longueur' "" pos:[90,130] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_elem_longueur' "Longueur:" pos:[20,130] width:67 height:19 align:#left
+		spinner 'spn_elem_montants' "" pos:[90,145] width:75 height:16 range:[0,10,0] type:#integer align:#left
+		label 'lbl_elem_montants' "Montants:" pos:[20,145] width:64 height:19 align:#left
+		spinner 'spn_elem_traverses' "" pos:[90,160] width:75 height:16 range:[0,10,0] type:#integer align:#left
+		label 'lbl_elem_traverses' "Traverses:" pos:[20,160] width:63 height:19 align:#left
 		
-		checkbox 'chk_invSens' "Inverser sens" pos:[18,200] width:104 height:16 align:#left
-		checkbox 'chk_double' "Double" pos:[18,186] width:69 height:16 align:#left
+		checkbox 'chk_double' "Double" pos:[18,175] width:69 height:16 align:#left		
 		
-		spinner 'spn_elem_tiercee' "" pos:[90,186] width:55 height:16 range:[0,100,0] type:#float align:#left
-		label 'lbl_tierce_pourcent' "%" pos:[151,187] width:15 height:16 align:#left
 		
-		checkbox 'chk_vitree' "Vitrée" pos:[18,214] width:133 height:16 align:#left
 		
-		spinner 'spn_imposte' "" pos:[90,250] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
-		spinner 'spn_allege' "" pos:[90,265] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
-		checkbox 'chk_imposte' "Imposte:" pos:[10,249] width:76 height:16 align:#left
-		checkbox 'chk_allege' "Allège:" pos:[10,263] width:60 height:16 align:#left
+		
+		
+		spinner 'spn_elem_tiercee' "" pos:[90,175] width:55 height:16 range:[0,100,0] type:#float align:#left
+		label 'lbl_tierce_pourcent' "%" pos:[151,176] width:15 height:16 align:#left
+		
+		checkbox 'chk_invSens' "Inv. sens" pos:[18,189] width:71 height:16 align:#left
+		
+		checkbox 'chk_pleine' "Pleine" pos:[18,203] width:133 height:16 align:#left
+		
+		spinner 'spn_imposte' "" pos:[90,244] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
+		spinner 'spn_allege' "" pos:[90,259] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
+		checkbox 'chk_imposte' "Imposte:" pos:[10,243] width:76 height:16 align:#left
+		checkbox 'chk_allege' "Allège:" pos:[10,257] width:60 height:16 align:#left
 	
 	
 		---------- Treeview -----------------------------------------------------------------------------
@@ -167,13 +175,13 @@ category:"CP | Menuiserie"
 			tv_sequence.ShowRootLines	 	= false
 			tv_sequence.ShowLines   			= false
 			
-			tv_sequence.BackColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
+			tv_sequence.BackColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
 			tv_sequence.ForeColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
 			tv_sequence.LineColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
-			tv_sequence.DrawMode 			= (dotnetclass "TreeViewDrawMode.OwnerDrawText")
+			tv_sequence.DrawMode 				= (dotnetclass "TreeViewDrawMode.OwnerDrawText")
 			
-			tv_sequence.indent				= 0
-			tv_sequence.Left				= 0
+			tv_sequence.indent					= 0
+			tv_sequence.Left						= 0
 			
 			
 			
@@ -226,7 +234,7 @@ category:"CP | Menuiserie"
 			
 			if noeudDest != undefined then	(
 				
-				local element_dest 				= get_element		 	noeudDest
+				local element_dest 			= get_element		 	noeudDest
 				deplacer_element				id_element_enDrag			( noeudDest.index + 1 )
 				
 			) else 
@@ -238,6 +246,11 @@ category:"CP | Menuiserie"
 			id_element_destination 		= 0
 			
 			node_enDrag = undefined
+			
+			--- on selectionne le premiere element ----
+			tv_sequence.SelectedNode = 	tv_sequence.Nodes.Item[ noeudDest.index ]
+			element_select 					= get_element		tv_sequence.SelectedNode 
+			
 			
 		)
 		
@@ -254,6 +267,7 @@ category:"CP | Menuiserie"
 		
 			local nv_node 	=	_itemParent.Nodes.add 		_item_aAjouter.nom
 			
+-- 			if est_instance 	( nv_node.index + 1 )	do nv_node.text += " *"
 			if est_instance 	( nv_node.index + 1 )	do nv_node.text += " *"
 			
 			case classof _item_aAjouter of (
@@ -283,8 +297,15 @@ category:"CP | Menuiserie"
 		
 		
 		----- UI	divers ----------------------------------------------------------------------------------------------------
-		fn actualiser_element 			=(
+		fn actualiser_boutons =(
 			
+			btn_dupliquer.enabled 		= element_select != undefined
+			btn_instancier.enabled 		= element_select != undefined
+			btn_supprimer.enabled 		= element_select != undefined
+			btn_rendreUnique.enabled 	= element_select != undefined	and est_instance ( tv_sequence.SelectedNode.index  + 1 )
+			
+		)
+		fn actualiser_element 			=(
 			
 			local ui_elem_enable		= false
 			if element_select != undefined do ui_elem_enable = true
@@ -303,27 +324,29 @@ category:"CP | Menuiserie"
 			
 			spn_elem_tiercee.enabled 					=  ui_elem_enable and	not	est_fixe element_select	and element_select.ouvrant_double
 			spn_elem_tiercee.indeterminate			=	not spn_elem_tiercee.enabled 
+			lbl_tierce_pourcent.enabled 				=  spn_elem_tiercee.enabled 	
 			
-			chk_invSens.enabled 	= ui_elem_enable 	and not	est_fixe 		element_select
 			chk_double.enabled 	= ui_elem_enable	and not	est_fixe 		element_select
-			chk_vitree.enabled 	= ui_elem_enable	and 			est_porte 		element_select
+			chk_invSens.enabled 	= ui_elem_enable 	and not	est_fixe 		element_select and not element_select.ouvrant_double
+			if not chk_invSens.enabled do chk_invSens.checked = false
+			chk_pleine.enabled 	= ui_elem_enable	and 			est_porte 		element_select
 			
 			
 			if element_select != undefined do (
+				
 				spn_elem_longueur.value = element_select.longueur
 				spn_elem_montants.value = element_select.div_montants_nbr
 				spn_elem_traverses.value = element_select.div_traverses_nbr
 				
-				if not	est_fixe 	element_select	do	chk_invSens.checked 	= element_select.symetrie
 				if not	est_fixe 	element_select	do	chk_double.checked 		= element_select.ouvrant_double
-				if not	est_fixe 	element_select	and element_select.ouvrant_double do	spn_elem_tiercee.value	= element_select.ouvrant_tierce_pourcent
-				if 	est_porte 			element_select	do	chk_vitree.checked 		= element_select.ouvrant_vitree
+				if not	est_fixe 	element_select	and chk_invSens.enabled do	chk_invSens.checked 	= element_select.symetrie
+				if not	est_fixe 	element_select	and 	element_select.ouvrant_double do	spn_elem_tiercee.value	= element_select.ouvrant_tierce_pourcent
+				if 	est_porte 			element_select	do	chk_pleine.checked 		= not	element_select.ouvrant_vitree
 			)
 			
+			actualiser_boutons ()
 			
-	
 		)
-		
 		
 		
 		
@@ -334,8 +357,7 @@ category:"CP | Menuiserie"
 			for i = 1 to sequence.count do 				
 				ajouter_TV_item	sequence[i]		tv_sequence
 			
--- 			local elem_selec = if sequence.count>0 do sequence[1] else undefined
-			actualiser_element 	()
+-- 			actualiser_element 	()
 			
 		) --- fin actualiser -----------
 		
@@ -343,21 +365,69 @@ category:"CP | Menuiserie"
 		
 		
 		----- EVENEMENTS----------------------------------------------------------------------------------------------------
-				
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		on roll_parametres open do
 		(
+			initialiser_tv ()
+			actualiser ()
+			
+			--- on selectionne le premiere element ----
+			if sequence.count> 0 do ( 
+				tv_sequence.SelectedNode = 	tv_sequence.Nodes.Item[0]
+				element_select 					= get_element		tv_sequence.SelectedNode 
+			)
+			
+			actualiser_element ()
+		)
+		on btn_ajouter_fixe pressed do
+		(
 					
-					initialiser_tv ()
-					actualiser ()
+					local id_elem_selectBack = if element_select != undefined then	( tv_sequence.SelectedNode.index  + 1 )	else	sequence.count
+					ajouter_element_menuis 	cp_menuiserie_fixe	pos:( id_elem_selectBack + 1 )
+					
+					----- on selectionne le bon élément de la liste ----------
+					tv_sequence.SelectedNode = 	tv_sequence.Nodes.Item[ id_elem_selectBack ]
+					element_select 					= get_element		tv_sequence.SelectedNode 
+					actualiser_element ()
 					
 				)
-		on btn_ajouter_fixe pressed do
-			ajouter_element_menuis 	cp_menuiserie_fixe
 		on btn_ajouter_fenetre pressed do
-			ajouter_element_menuis 	cp_menuiserie_fenetre
+		(
+					
+					local id_elem_selectBack = if element_select != undefined then	( tv_sequence.SelectedNode.index  + 1 )	else	sequence.count
+					ajouter_element_menuis 	cp_menuiserie_fenetre	pos:( id_elem_selectBack + 1 )
+					
+					----- on selectionne le bon élément de la liste ----------
+					tv_sequence.SelectedNode = 	tv_sequence.Nodes.Item[ id_elem_selectBack ]
+					element_select 					= get_element		tv_sequence.SelectedNode 
+					actualiser_element ()
+					
+				)
 		on btn_ajouter_porte pressed do
-			ajouter_element_menuis 	cp_menuiserie_porte
+		(
+					
+					local id_elem_selectBack = if element_select != undefined then	( tv_sequence.SelectedNode.index  + 1 )	else	sequence.count
+					ajouter_element_menuis 	cp_menuiserie_porte	pos:( id_elem_selectBack + 1 )
+					
+					----- on selectionne le bon élément de la liste ----------
+					tv_sequence.SelectedNode = 	tv_sequence.Nodes.Item[ id_elem_selectBack ]
+					element_select 					= get_element		tv_sequence.SelectedNode 
+					actualiser_element ()
+					
+				)
 		on tv_sequence mouseDown _arg 	do
 		(
 					
@@ -366,6 +436,7 @@ category:"CP | Menuiserie"
 					
 					if element_select != undefined then (
 		-- 				addSubRollout 	subroll_dest		elem_selec.roll_parametres
+						tv_sequence.SelectedNode 	= noeud_selec
 					)else (
 						tv_sequence.SelectedNode 	= undefined
 						element_select 						= undefined
@@ -380,13 +451,43 @@ category:"CP | Menuiserie"
 		on tv_sequence ItemDrag _sender		_arg 	do
 			drag_demarrer 		_arg
 		on btn_dupliquer pressed do
-			dupliquer_element_menuis 		( tv_sequence.SelectedNode.index + 1 )
+		(
+					local id_elem_selec = ( tv_sequence.SelectedNode.index + 1 )
+					dupliquer_element_menuis 		id_elem_selec
+					
+					----- on selectionne le bon élément de la liste ----------
+					tv_sequence.SelectedNode = 	tv_sequence.Nodes.Item[ id_elem_selec ]
+					element_select 					= get_element		tv_sequence.SelectedNode 
+					actualiser_element ()
+				)
 		on btn_instancier pressed do
-			instancier_element_menuis 		( tv_sequence.SelectedNode.index + 1 )
+		(
+					local id_elem_selec = ( tv_sequence.SelectedNode.index + 1 )
+					instancier_element_menuis 		id_elem_selec
+					
+					----- on selectionne le bon élément de la liste ----------
+					tv_sequence.SelectedNode = 	tv_sequence.Nodes.Item[ id_elem_selec ]
+					element_select 					= get_element		tv_sequence.SelectedNode 
+					actualiser_element ()
+				)
 		on btn_rendreUnique pressed do
-			rendreUnique_element_menuis 	( tv_sequence.SelectedNode.index + 1 )
+		(
+					rendreUnique_element_menuis 	( tv_sequence.SelectedNode.index + 1 )
+				)
 		on btn_supprimer pressed do
-			retirer_element_menuis 			( tv_sequence.SelectedNode.index + 1 )
+		(
+					local id_elem_selec = ( tv_sequence.SelectedNode.index + 1 )
+					retirer_element_menuis 			id_elem_selec
+					
+					if sequence.count> 0 then  ( 
+						id_elem_selec = if id_elem_selec > sequence.count then id_elem_selec - 1 else	id_elem_selec 
+						
+						tv_sequence.SelectedNode = 	tv_sequence.Nodes.Item[ id_elem_selec - 1 ]
+						element_select 					= get_element		tv_sequence.SelectedNode 
+						
+					) else element_select = undefined
+					actualiser_element ()
+				)
 		on spn_elem_longueur changed val do
 		(
 					
@@ -404,12 +505,6 @@ category:"CP | Menuiserie"
 					element_select.div_traverses_nbr = val
 					redrawViews ()
 				)
-		on chk_invSens changed state do
-		(
-					
-					element_select.symetrie = state
-					redrawViews ()
-				)
 		on chk_double changed state do
 		(
 					
@@ -422,10 +517,16 @@ category:"CP | Menuiserie"
 					element_select.ouvrant_tierce_pourcent = val
 					redrawViews ()
 				)
-		on chk_vitree changed state do
+		on chk_invSens changed state do
 		(
 					
-					element_select.ouvrant_vitree = state
+					element_select.symetrie = state
+					redrawViews ()
+				)
+		on chk_pleine changed state do
+		(
+					
+					element_select.ouvrant_vitree = not	state
 					redrawViews ()
 				)
 	)
@@ -482,7 +583,7 @@ category:"CP | Menuiserie"
 	fn est_fenetre		_compo	=	classof	_compo	==	cp_menuiserie_fenetre
 	fn est_fixe				_compo	=	classof	_compo	==	cp_menuiserie_fixe
 	
-	fn est_instance	_id		= (
+	fn est_instance		_id		= (
 		
 		local result =false
 		for i = 1 to sequence.count where i != _id do
@@ -543,15 +644,19 @@ category:"CP | Menuiserie"
 		
 		---- actualisations -----------
 		actualiser_UI ()
-	
+		
 	)
 	
 	
 	
-	fn ajouter_element_menuis		_element_plug	 =(
+	fn ajouter_element_menuis		_element_plug	 pos:	=(
 		
 		local nvl_element 		= createinstance	_element_plug
-		append sequence		nvl_element
+		if pos == unsupplied or pos > sequence.count	then (
+			append sequence		nvl_element
+		) else (
+			insertItem		nvl_element		sequence		pos
+		)
 		
 		
 		---- actualisations -----------
@@ -669,9 +774,13 @@ category:"CP | Menuiserie"
 			if compo_temp.longueur == 0 then		compo_temp.longueur 	= 		longueur_composant
 			
 			if est_porte 	compo_temp 	then		compo_temp.hauteur	=		hauteur - menuis_epaisseur
-													else		compo_temp.hauteur	=		hauteur - 2*menuis_epaisseur
+														else		compo_temp.hauteur	=		hauteur - 2*menuis_epaisseur
 			
-			compo_temp.profondeur		=	menuis_profondeur
+			if not est_fixe compo_temp do compo_temp.ouvrant_cadre_larg		=	menuis_epaisseur
+			
+			
+			compo_temp.profondeur			=	menuis_profondeur
+			compo_temp.div_largeur		=	menuis_epaisseur / 2
 -- 			compo_temp.low_poly			=	low_poly
 			compo_temp.qualite			 	= qualite		
 			compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv
