@@ -92,7 +92,9 @@ category:"CP | Menuiserie"
 	
 	
 	
-	rollout roll_parametres  "Menuiseries"	(		
+	rollout roll_parametres "Menuiseries" width:180 height:285
+	(
+		
 		
 		------------ TRee view -----------------------------
 		local m_dragDropEffect		=	dotNetClass "System.Windows.Forms.DragDropEffects"		
@@ -113,16 +115,20 @@ category:"CP | Menuiserie"
 		
 		GroupBox 'grp_element' "Elément" pos:[5,121] width:170 height:121 align:#left
 		
-		spinner 'spn_elem_longueur' "" pos:[90,141] width:75 height:16 range:[0,1e20,0] type:#worldunits align:#left
-		label 'lbl_elem_longueur' "Longueur:" pos:[20,139] width:75 height:19 align:#left
+		spinner 'spn_elem_longueur' "" pos:[90,141] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_elem_longueur' "Longueur:" pos:[20,139] width:67 height:19 align:#left
 		spinner 'spn_elem_montants' "" pos:[90,156] width:75 height:16 range:[0,10,0] type:#integer align:#left
-		label 'lbl_elem_montants' "Montants:" pos:[20,155] width:75 height:19 align:#left
+		label 'lbl_elem_montants' "Montants:" pos:[20,155] width:64 height:19 align:#left
 		spinner 'spn_elem_traverses' "" pos:[90,171] width:75 height:16 range:[0,10,0] type:#integer align:#left
-		label 'lbl_elem_traverses' "Traverses:" pos:[20,169] width:75 height:19 align:#left
+		label 'lbl_elem_traverses' "Traverses:" pos:[20,169] width:63 height:19 align:#left
 		
-		checkbox 'chk_invSens' "Inverser sens" pos:[18,188] width:104 height:16 align:#left
-		checkbox 'chk_double' "Double" pos:[18,202] width:133 height:16 align:#left
-		checkbox 'chk_vitree' "Vitrée" pos:[18,216] width:133 height:16 align:#left
+		checkbox 'chk_invSens' "Inverser sens" pos:[18,200] width:104 height:16 align:#left
+		checkbox 'chk_double' "Double" pos:[18,186] width:69 height:16 align:#left
+		
+		spinner 'spn_elem_tiercee' "" pos:[90,186] width:55 height:16 range:[0,100,0] type:#float align:#left
+		label 'lbl_tierce_pourcent' "%" pos:[151,187] width:15 height:16 align:#left
+		
+		checkbox 'chk_vitree' "Vitrée" pos:[18,214] width:133 height:16 align:#left
 		
 		spinner 'spn_imposte' "" pos:[90,250] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
 		spinner 'spn_allege' "" pos:[90,265] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
@@ -287,13 +293,16 @@ category:"CP | Menuiserie"
 			spn_elem_longueur.enabled 				= ui_elem_enable
 			spn_elem_longueur.indeterminate		=	not ui_elem_enable
 			
-			lbl_elem_montants.enabled = ui_elem_enable
-			spn_elem_montants.enabled = ui_elem_enable
+			lbl_elem_montants.enabled 				= ui_elem_enable
+			spn_elem_montants.enabled 				= ui_elem_enable
 			spn_elem_montants.indeterminate		=	not ui_elem_enable
 			
-			lbl_elem_traverses.enabled = ui_elem_enable
-			spn_elem_traverses.enabled = ui_elem_enable
+			lbl_elem_traverses.enabled 				= ui_elem_enable
+			spn_elem_traverses.enabled 				= ui_elem_enable
 			spn_elem_traverses.indeterminate		=	not ui_elem_enable
+			
+			spn_elem_tiercee.enabled 					=  ui_elem_enable and	not	est_fixe element_select	and element_select.ouvrant_double
+			spn_elem_tiercee.indeterminate			=	not spn_elem_tiercee.enabled 
 			
 			chk_invSens.enabled 	= ui_elem_enable 	and not	est_fixe 		element_select
 			chk_double.enabled 	= ui_elem_enable	and not	est_fixe 		element_select
@@ -307,42 +316,14 @@ category:"CP | Menuiserie"
 				
 				if not	est_fixe 	element_select	do	chk_invSens.checked 	= element_select.symetrie
 				if not	est_fixe 	element_select	do	chk_double.checked 		= element_select.ouvrant_double
+				if not	est_fixe 	element_select	and element_select.ouvrant_double do	spn_elem_tiercee.value	= element_select.ouvrant_tierce_pourcent
 				if 	est_porte 			element_select	do	chk_vitree.checked 		= element_select.ouvrant_vitree
 			)
 			
 			
 	
 		)
-		on spn_elem_longueur changed val do (
-			
-			element_select.longueur = val
-			redrawViews ()
-		)
-		on spn_elem_montants changed val do (
-			
-			element_select.div_montants_nbr = val
-			redrawViews ()
-		)
-		on spn_elem_traverses changed val do (
-			element_select.div_traverses_nbr = val
-			redrawViews ()
-		)
 		
-		on chk_invSens changed state do (
-			
-			element_select.symetrie = state
-			redrawViews ()
-		)
-		on chk_double changed state do (
-			
-			element_select.ouvrant_double = state
-			redrawViews ()
-		)
-		on chk_vitree changed state do (
-			
-			element_select.ouvrant_vitree = state
-			redrawViews ()
-		)
 		
 		
 		
@@ -362,49 +343,92 @@ category:"CP | Menuiserie"
 		
 		
 		----- EVENEMENTS----------------------------------------------------------------------------------------------------
-		on roll_parametres	open do (
-			
-			initialiser_tv ()
-			actualiser ()
-			
-		)
+				
 		
-		
-		
-		-------- la sequence -----------
-		on btn_ajouter_fixe 		pressed 			do 	ajouter_element_menuis 	cp_menuiserie_fixe
-		on btn_ajouter_fenetre 	pressed 			do 	ajouter_element_menuis 	cp_menuiserie_fenetre
-		on btn_ajouter_porte 	pressed 			do 	ajouter_element_menuis 	cp_menuiserie_porte
-		
-		on btn_dupliquer 			pressed 			do	dupliquer_element_menuis 		( tv_sequence.SelectedNode.index + 1 )
-		on btn_instancier 			pressed 			do	instancier_element_menuis 		( tv_sequence.SelectedNode.index + 1 )
-		on btn_rendreUnique		pressed 			do	rendreUnique_element_menuis 	( tv_sequence.SelectedNode.index + 1 )
-		on btn_supprimer 			pressed 			do	retirer_element_menuis 			( tv_sequence.SelectedNode.index + 1 )
-		
-		
-		
-		--------- le treeView ---------
-		on tv_sequence 	mouseDown 				_arg 	do  	(
-			
-			local noeud_selec 		= tv_sequence.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y )
-			element_select			= get_element	noeud_selec
-			
-			if element_select != undefined then (
--- 				addSubRollout 	subroll_dest		elem_selec.roll_parametres
-			)else (
-				tv_sequence.SelectedNode 	= undefined
-				element_select 						= undefined
-			)
-			
-			actualiser_element 	()
-		)
-		
-		on tv_sequence 	DragOver 	_sender		_arg	do	drag_checkSurvol  	_arg
-		on tv_sequence 	DragDrop 					_arg 	do	drag_recevoir 			_arg
-		on tv_sequence 	ItemDrag 	_sender		_arg 	do	drag_demarrer 		_arg
-		
-		
-	) ---- fin rollout menuiseries	------------------------------
+		on roll_parametres open do
+		(
+					
+					initialiser_tv ()
+					actualiser ()
+					
+				)
+		on btn_ajouter_fixe pressed do
+			ajouter_element_menuis 	cp_menuiserie_fixe
+		on btn_ajouter_fenetre pressed do
+			ajouter_element_menuis 	cp_menuiserie_fenetre
+		on btn_ajouter_porte pressed do
+			ajouter_element_menuis 	cp_menuiserie_porte
+		on tv_sequence mouseDown _arg 	do
+		(
+					
+					local noeud_selec 		= tv_sequence.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y )
+					element_select			= get_element	noeud_selec
+					
+					if element_select != undefined then (
+		-- 				addSubRollout 	subroll_dest		elem_selec.roll_parametres
+					)else (
+						tv_sequence.SelectedNode 	= undefined
+						element_select 						= undefined
+					)
+					
+					actualiser_element 	()
+				)
+		on tv_sequence DragOver _sender		_arg	do
+			drag_checkSurvol  	_arg
+		on tv_sequence DragDrop _arg 	do
+			drag_recevoir 			_arg
+		on tv_sequence ItemDrag _sender		_arg 	do
+			drag_demarrer 		_arg
+		on btn_dupliquer pressed do
+			dupliquer_element_menuis 		( tv_sequence.SelectedNode.index + 1 )
+		on btn_instancier pressed do
+			instancier_element_menuis 		( tv_sequence.SelectedNode.index + 1 )
+		on btn_rendreUnique pressed do
+			rendreUnique_element_menuis 	( tv_sequence.SelectedNode.index + 1 )
+		on btn_supprimer pressed do
+			retirer_element_menuis 			( tv_sequence.SelectedNode.index + 1 )
+		on spn_elem_longueur changed val do
+		(
+					
+					element_select.longueur = val
+					redrawViews ()
+				)
+		on spn_elem_montants changed val do
+		(
+					
+					element_select.div_montants_nbr = val
+					redrawViews ()
+				)
+		on spn_elem_traverses changed val do
+		(
+					element_select.div_traverses_nbr = val
+					redrawViews ()
+				)
+		on chk_invSens changed state do
+		(
+					
+					element_select.symetrie = state
+					redrawViews ()
+				)
+		on chk_double changed state do
+		(
+					
+					element_select.ouvrant_double = state
+					actualiser_element 	()
+					redrawViews ()
+				)
+		on spn_elem_tiercee changed val do
+		(
+					element_select.ouvrant_tierce_pourcent = val
+					redrawViews ()
+				)
+		on chk_vitree changed state do
+		(
+					
+					element_select.ouvrant_vitree = state
+					redrawViews ()
+				)
+	)
 	
 	
 	
@@ -777,5 +801,4 @@ category:"CP | Menuiserie"
 	
 	
 ) ------- fin plugin ---------------------
-
 
