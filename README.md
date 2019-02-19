@@ -75,6 +75,7 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
   - [ ] façades : portiques/porches ?
   - [ ] façades : repartiion mode espacement.
   - [ ] Toitures : integration d'elemnts secondaire (chien assis, lucarnes, cheminets, locaux techniques, ...)
+  - [ ] Toiture, deboguer la squeletisation, y'a un fichier max avec un exemple du bug dans recherche/3D. c'est un decalage sur Z d'un point.
 
 
 #### __Terrain__
