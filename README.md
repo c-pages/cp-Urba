@@ -73,6 +73,7 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
   - [ ] façades : Les chaînages
   - [ ] façades : trouver le moyen de faire des corniches (comment les placer sur Z ?)
   - [ ] façades : portiques/porches ?
+  - [ ] façades : repartiion mode espacement.
   - [ ] Toitures : integration d'elemnts secondaire (chien assis, lucarnes, cheminets, locaux techniques, ...)
 
 
