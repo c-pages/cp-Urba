@@ -120,7 +120,7 @@ category:"CP | Bâtiment	| Element"
 		label lbl_decalage "Décallage:" pos:[20,49] width:55 height:19 align:#left
 		spinner spn_decalage "" pos:[90,49] width:75 height:16 range:[-1e+20,1e+20,0] type:#worldunits align:#left
 		label lbl_repetitions "Répétitions:" pos:[20,64] width:60 height:19 align:#left
-		spinner spn_repetitions "" pos:[90,64] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		spinner spn_repetitions "" pos:[90,64] width:75 height:16 range:[0,1e+20,0] type:#integer align:#left
 		label lbl_espacement "Espacement:" pos:[20,79] width:69 height:19 align:#left
 		spinner spn_espacement "" pos:[90,79] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		fn actualiser =(
@@ -169,36 +169,6 @@ category:"CP | Bâtiment	| Element"
 			button 		btn_ajouter_groupe	 "Groupe"			width:50	height:17			align:#left			across:3	
 			button 		btn_ajouter_vide2 	""			width:50	height:17			align:#left		enabled:false
 			button 		btn_ajouter_vide3 	""			width:50	height:17			align:#left		enabled:false
-			/* 
-			button 		btn_ajouter_groupe 	"Groupe"			width:50		height:17		align:#left		across:3	
-			button 		btn_ajouter_vide3 	""			width:50	height:17			align:#left		enabled:false
-			button 		btn_ajouter_vide4	""			width:50		height:17		align:#left		enabled:false
-			 */
-			/* 
--- 			label			lbl_pleins	""	align:#left
-			button 		btn_ajouter_mur 			"Mur"			width:50		height:17		across:3		align:#left
-			button 		btn_ajouter_poteau 		"Poteau"			width:50		height:17		align:#left	enabled:false
-			button 		btn_ajouter_chainage 		"Chainage"		width:50	height:17			align:#left		enabled:false
-			
--- 			label			lbl_baies	""	align:#left
-			button 		btn_ajouter_fixe		 		"Fixe"				width:50		height:17	align:#left		across:3		
-			button 		btn_ajouter_fenetre 		"Fenêtre"		width:50		height:17	align:#left	
-			button 		btn_ajouter_porte 	"Porte"			width:50		height:17		align:#left		
-			button 		btn_ajouter_ensemble 		"Ens. men."				width:50	height:17			align:#left	across:3	
-			
-			button 		btn_ajouter_vide1 	""			width:50	height:17			align:#left		enabled:false
-			button 		btn_ajouter_vide2 	""			width:50		height:17		align:#left		enabled:false
-			
--- 			label			lbl_divers	""	align:#left
-			button 		btn_ajouter_balcon 	"Balcon"			width:50		height:17		align:#left		across:3	
-			button 		btn_ajouter_corniche 	"Corniche"			width:50	height:17			align:#left		enabled:false
-			button 		btn_ajouter_porche 	"Porche"			width:50		height:17		align:#left		enabled:false
-			
-			button 		btn_ajouter_groupe 	"Groupe"			width:50		height:17		align:#left		across:3	
-			button 		btn_ajouter_vide3 	""			width:50	height:17			align:#left		enabled:false
-			button 		btn_ajouter_vide4	""			width:50		height:17		align:#left		enabled:false
-			
-			 */
 			
 			
 			dotNetControl tv_sequence	 "treeview" /* width:145 */ height:160 --align:#left
@@ -538,8 +508,10 @@ category:"CP | Bâtiment	| Element"
 					
 					if roll_editeur_facade == undefined then
 						addSubRollout 	subroll_dest		elem_selec.roll_menuiserie
-					else
+					else (
 						addSubRollout 	subroll_dest		elem_selec.menuiserie_objet.roll_parametres
+						addSubRollout 	subroll_dest		elem_selec.roll_imposte
+					)
 				)
 				
 			) else (
@@ -562,40 +534,10 @@ category:"CP | Bâtiment	| Element"
 			
 			local touches = dotnetclass  "System.Windows.Forms.Keys"
 			
--- 			local dossierCourant  = m_edit.getDossier ()			
+			
 			
 			
 			debug "key_up arg" var:_arg
-			/* 
-			case keyCode of (
-				
-				-- Tab : focus ----
-				( touches.Tab ): 	if _arg.shift		then m_prt.focusPrecedant ()
-															else  m_prt.focusSuivant ()
-				
-		 		-- renommer --
-				( touches.F2 ): 		if dossierCourant.estElemUtilisateur () do editerNom	dossierCourant
-				
-				-- supprimer --
-				( touches.Delete ): 	if dossierCourant.estElemUtilisateur ()	do m_edit.supprimer	dossierCourant
-			
--- 				-- ouvrir  --	
--- 				( touches.Enter ): 	m_edit.ouvrir		dossierCourant
-				
-				-- fleches --
-				( touches.Left): 		m_edit.ouvrir		dossierCourant
-				( touches.Right ): 	m_edit.ouvrir		dossierCourant
-				( touches.Up): 		m_edit.ouvrir		dossierCourant
-				( touches.Down ): 	m_edit.ouvrir		dossierCourant
-				
-				-- undo /redo --
-				( touches.Z ): 		if _arg.Control do	m_cmd.defaire ()
-				( touches.Y ): 		if _arg.Control do	m_cmd.refaire ()
-				
-				( touches.Escape ): 		m_apercus.annuler ()
-				
-			)
-			 */
 		)
 		
 		
@@ -643,12 +585,6 @@ category:"CP | Bâtiment	| Element"
 		
 		on btn_ajouter_baie	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_baie
 			
-		/* 
-		on btn_ajouter_fixe				pressed 			do 	ajouter_element_facade 	cp_menuiserie_fixe
-		on btn_ajouter_fenetre			pressed 			do 	ajouter_element_facade 	cp_menuiserie_fenetre
-		on btn_ajouter_porte			pressed 			do 	ajouter_element_facade 	cp_menuiserie_porte
-		on btn_ajouter_ensemble		pressed 			do 	ajouter_element_facade 	cp_menuiserie_ensemble
-			 */
 		on btn_ajouter_balcon			pressed 			do 	ajouter_element_facade 	cp_facadeElem_balcon
 		on btn_ajouter_groupe			pressed 			do 	ajouter_element_facade 	cp_facadeElem_groupe
 		

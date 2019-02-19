@@ -506,6 +506,7 @@ category:"CP | Menuiserie"
 		(
 					
 					element_select.div_montants_nbr = val
+					if not est_fixe element_select do element_select.div_montants_nbr_2 = val
 					redrawViews ()
 				)
 		on spn_elem_traverses changed val do
@@ -820,12 +821,12 @@ category:"CP | Menuiserie"
 			
 			local compo_temp 				= 	copy sequence[i]
 			
-			if compo_temp.longueur == 0 then	compo_temp.longueur 	= 		longueur_composant
+			if compo_temp.longueur == 0 then	compo_temp.longueur 		= 		longueur_composant
 			
-			if est_porte 	compo_temp 	then		compo_temp.hauteur		=		hauteur - menuis_epaisseur
+			if est_porte 	compo_temp 	then		compo_temp.hauteur			=		hauteur - menuis_epaisseur
 														else		(
 															if alleges_use[i]	then (
-																compo_temp.hauteur		=		hauteur - 2*menuis_epaisseur - alleges_hauteur[i]
+																compo_temp.hauteur				=		hauteur - 2*menuis_epaisseur - alleges_hauteur[i]
 															) else 	compo_temp.hauteur		=		hauteur - 2*menuis_epaisseur
 														)
 			
