@@ -25,7 +25,7 @@ category:"CP | Menuiserie"
 	local sequence_tmp
 	
 	---- composants ---------
-	local compo_cadre, compo_meneau
+	local compo_cadre, compo_meneau, compo_allege
 	
 	---- manager de mesh -------------------
 	local mgr_mesh = str_mgr_mesh ()
@@ -43,9 +43,14 @@ category:"CP | Menuiserie"
 		
 		nom	 					type:#string 		/* 	ui:edTxt_nom		 */			default:"Ens. menuisé"
 		
-		sequence				type:#maxObjectTab	tabSizeVariable:true
--- 		
--- 		parent					type:#maxObject	
+		sequence				type:#maxObjectTab		tabSizeVariable:true
+		
+		allege_use				type:#Boolean				ui:chk_allege 						default:false
+		allege_hauteur		type:#worldUnits			ui:spn_allege_hauteur 			default:100.
+		
+		alleges_use			type:#BoolTab				tabSizeVariable:true
+		alleges_hauteur		type:#worldUnitsTab		tabSizeVariable:true
+		
 	)
 	parameters params_divers rollout:roll_divers
 	(
@@ -92,7 +97,7 @@ category:"CP | Menuiserie"
 	
 	
 	
-	rollout roll_parametres "Menuiseries" width:180 height:285
+	rollout roll_parametres "Menuiseries" width:180 height:548
 	(
 		
 		
@@ -113,7 +118,7 @@ category:"CP | Menuiserie"
 		button 'btn_rendreUnique' "Uni" pos:[150,49] width:25 height:17 toolTip:"Rendre unique." align:#left
 		button 'btn_supprimer' "Sup" pos:[150,65] width:25 height:17 toolTip:"Supprimer." align:#left
 		
-		GroupBox 'grp_element' "Elément" pos:[5,115] width:170 height:108 align:#left
+		GroupBox 'grp_element' "Elément" pos:[5,115] width:170 height:137 align:#left
 		
 		spinner 'spn_elem_longueur' "" pos:[90,130] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		label 'lbl_elem_longueur' "Longueur:" pos:[20,130] width:67 height:19 align:#left
@@ -122,25 +127,19 @@ category:"CP | Menuiserie"
 		spinner 'spn_elem_traverses' "" pos:[90,160] width:75 height:16 range:[0,10,0] type:#integer align:#left
 		label 'lbl_elem_traverses' "Traverses:" pos:[20,160] width:63 height:19 align:#left
 		
-		checkbox 'chk_double' "Double" pos:[18,175] width:69 height:16 align:#left		
+		checkbox 'chk_double' "Double" pos:[18,190] width:69 height:16 align:#left		
+		
+		spinner 'spn_elem_tiercee' "" pos:[90,190] width:55 height:16 range:[0,100,0] type:#float align:#left
+		label 'lbl_tierce_pourcent' "%" pos:[151,191] width:15 height:16 align:#left
+		
+		checkbox 'chk_invSens' "Inv. sens" pos:[18,204] width:71 height:16 align:#left
+		
+		checkbox 'chk_pleine' "Pleine" pos:[18,218] width:133 height:16 align:#left
+		
+		checkbox 'chk_allege' "All. vitrée:" pos:[18,176] width:70 height:16 align:#left
+		spinner 'spn_allege_hauteur' "" pos:[90,175] width:75 height:16 range:[0,100,0] type:#worldunits align:#left
 		
 		
-		
-		
-		
-		spinner 'spn_elem_tiercee' "" pos:[90,175] width:55 height:16 range:[0,100,0] type:#float align:#left
-		label 'lbl_tierce_pourcent' "%" pos:[151,176] width:15 height:16 align:#left
-		
-		checkbox 'chk_invSens' "Inv. sens" pos:[18,189] width:71 height:16 align:#left
-		
-		checkbox 'chk_pleine' "Pleine" pos:[18,203] width:133 height:16 align:#left
-		
-		spinner 'spn_imposte' "" pos:[90,244] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
-		spinner 'spn_allege' "" pos:[90,259] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
-		checkbox 'chk_imposte' "Imposte:" pos:[10,243] width:76 height:16 align:#left
-		checkbox 'chk_allege' "Allège:" pos:[10,257] width:60 height:16 align:#left
-	
-	
 		---------- Treeview -----------------------------------------------------------------------------
 		local id_element_enDrag	=	0
 		local id_element_destination	=	0		
@@ -329,16 +328,28 @@ category:"CP | Menuiserie"
 			chk_pleine.enabled 	= ui_elem_enable	and 			est_porte 		element_select
 			
 			
+			chk_allege.enabled 							= ui_elem_enable and not est_porte		element_select	
+			spn_allege_hauteur.enabled 				= ui_elem_enable and not est_porte		element_select	and alleges_use[	tv_sequence.SelectedNode.index  + 1 	]
+			spn_allege_hauteur.indeterminate		=	not spn_allege_hauteur.enabled
+			
+			
+			
 			if element_select != undefined do (
 				
-				spn_elem_longueur.value = element_select.longueur
-				spn_elem_montants.value = element_select.div_montants_nbr
-				spn_elem_traverses.value = element_select.div_traverses_nbr
+				spn_elem_longueur.value 	= 	element_select.longueur
+				spn_elem_montants.value 	= 	element_select.div_montants_nbr
+				spn_elem_traverses.value 	= 	element_select.div_traverses_nbr
+				if not spn_allege_hauteur.indeterminate do
+					spn_allege_hauteur.value	=	alleges_hauteur[	tv_sequence.SelectedNode.index  + 1 	]
+				chk_allege.checked 			= alleges_use[	tv_sequence.SelectedNode.index  + 1 	]
 				
 				if not	est_fixe 	element_select	do	chk_double.checked 		= element_select.ouvrant_double
-				if not	est_fixe 	element_select	and chk_invSens.enabled do	chk_invSens.checked 	= element_select.symetrie
+				if not	est_fixe 	element_select	and 	chk_invSens.enabled do	chk_invSens.checked 	= element_select.symetrie
 				if not	est_fixe 	element_select	and 	element_select.ouvrant_double do	spn_elem_tiercee.value	= element_select.ouvrant_tierce_pourcent
 				if 	est_porte 			element_select	do	chk_pleine.checked 		= not	element_select.ouvrant_vitree
+				
+				
+				
 			)
 			
 			actualiser_boutons ()
@@ -526,6 +537,18 @@ category:"CP | Menuiserie"
 					element_select.ouvrant_vitree = not	state
 					redrawViews ()
 				)
+		on chk_allege changed state do
+		(
+					
+					alleges_use[  tv_sequence.SelectedNode.index  + 1 ] = state
+					actualiser_element 	()
+					redrawViews ()
+				)
+		on spn_allege_hauteur changed val do
+		(
+					alleges_hauteur[  tv_sequence.SelectedNode.index  + 1 ] = val
+					redrawViews ()
+				)
 	)
 	
 	
@@ -651,8 +674,12 @@ category:"CP | Menuiserie"
 		local nvl_element 		= createinstance	_element_plug
 		if pos == unsupplied or pos > sequence.count	then (
 			append sequence		nvl_element
+			append alleges_use		false
+			append alleges_hauteur	100.
 		) else (
-			insertItem		nvl_element		sequence		pos
+			insertItem		nvl_element		sequence			pos
+			insertItem		false					alleges_use		pos
+			insertItem		100.					alleges_hauteur	pos
 		)
 		
 		
@@ -662,28 +689,46 @@ category:"CP | Menuiserie"
 	fn retirer_element_menuis		_id	 	=(
 		
 		deleteItem sequence 				_id
+		deleteItem alleges_use 			_id
+		deleteItem alleges_hauteur 	_id
 		
 		---- actualisations -----------
 		actualiser_UI ()
 	)
 	fn monter_element_menuis 		_id 		=(
 		
-		local elem_temp 		= sequence[ _id ]
+		local elem_temp 					= sequence[ _id ]
+		local allegeUse_temp 			= alleges_use[ _id ]
+		local allegeHauteur_temp 		= alleges_hauteur[ _id ]
+		
 		deleteItem 	sequence 				_id
-		insertItem 	elem_temp			sequence  					(	_id - 1 )
+		deleteItem 	alleges_use 			_id
+		deleteItem 	alleges_hauteur 	_id
+		
+		insertItem 	elem_temp					sequence  					(	_id - 1 )
+		insertItem 	allegeUse_temp				alleges_use  				(	_id - 1 )
+		insertItem 	allegeHauteur_temp		alleges_hauteur  		(	_id - 1 )
 		
 		---- actualisations -----------
 		actualiser_UI ()
 	)
 	fn	descendre_element_menuis 	_id 		=(
 		
-		local elem_temp 		= sequence[ _id ]
+		local elem_temp 					= sequence[ _id ]
+		local allegeUse_temp 			= alleges_use[ _id ]
+		local allegeHauteur_temp 		= alleges_hauteur[ _id ]
 		deleteItem 	sequence 				_id
-		if _id == sequence.count then 
+		deleteItem 	alleges_use 			_id
+		deleteItem 	alleges_hauteur 	_id
+		if _id == sequence.count then (
 			append sequence 				elem_temp
-		else 
-			insertItem 	elem_temp		sequence  					(	_id + 1 )		
-		
+			append alleges_use 			allegeUse_temp
+			append alleges_hauteur 	allegeHauteur_temp
+		) else (
+			insertItem 	elem_temp					sequence  					(	_id + 1 )	
+			insertItem 	allegeUse_temp				alleges_use  				(	_id + 1 )
+			insertItem 	allegeHauteur_temp		alleges_hauteur  		(	_id + 1 )
+		)
 		---- actualisations -----------
 		actualiser_UI ()
 	)
@@ -739,26 +784,33 @@ category:"CP | Menuiserie"
 	fn actualiser_composants	= with redraw off (
 		
 		---- creation des composants ------------------
-		if compo_cadre 		== undefined		do	compo_cadre		= 	createInstance  cp_menuisElem_cadre
+		if compo_cadre 			== undefined	do	compo_cadre		= 	createInstance  cp_menuisElem_cadre
 		if compo_meneau		== undefined	do	compo_meneau	= 	createInstance  cp_menuisElem_meneau
+		if compo_allege			== undefined	do	compo_allege	= 	createInstance  cp_menuiserie_fixe
 		
 		----- maj du cadre ----------------------
 		compo_cadre.longueur 						= longueur
 		compo_cadre.hauteur 						= hauteur	
 		compo_cadre.profondeur 					= menuis_profondeur
 		compo_cadre.menuis_epaisseur	 		= menuis_epaisseur	
--- 		compo_cadre.low_poly			 			= low_poly		
 		compo_cadre.qualite			 				= qualite		
 		compo_cadre.matId_menuis	 			= matId_menuis
-		compo_cadre.travBasse					=	false
+		compo_cadre.travBasse						=	false
+		
+		
 		
 		----- Meneaux  ----------------------
 		compo_meneau.longueur 					= menuis_epaisseur
 		compo_meneau.profondeur 				= menuis_profondeur
 		compo_meneau.hauteur 					= hauteur	-  menuis_epaisseur
--- 		compo_meneau.low_poly			 		= low_poly		
 		compo_meneau.qualite			 			= qualite		
 		
+		
+		----- maj du allege ----------------------
+		compo_allege.menuis_profondeur		= menuis_profondeur
+		compo_allege.menuis_epaisseur	 		= menuis_epaisseur	
+		compo_allege.cadre			 				= false
+		compo_allege.qualite			 				= qualite		
 		
 		
 		--- maj des composants de la sequence -------------
@@ -767,23 +819,29 @@ category:"CP | Menuiserie"
 		for i = 1 to sequence.count do (
 			
 			local compo_temp 				= 	copy sequence[i]
-	
-			if compo_temp.longueur == 0 then		compo_temp.longueur 	= 		longueur_composant
 			
-			if est_porte 	compo_temp 	then		compo_temp.hauteur	=		hauteur - menuis_epaisseur
-														else		compo_temp.hauteur	=		hauteur - 2*menuis_epaisseur
+			if compo_temp.longueur == 0 then	compo_temp.longueur 	= 		longueur_composant
+			
+			if est_porte 	compo_temp 	then		compo_temp.hauteur		=		hauteur - menuis_epaisseur
+														else		(
+															if alleges_use[i]	then (
+																compo_temp.hauteur		=		hauteur - 2*menuis_epaisseur - alleges_hauteur[i]
+															) else 	compo_temp.hauteur		=		hauteur - 2*menuis_epaisseur
+														)
+			
+			
 			
 			if not est_fixe compo_temp do compo_temp.ouvrant_cadre_larg		=	menuis_epaisseur
 			
 			
-			compo_temp.menuis_profondeur			=	menuis_profondeur
-			compo_temp.div_largeur		=	menuis_epaisseur / 2
--- 			compo_temp.low_poly			=	low_poly
-			compo_temp.qualite			 	= qualite		
+			compo_temp.menuis_profondeur	=	menuis_profondeur
+			compo_temp.div_largeur				=	menuis_epaisseur / 2
+			compo_temp.qualite			 			= qualite		
+			compo_temp.cadre 						= false
 			compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv
-			compo_temp.cadre 				= false
 			
 			append sequence_tmp		compo_temp
+			
 		)
 		
 		
@@ -794,11 +852,10 @@ category:"CP | Menuiserie"
 			
 			append	sequence_tmp  	compo_temp
 			
-			compo_temp.hauteur			=	hauteur 	- 2*menuis_epaisseur
-			compo_temp.menuis_profondeur		=	menuis_profondeur
--- 			compo_temp.low_poly			=	low_poly
-			compo_temp.qualite				=	qualite
-			compo_temp.longueur			=	longueur 		- 2*menuis_epaisseur
+			compo_temp.hauteur						=	hauteur 	- 2*menuis_epaisseur
+			compo_temp.menuis_profondeur	=	menuis_profondeur
+			compo_temp.qualite						=	qualite
+			compo_temp.longueur					=	longueur 		- 2*menuis_epaisseur
 		)
 		
 	)  --- fin actualiser_composants  ------------------
@@ -826,27 +883,40 @@ category:"CP | Menuiserie"
 		
 		---- la sequence	-----
 		local compo_travBas		= 	if qualite ==3	then	createInstance  cp_prim_boiteL  horizontal:true	else createInstance 	cp_prim_boite
+		
 		local depos_composant 	= [ menuis_epaisseur, 0  , 0 ]
 		
 		for i = 1 to	sequence_tmp.count do (
 			
 			---- le composant -----
 			local composant 		= sequence_tmp [i]
-			local calage_z			= if est_porte		composant		then 	0 else  menuis_epaisseur			
-			local depose_temp 	= if  not est_fixe 	composant 	then  	depos_composant  	+ [0, 	0,		calage_z ]
-																					else		depos_composant 	+ [0,		0,		menuis_epaisseur ]
+			local calage_z			= if est_porte		composant	then 	0 else  menuis_epaisseur			
+			local depose_temp 	= if  not est_fixe 	composant 	then  	depos_composant  + [0, 	0,		calage_z ]
+																							else		depos_composant 	+ [0,		0,		menuis_epaisseur ]
 			
 			
-			mgr_mesh.attacher		mesh		composant	transf:depose_temp
+			if sequence.count > 0 	and alleges_use[i]		then (
+				mgr_mesh.attacher				mesh		composant		transf:( depose_temp + [0,0,alleges_hauteur[i]  ] )
+				compo_allege.longueur 	= composant.longueur
+				compo_allege.hauteur 	= alleges_hauteur[i]	 - menuis_epaisseur
+				mgr_mesh.attacher				mesh		compo_allege	transf: depose_temp 
+				
+			)	else	mgr_mesh.attacher		mesh		composant	transf:depose_temp
+				
 			
 			
-			
-			---- la traverse du bas ------------
 			if not est_porte 	composant 	do (
-				compo_travBas.hauteur 		= 	menuis_epaisseur
+				
+				---- la traverse du bas ------------
+				compo_travBas.hauteur 			= 	menuis_epaisseur
 				compo_travBas.profondeur		=	menuis_profondeur
 				compo_travBas.longueur		=	composant.longueur
 				mgr_mesh.attacher		mesh		compo_travBas	transf:depos_composant
+				
+				if sequence.count > 0 	and alleges_use[i] do (
+					mgr_mesh.attacher		mesh		compo_travBas	transf:( depos_composant + [0,0,alleges_hauteur[i]] )
+				)
+				
 			)
 				
 			

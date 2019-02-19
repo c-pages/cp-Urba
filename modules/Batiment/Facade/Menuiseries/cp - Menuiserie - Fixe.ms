@@ -90,9 +90,7 @@ category:"CP | Menuiserie"
 		)
 	)
 	rollout roll_divers  "Divers"	(
-		/* group "Qualité" (
-			checkbox	shk_lowPoly			"Low poly" 		
-		) */
+		
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)

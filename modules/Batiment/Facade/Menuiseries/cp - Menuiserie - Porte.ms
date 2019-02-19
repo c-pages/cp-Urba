@@ -28,32 +28,25 @@ category:"CP | Menuiserie"
 	
 	
 	parameters params_dimensions rollout:rol_global	(
--- 		longueur 		type:#worldUnits 	ui:spn_longueur 			default:90.
 		hauteur	 		type:#worldUnits 	ui:spn_hauteur 			default:0.
 		menuis_profondeur	 			type:#worldUnits 	ui:spn_profondeur		default:5.
--- 		cadre_use		type:#boolean 		ui:shk_cadre				default:true
 		
 		cadre						type:#boolean 		ui:shk_cadre				default:true
 		menuis_epaisseur		type:#worldUnits 	ui:spn_cadre_ep			default:5.
 		travBasse				type:#boolean 		ui:shk_traverse_B		default:false
--- 		ouvrant_callage	 	type:#worldUnits ui:spn_ouvrant_calage	default:0
 	)
 	parameters params_general rollout:roll_parametres	(
 		
 		longueur 		type:#worldUnits 	ui:spn_longueur 			default:0.
 		
 		----- les menuiseries -----------
--- 		cadre_largeur	 				type:#worldUnits 	default:3.5
--- 		menuis_profondeur	 					type:#worldUnits 	default:5.
 		vitrage_epaisseur				type:#worldUnits 	default:1.
 		
 		----- ouvrants ---------------------
--- 		ouvrant_profondeur	 		type:#worldUnits 	default:4.	
 		ouvrant_travBasse_ht	 	type:#worldUnits 	default:10.
 		div_profondeur	 			type:#worldUnits 	default:3.
 		
 		ouvrant_double				type:#boolean 		ui:shk_double								default:false
--- 		ouvrant_tierce					type:#boolean 		ui:shk_tierce								default:false
 		ouvrant_tierce_pourcent	type:#float		 		ui:spn_tierce_pourcent					default:50.
 		
 		ouvrant_vitree					type:#boolean 		ui:shk_vitree								default:true		
@@ -83,8 +76,6 @@ category:"CP | Menuiserie"
 		nom	 							type:#string 			default:"Porte"
 		
 		------ options --------------
--- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
-		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
@@ -123,19 +114,14 @@ category:"CP | Menuiserie"
 			spinner 	spn_cadre_ep 			"Epaisseur" 			type:#worldunits 	range:[0,1e20,0]
 			checkbox	shk_traverse_B		"Traverse basse"
 		)
--- 		checkbox	shk_cadre				"Cadre" 		
--- 		spinner 	spn_ouvrant_calage	"Calage" 				type:#worldunits 	range:[0,1e20,0]
 	)
 	
 	rollout roll_parametres  "Paramètres"	(		
 		
 		spinner 	spn_longueur 			"longueur" 				type:#worldunits 	range:[0,1e20,0]
--- 		spinner 	spn_angle_1 						"Ouv. 1 (°)" 	type:#float				range:[0,180,0]	tooltip:"Angle ouverture porte 1"
 		checkbox	shk_symetrie						"Inverser sens"		tooltip:"Inverser le sens d'ouverture de la porte"
-		checkbox	shk_double							"Double"		width:47	-- across:2	
--- 		checkbox	shk_tierce							"Tiercée"
+		checkbox	shk_double							"Double"		width:47	
 		spinner 	spn_tierce_pourcent 			"Tiercée (%)" 					type:#float				range:[0,100,0] 
--- 		spinner 	spn_angle_2 						"Ouv. 2 (°)" 	type:#float				range:[0,180,0]	tooltip:"Angle ouverture porte 2"
 		
 		group 	"Vitrée" (	
 			checkbox	shk_vitree							"Vitrée"				
@@ -160,14 +146,9 @@ category:"CP | Menuiserie"
 			
 			spn_ouvrant_cadre_larg.indeterminate			=	not ouvrant_double
 			spn_ouvrant_cadre_larg.enabled 				=	ouvrant_double
--- 			shk_tierce.enabled = ouvrant_double
--- 			if not ouvrant_double do shk_tierce.triState = 2
 			
 			spn_tierce_pourcent.indeterminate			=	 not ouvrant_double
 			spn_tierce_pourcent.enabled 					=	ouvrant_double
-			
--- 			spn_angle_2.indeterminate			=	not ouvrant_double
--- 			spn_angle_2.enabled 				=	ouvrant_double
 			spn_div_montants_nbr_2.indeterminate		=	not ouvrant_double	and 	not ouvrant_vitree
 			spn_div_montants_nbr_2.enabled 				=	ouvrant_double and  ouvrant_vitree
 			
@@ -184,9 +165,6 @@ category:"CP | Menuiserie"
 			
 			spn_div_largeur.indeterminate			=	not ouvrant_vitree
 			spn_div_largeur.enabled 					=	ouvrant_vitree
--- 			spn_div_montants_nbr.indeterminate			=	not ouvrant_vitree
--- 			spn_div_montants_nbr.enabled 					=	ouvrant_vitree
-
 
 
 			shk_poignee_2.enabled =  ouvrant_double
@@ -199,9 +177,6 @@ category:"CP | Menuiserie"
 	)
 	
 	rollout roll_divers  "Divers"	(
-		/* group "Qualité" (
-			checkbox	shk_lowPoly				"Low poly" 		
-		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -230,12 +205,10 @@ category:"CP | Menuiserie"
 		
 		
 		---- creation des composants ------------------
--- 		if compo_ouvrant_plein 		== undefined	do	(
 		if qualite != 3 then
 			compo_ouvrant_plein	= 	createInstance  cp_prim_boite
 		else
-			compo_ouvrant_plein	= 	createInstance  cp_prim_planVertical				
--- 		)
+			compo_ouvrant_plein	= 	createInstance  cp_prim_planVertical
 		
 		
 		if compo_ouvrant_vitree 		== undefined	do	compo_ouvrant_vitree	= 	createInstance  cp_menuisElem_chassisVitre
@@ -255,12 +228,12 @@ category:"CP | Menuiserie"
 		local ouvrant_longueur_tmp	=	if not ouvrant_double then  longueur_passage		else longueur_passage / 2 
 	
 		compo_ouvrant_vitree.longueur 					= ouvrant_longueur_tmp	
-		compo_ouvrant_vitree.profondeur 				= menuis_profondeur / 2 -- 		ouvrant_profondeur
+		compo_ouvrant_vitree.profondeur 				= menuis_profondeur / 2 
 		compo_ouvrant_vitree.hauteur 					= hauteur_passage
 		
 		compo_ouvrant_vitree.cadre_largeur 			= ouvrant_cadre_larg
 		compo_ouvrant_vitree.travBasse_hauteur		= ouvrant_cadre_travB_ht		
--- 		compo_ouvrant_vitree.low_poly			 		= low_poly
+		
 		compo_ouvrant_vitree.matId_menuis	 		= matId_menuis
 		compo_ouvrant_vitree.matId_vitrage	 		= matId_vitrage		
 		compo_ouvrant_vitree.div_montants_nbr 		= div_montants_nbr
@@ -410,7 +383,6 @@ category:"CP | Menuiserie"
 			
 			if poignee_1_use /* and not low_poly  */and hauteur  > hauteur_min and ouvrant_cadre_larg > largeur_menuis_min	do (
 				
-	-- 			local longueur_passage = compo_ouvrant.longueur
 				
 				compo_poignee.qualite 			= qualite
 				compo_poignee.matID			=	matId_poignee

@@ -232,6 +232,8 @@ category:"CP | Facade	| Element"
 	---- les composants ---------------------
 	fn actualiser_composants	= with redraw off (
 		
+		
+		------ la menuiserie principale	------------------------------------
 		local hauteur_menuis			
 		if menuiserie_objet != undefined do (
 
@@ -264,6 +266,7 @@ category:"CP | Facade	| Element"
 			compo_menuis.menuis_profondeur	= menuis_profondeur
 		)
 		
+		------ l'imposte	------------------------------------------------
 		if imposte_use do (
 			if imposte_objet == undefined do
 				imposte_objet = createInstance cp_menuiserie_fixe
@@ -280,6 +283,8 @@ category:"CP | Facade	| Element"
 			compo_imposte.menuis_profondeur	= menuis_profondeur
 			compo_imposte.div_largeur				=	menuis_epaisseur / 1.5
 		)
+		
+		
 		
 	)  --- fin composants_actualiser  ------------------
 	
@@ -318,11 +323,11 @@ category:"CP | Facade	| Element"
 		
 		----- tableau gauche ------
 		local pt_7	=	[0,					profondeur,		hauteur_baie_tmp]
-		local pt_8	=	[0,					0,					hauteur_baie_tmp]
+		local pt_8	=	[0,					0,						hauteur_baie_tmp]
 		
 		----- tableau droit ------
-		local pt_9	=	[longueur,			0,					hauteur_baie_tmp]
-		local pt_10	=	[longueur,			profondeur,		hauteur_baie_tmp]
+		local pt_9	=	[longueur,			0,						hauteur_baie_tmp]
+		local pt_10	=	[longueur,			profondeur,	hauteur_baie_tmp]
 		
 		----- Imposte ------
 		local pt_11	=	[longueur,			0,					hauteur]
