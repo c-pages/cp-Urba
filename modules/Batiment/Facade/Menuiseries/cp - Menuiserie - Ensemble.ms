@@ -37,7 +37,6 @@ category:"CP | Menuiserie"
 		longueur 					type:#worldUnits 	ui:spn_longueur 					default:120.
 		
 		menuis_epaisseur		type:#worldUnits 	ui:spn_menuis_largeur				default:7.
--- 		menuis_ouvrant_ep	type:#worldUnits 	ui:spn_menuis_ouvrLargeur		default:7.
 		menuis_profondeur	type:#worldUnits 	ui:spn_menuis_profondeur			default:5.
 	)
 	parameters params_general rollout:roll_parametres	(
@@ -86,11 +85,9 @@ category:"CP | Menuiserie"
 		
 		
 		spinner 'spn_menuis_largeur' "" pos:[90,71] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
-		label 'lbl_largeur' "Largeur" pos:[20,71] width:67 height:16 align:#left
--- 		spinner 'spn_menuis_ouvrLargeur' "" pos:[90,93] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
--- 		label 'lbl_ouvr_larg' "Ouvr. larg." pos:[20,93] width:67 height:16 align:#left
+		label 'lbl_largeur' "Largeur:" pos:[20,71] width:67 height:16 align:#left
 		spinner 'spn_menuis_profondeur' "" pos:[90,86] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
-		label 'lbl_menuis_profondeur' "Profondeur:" pos:[20,86] width:67 height:16 align:#left
+		label 'lbl_menuis_profondeur' "menuis_profondeur:" pos:[20,86] width:67 height:16 align:#left
 	)
 	
 	
@@ -742,7 +739,7 @@ category:"CP | Menuiserie"
 	fn actualiser_composants	= with redraw off (
 		
 		---- creation des composants ------------------
-		if compo_cadre 		== undefined	do	compo_cadre		= 	createInstance  cp_menuisElem_cadre
+		if compo_cadre 		== undefined		do	compo_cadre		= 	createInstance  cp_menuisElem_cadre
 		if compo_meneau		== undefined	do	compo_meneau	= 	createInstance  cp_menuisElem_meneau
 		
 		----- maj du cadre ----------------------
@@ -779,7 +776,7 @@ category:"CP | Menuiserie"
 			if not est_fixe compo_temp do compo_temp.ouvrant_cadre_larg		=	menuis_epaisseur
 			
 			
-			compo_temp.profondeur			=	menuis_profondeur
+			compo_temp.menuis_profondeur			=	menuis_profondeur
 			compo_temp.div_largeur		=	menuis_epaisseur / 2
 -- 			compo_temp.low_poly			=	low_poly
 			compo_temp.qualite			 	= qualite		
@@ -798,7 +795,7 @@ category:"CP | Menuiserie"
 			append	sequence_tmp  	compo_temp
 			
 			compo_temp.hauteur			=	hauteur 	- 2*menuis_epaisseur
-			compo_temp.profondeur		=	menuis_profondeur
+			compo_temp.menuis_profondeur		=	menuis_profondeur
 -- 			compo_temp.low_poly			=	low_poly
 			compo_temp.qualite				=	qualite
 			compo_temp.longueur			=	longueur 		- 2*menuis_epaisseur
@@ -825,7 +822,7 @@ category:"CP | Menuiserie"
 		--- Construction ---------------------------------------------------------------------------------------
 
 		---- le cadre  -------
-		mgr_mesh.attacher		mesh		compo_cadre 	--	transf:[0, profondeur  , 0 ]
+		mgr_mesh.attacher		mesh		compo_cadre 	--	transf:[0, menuis_profondeur  , 0 ]
 		
 		---- la sequence	-----
 		local compo_travBas		= 	if qualite ==3	then	createInstance  cp_prim_boiteL  horizontal:true	else createInstance 	cp_prim_boite
@@ -901,7 +898,7 @@ category:"CP | Menuiserie"
 					pt_profondeur	=	gridPoint
 				)
 				3:	(
-					profondeur 				= length ( gridPoint - pt_profondeur )
+					menuis_profondeur 				= length ( gridPoint - pt_profondeur )
 					pt_hauteur				=	gridPoint
 				)
 				4:	hauteur 					= length ( gridPoint - pt_hauteur )

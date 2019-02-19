@@ -30,11 +30,11 @@ category:"CP | Menuiserie"
 	parameters params_dimensions rollout:rol_global	(
 -- 		longueur 		type:#worldUnits 	ui:spn_longueur 			default:90.
 		hauteur	 		type:#worldUnits 	ui:spn_hauteur 			default:0.
-		profondeur	 			type:#worldUnits 	ui:spn_profondeur		default:5.
+		menuis_profondeur	 			type:#worldUnits 	ui:spn_profondeur		default:5.
 -- 		cadre_use		type:#boolean 		ui:shk_cadre				default:true
 		
 		cadre						type:#boolean 		ui:shk_cadre				default:true
-		cadre_epaisseur		type:#worldUnits 	ui:spn_cadre_ep			default:5.
+		menuis_epaisseur		type:#worldUnits 	ui:spn_cadre_ep			default:5.
 		travBasse				type:#boolean 		ui:shk_traverse_B		default:false
 -- 		ouvrant_callage	 	type:#worldUnits ui:spn_ouvrant_calage	default:0
 	)
@@ -44,7 +44,7 @@ category:"CP | Menuiserie"
 		
 		----- les menuiseries -----------
 -- 		cadre_largeur	 				type:#worldUnits 	default:3.5
--- 		profondeur	 					type:#worldUnits 	default:5.
+-- 		menuis_profondeur	 					type:#worldUnits 	default:5.
 		vitrage_epaisseur				type:#worldUnits 	default:1.
 		
 		----- ouvrants ---------------------
@@ -116,7 +116,7 @@ category:"CP | Menuiserie"
 	
 	rollout rol_global  "Global"	(
 		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
-		spinner 	spn_profondeur 		"Profondeur" 			type:#worldunits 	range:[0,1e20,0]
+		spinner 	spn_profondeur 		"menuis_profondeur" 			type:#worldunits 	range:[0,1e20,0]
 		
 		group "cadre" (
 			checkbox	shk_cadre				"Cadre"
@@ -243,9 +243,9 @@ category:"CP | Menuiserie"
 		
 		if cadre and compo_cadre 	== undefined	do	compo_cadre		= createInstance  	cp_menuisElem_cadre
 		
-		local longueur_passage 	=   if cadre then longueur - cadre_epaisseur*2	else  longueur
-		local hauteur_passage 		 = if cadre and travBasse	then hauteur  - cadre_epaisseur*2	
-												else if cadre then  hauteur  - cadre_epaisseur
+		local longueur_passage 	=   if cadre then longueur - menuis_epaisseur*2	else  longueur
+		local hauteur_passage 		 = if cadre and travBasse	then hauteur  - menuis_epaisseur*2	
+												else if cadre then  hauteur  - menuis_epaisseur
 												else	hauteur
 		
 		
@@ -255,7 +255,7 @@ category:"CP | Menuiserie"
 		local ouvrant_longueur_tmp	=	if not ouvrant_double then  longueur_passage		else longueur_passage / 2 
 	
 		compo_ouvrant_vitree.longueur 					= ouvrant_longueur_tmp	
-		compo_ouvrant_vitree.profondeur 				= profondeur / 2 -- 		ouvrant_profondeur
+		compo_ouvrant_vitree.profondeur 				= menuis_profondeur / 2 -- 		ouvrant_profondeur
 		compo_ouvrant_vitree.hauteur 					= hauteur_passage
 		
 		compo_ouvrant_vitree.cadre_largeur 			= ouvrant_cadre_larg
@@ -266,7 +266,7 @@ category:"CP | Menuiserie"
 		compo_ouvrant_vitree.div_montants_nbr 		= div_montants_nbr
 		compo_ouvrant_vitree.div_traverses_nbr 		= div_traverses_nbr
 		compo_ouvrant_vitree.div_largeur				= div_largeur
-		compo_ouvrant_vitree.div_profondeur			= profondeur / 2
+		compo_ouvrant_vitree.div_profondeur			= menuis_profondeur / 2
 		compo_ouvrant_vitree.div_calage_verti		= div_calage_verti
 		compo_ouvrant_vitree.vitrage_epaisseur		= vitrage_epaisseur
 		compo_ouvrant_vitree.qualite			 			= qualite		
@@ -275,7 +275,7 @@ category:"CP | Menuiserie"
 		compo_ouvrant_plein.longueur	 				= ouvrant_longueur_tmp
 		compo_ouvrant_plein.hauteur 					= hauteur_passage
 		if qualite != 3 do
-			compo_ouvrant_plein.profondeur 			= profondeur / 2 -- 		ouvrant_profondeur
+			compo_ouvrant_plein.profondeur 			= menuis_profondeur / 2 -- 		ouvrant_profondeur
 		
 		
 		compo_ouvrant_1	=	 if ouvrant_vitree then compo_ouvrant_vitree else compo_ouvrant_plein
@@ -285,10 +285,10 @@ category:"CP | Menuiserie"
 			compo_ouvrant_1.longueur 				= longueur_passage
 		) else (
 			
-			compo_ouvrant_1.longueur				=	if cadre then (longueur_passage 	*  ouvrant_tierce_pourcent / 100 ) /* - cadre_epaisseur  */else (longueur_passage 	*  ouvrant_tierce_pourcent / 100 )
+			compo_ouvrant_1.longueur				=	if cadre then (longueur_passage 	*  ouvrant_tierce_pourcent / 100 ) /* - menuis_epaisseur  */else (longueur_passage 	*  ouvrant_tierce_pourcent / 100 )
 			
 			compo_ouvrant_2 							= copy compo_ouvrant_1
-			compo_ouvrant_2.longueur 				=  if cadre then ( longueur_passage	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) /* - cadre_epaisseur  */else	( longueur_passage	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) 
+			compo_ouvrant_2.longueur 				=  if cadre then ( longueur_passage	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) /* - menuis_epaisseur  */else	( longueur_passage	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) 
 			
 			if ouvrant_vitree  do
 				compo_ouvrant_2.div_montants_nbr 	=  div_montants_nbr_2
@@ -312,9 +312,9 @@ category:"CP | Menuiserie"
 		if cadre do	(
 			compo_cadre.longueur						=	longueur
 			compo_cadre.hauteur						=	hauteur
-			compo_cadre.profondeur					=	profondeur
-			compo_cadre.menuis_epaisseur			=	cadre_epaisseur
-			compo_cadre.travBasse_hauteur			=	cadre_epaisseur
+			compo_cadre.profondeur					=	menuis_profondeur
+			compo_cadre.menuis_epaisseur			=	menuis_epaisseur
+			compo_cadre.travBasse_hauteur			=	menuis_epaisseur
 			compo_cadre.travBasse					=	travBasse
 			
 			compo_cadre.qualite			 				= qualite		
@@ -354,11 +354,11 @@ category:"CP | Menuiserie"
 		local recalle_ouv_2
 		
 		local longueur_ouvrant_1 	= compo_ouvrant_1.longueur 
-		local callage_montant_G 	= 	 if cadre then cadre_epaisseur else 0
+		local callage_montant_G 	= 	 if cadre then menuis_epaisseur else 0
 		local callage_montant_D 	= callage_montant_G
-		local ouvrant_pos_z 		= if cadre and travBasse then cadre_epaisseur else 0
-		local ouvrant_profondeur = profondeur / 2
-		local ouvrant_callage_y	= 	if qualite != 3 then	profondeur else 0
+		local ouvrant_pos_z 		= if cadre and travBasse then menuis_epaisseur else 0
+		local ouvrant_profondeur = menuis_profondeur / 2
+		local ouvrant_callage_y	= 	if qualite != 3 then	menuis_profondeur else 0
 		
 		
 		if  symetrie and not ouvrant_double	then (

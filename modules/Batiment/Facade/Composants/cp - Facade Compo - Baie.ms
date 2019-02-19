@@ -23,10 +23,8 @@ category:"CP | Facade	| Element"
 	local mgr_mesh = str_mgr_mesh ()
 	
 	----- les composants -----------	
-	local compo_menuis
+	local compo_menuis, compo_imposte
 	
-	----- les classes de menuiserie ---------------------
-	local menuis_classes
 	
 	
 	
@@ -36,23 +34,34 @@ category:"CP | Facade	| Element"
 		
 		hauteur	 		type:#worldUnits 	ui:spn_hauteur 			default:250.
 		
+		menuis_epaisseur		type:#worldUnits 	ui:spn_menuis_largeur				default:7.
+		menuis_profondeur	type:#worldUnits 	ui:spn_menuis_profondeur			default:5.
 	)
 	parameters params_general rollout:roll_parametres	(
 		
-		longueur 				type:#worldUnits 	ui:spn_longueur 				default:120.
-		baie_hauteur			type:#worldUnits 	ui:spn_baie_hauteur			default:-50.
-		profondeur	 			type:#worldUnits 	ui:spn_profondeur			default:15.
-		allege_hauteur			type:#worldUnits 	ui:spn_allege_hauteur	default:100.
+		longueur 					type:#worldUnits 	ui:spn_longueur 				default:120.
+		baie_hauteur				type:#worldUnits 	ui:spn_baie_hauteur			default:-50.
+		profondeur	 			type:#worldUnits 	ui:spn_profondeur				default:15.
+		allege_hauteur			type:#worldUnits 	ui:spn_allegePleine			default:100.
 		
-		tablette					type:#boolean 		ui:shk_tablette					default:true
+		tablette						type:#boolean 						default:true
 		
-		menuiserie_type			type:#integer 			ui:ddl_type_menuiserie				default:3
 		menuiserie_objet			type:#maxObject		
+		
 		
 	)	-----	fin parametres --------------------
 	
-	parameters params_menuiserie rollout:roll_menuiserie	(
+	parameters params_imposte rollout:roll_imposte	(
 		
+		imposte_use				type:#boolean 			ui:chck_imposte_use				default:false
+		imposte_hauteur		type:#worldUnits 		ui:spn_imposte_hauteur			default:210.
+		imposte_montants		type:#integer 			ui:spn_imposte_montants		default:0
+		imposte_traverses		type:#integer 			ui:spn_imposte_traverses		default:0
+		
+		imposte_arc_use		type:#boolean 			ui:chck_imposte_arc_use		default:false
+		imposte_arc_rayon		type:#worldUnits 		ui:spn_imposte_arc_rayon		default:250.
+		
+		imposte_objet			type:#maxObject		
 		
 	)
 	parameters params_divers rollout:roll_divers	(
@@ -60,15 +69,13 @@ category:"CP | Facade	| Element"
 		nom	 							type:#string 			default:"Baie"
 		
 		------ options --------------
--- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
-		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
-		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
-		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
-		matId_poignee					type:#integer 			ui:spn_matId_poignee	default:3
-		matId_mur						type:#integer 			ui:spn_matId_mur		default:4
+		matId_menuis				type:#integer 			ui:spn_matId_menuis	default:1
+		matId_vitrage				type:#integer 			ui:spn_matId_vitrage	default:2
+		matId_poignee				type:#integer 			ui:spn_matId_poignee	default:3
+		matId_mur					type:#integer 			ui:spn_matId_mur		default:4
 		
 	)	-----	fin parametres --------------------
 	
@@ -90,7 +97,7 @@ category:"CP | Facade	| Element"
 	
 	
 	
-	rollout roll_baie "Baie" width:268 height:221
+	rollout roll_parametres	 "Baie" width:268 height:221
 	(
 		edittext 'edt_nom' "" pos:[5,2] width:170 height:17 align:#left
 		
@@ -99,7 +106,7 @@ category:"CP | Facade	| Element"
 		label 'lbl_longueur' "Longueur:" pos:[20,42] width:60 height:19 align:#left
 		spinner 'spn_longueur' "" pos:[90,42] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		label 'lbl_hauteur' "Hauteur:" pos:[20,57] width:55 height:19 align:#left
-		spinner 'spn_hauteur' "" pos:[90,57] width:75 height:16 range:[-1e+20,1e+20,0] type:#worldunits align:#left
+		spinner 'spn_baie_hauteur' "" pos:[90,57] width:75 height:16 range:[-1e+20,1e+20,0] type:#worldunits align:#left
 		label 'lbl_profondeur' "Profondeur:" pos:[20,72] width:69 height:19 align:#left
 		spinner 'spn_profondeur' "" pos:[90,72] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		label 'lbl_allegePleine' "Allège pleine:" pos:[20,87] width:75 height:19 align:#left
@@ -114,114 +121,78 @@ category:"CP | Facade	| Element"
 	
 	
 	
-	rollout roll_menuiserie_2 "Menuiserie" width:188 height:285
+	
+	rollout rol_global "Global" width:162 height:106
 	(
-		button 'btn29' "Fixe" pos:[5,5] width:48 height:17 align:#left
-		button 'btn30' "Fenêtre" pos:[52,5] width:48 height:17 align:#left
-		button 'btn31' "Porte" pos:[99,5] width:48 height:17 align:#left
+		spinner 'spn_hauteur' "Hauteur" pos:[42,7] width:70 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		
-		dotNetControl 'tv_sequence' "treeview" pos:[5,25] width:141 height:89 align:#left
-		
-		button 'btn32' "Dup" pos:[150,25] width:25 height:17 align:#left	tooltip:"Dupliquer."
-		button 'btn33' "Inst" pos:[150,41] width:25 height:17 align:#left	tooltip:"Instancier."
-		button 'btn34' "Uni" pos:[150,57] width:25 height:17 align:#left	tooltip:"Rendre unique."
-		button 'btn35' "Sup" pos:[150,73] width:25 height:17 align:#left	tooltip:"Supprimer."
-		
-		GroupBox 'grp45' "Elément" pos:[5,121] width:170 height:121 align:#left
-		
-		spinner 'spn99' "" pos:[90,141] width:75 height:16 range:[0,100,0] type:#worldunits align:#left
-		label 'lbl95' "Longueur:" pos:[20,139] width:75 height:19 align:#left
-		spinner 'spn100' "" pos:[90,156] width:75 height:16 range:[0,100,0] type:#integer align:#left
-		label 'lbl96' "Montants:" pos:[20,155] width:75 height:19 align:#left
-		spinner 'spn101' "" pos:[90,171] width:75 height:16 range:[0,100,0] type:#integer align:#left
-		label 'lbl97' "Traverses:" pos:[20,169] width:75 height:19 align:#left
-		
-		checkbox 'chk75' "Inverser sens" pos:[18,188] width:104 height:16 align:#left
-		checkbox 'chk74' "Double" pos:[18,202] width:133 height:16 align:#left
-		checkbox 'chk76' "Vitrée" pos:[18,216] width:133 height:16 align:#left
-		
-		spinner 'spn119' "" pos:[90,250] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
-		spinner 'spn120' "" pos:[90,265] width:85 height:16 range:[0,100,0] type:#worldunits align:#left
-		checkbox 'chk91' "Imposte:" pos:[10,249] width:76 height:16 align:#left
-		checkbox 'chk92' "Allège:" pos:[10,263] width:60 height:16 align:#left
-	)
-	
-	
-	
-	
-	rollout rol_global  "Global"	(
-		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
-	)
-	
-	rollout roll_parametres  "Baie"	(		
-		
-		group "Dimensions" (
--- 			checkbox	shk_etirable			"Etirable" 	
-			spinner 	spn_longueur 			"Longueur" 			type:#worldunits 	range:[0,1e20,0]
-			spinner 	spn_baie_hauteur 		"Hauteur" 			type:#worldunits 	range:[-1e20,1e20,0]
-			spinner 	spn_profondeur			"Profondeur" 		type:#worldunits 	range:[0,1e20,0]
-			spinner 	spn_allege_hauteur 	"Allège" 		type:#worldunits 	range:[0,1e20,0]
-		)
-		group " Menuiserie" (
-			dropDownList ddl_type_menuiserie	""  align:#left
-		)
-		group "Divers" (
-			checkbox	shk_tablette			"Tablette" 	
-			dropDownList	ddl_volet		"Volets"	 items:#("Aucun", "Battant", "Roulant")
-		)
-		
-		fn actualiser =(
-			
-			
-			--- le dropdownlist	--------------
-			local liste_nomsMenuis = #()
-			for classe in menuis_classes do (
-				local tmp_instance = createinstance 	classe
-				append liste_nomsMenuis	tmp_instance.nom
-			)
-			ddl_type_menuiserie.items = liste_nomsMenuis
-			
-		)
-		on roll_parametres	open 					do actualiser ()
-		on ddl_type_menuiserie		selected val	do (
-			menuiserie_objet = createInstance menuis_classes[val ]
-			redrawViews ()
-			actualiser()
-		)
+		spinner 'spn_menuis_largeur' "" pos:[90,29] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_largeur' "Largeur:" pos:[20,29] width:67 height:16 align:#left
+		spinner 'spn_menuis_profondeur' "" pos:[90,44] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_menuis_profondeur' "Profondeur:" pos:[20,44] width:67 height:16 align:#left
 	)
 	
 	
 	rollout roll_menuiserie "Menuiserie" 
 	(
--- 		dropDownList ddl_type_menuiserie	""  align:#left
 		
-		subrollout		subRoll_param	""		height:250	align:#left
+		subrollout		subRoll_param	""		pos:[0,0]	height:320	width:179 align:#left
 		
 		fn actualiser = (
-			
-			
-			
-			--- le subroll	--------------
-			if subRoll_param.rollouts.count > 0 do 
-				for subRoll in subRoll_param.rollouts  do
-					removeSubRollout subRoll_param	subRoll
 			
 			addSubRollout 	subRoll_param		menuiserie_objet.roll_parametres
 			
 		)
-		
-		
-		
 		on roll_menuiserie open do actualiser ()
 	)
 	
 	
+	rollout roll_imposte "Imposte" width:162 height:106
+	(
+		
+		checkbox 'chck_imposte_use' "Imposte" pos:[18,1] width:69 height:16 align:#left		
+		
+		label 'lbl_imposte_hauteur' "Hauteur:" pos:[20,17] width:60 height:19 align:#left
+		spinner 'spn_imposte_hauteur' "" pos:[90,17] width:75 height:16 range:[-1e+20,1e+20,0] type:#worldunits align:#left
+		label 'lbl_imposte_montants' "Montants:" pos:[20,32] width:55 height:19 align:#left
+		spinner 'spn_imposte_montants' "" pos:[90,32] width:75 height:16 range:[-1e+20,1e+20,0] type:#integer align:#left
+		label 'lbl_imposte_traverses' "Traverses:" pos:[20,47] width:69 height:19 align:#left
+		spinner 'spn_imposte_traverses' "" pos:[90,47] width:75 height:16 range:[0,1e+20,0] type:#integer align:#left
+		
+		checkbox 'chck_imposte_arc_use' "Arc" pos:[18,65] width:69 height:16 align:#left
+		label 'lbl_imposte_rayon' "Rayon:" pos:[20,81] width:60 height:19 align:#left
+		spinner 'spn_imposte_arc_rayon' "" pos:[90,81] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		
+		fn actualiser	=(
+			lbl_imposte_hauteur.enabled 					= imposte_use
+			spn_imposte_hauteur.enabled 				= imposte_use
+			spn_imposte_hauteur.indeterminate		= not imposte_use
+			
+			lbl_imposte_montants.enabled 				= imposte_use
+			spn_imposte_montants.enabled 				= imposte_use
+			spn_imposte_montants.indeterminate		= not imposte_use
+			lbl_imposte_traverses.enabled 				= imposte_use
+			spn_imposte_traverses.enabled 				= imposte_use
+			spn_imposte_traverses.indeterminate		= not imposte_use
+			
+			chck_imposte_arc_use.enabled 				= imposte_use
+			lbl_imposte_rayon.enabled 					= imposte_use and imposte_arc_use
+			spn_imposte_arc_rayon.enabled 			= imposte_use and imposte_arc_use
+			spn_imposte_arc_rayon.indeterminate	= not imposte_use or not imposte_arc_use
+			
+		)
+		
+		
+		on roll_imposte	open do actualiser()
+		
+		on chck_imposte_use		changed state  do actualiser()
+		on chck_imposte_arc_use	changed state  do actualiser()
+		
+	)
 	
 	
 	rollout roll_divers  "Divers"	(
-	/* 	group "Qualité" (
-			checkbox	shk_lowPoly				"Low poly" 		
-		) */
+		
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -241,24 +212,13 @@ category:"CP | Facade	| Element"
 
 	fn initialiser	=(
 		
-		----- initialiser la liste des menuiseries	-----------------
-		fn classer_ordeAlphabetique 	classe1 	classe2 =		( 
-			case of				(
-				(classe1 as string < classe2 as string): -1
-				(classe1 as string > classe2 as string): 1
-				default: 0
-			)
-		)
-		menuis_classes = for classe in GeometryClass.classes where matchPattern ( classe as string ) pattern:"cp_menuiserie*" collect classe
-		qsort menuis_classes	 classer_ordeAlphabetique
-		
-		
-		
 		
 		---- si pas encore de mnuiserie on applique la menuiserie par defaut	------------------
-		if menuiserie_objet == undefined do (
-			menuiserie_objet = createInstance menuis_classes[menuiserie_type ]			
-		)
+		if menuiserie_objet == undefined do 
+			menuiserie_objet = createInstance cp_menuiserie_ensemble		
+		
+		if imposte_objet == undefined do
+			imposte_objet = createInstance cp_menuiserie_fixe
 	)
 	
 	
@@ -272,13 +232,53 @@ category:"CP | Facade	| Element"
 	---- les composants ---------------------
 	fn actualiser_composants	= with redraw off (
 		
+		local hauteur_menuis			
 		if menuiserie_objet != undefined do (
-			compo_menuis	=	copy menuiserie_objet
+
+			compo_menuis					=	copy menuiserie_objet
 			compo_menuis.longueur		=	longueur
-			local hauteur_menuis		=	if baie_hauteur <=0 	then		hauteur + baie_hauteur - allege_hauteur
-																				else		baie_hauteur
+			
+			---- la hauteur de la menuiseire princpale, en fonction de l'imposte, de valeurs de hauteur négatives,etc ... ------------
+			if not imposte_use then (
+				hauteur_menuis		=	if baie_hauteur <=0 	then		hauteur + baie_hauteur - allege_hauteur
+																				else		baie_hauteur - allege_hauteur
+			) else (
+				hauteur_menuis		=	if imposte_hauteur <=0 	then		(
+					if baie_hauteur <=0 	then		hauteur + baie_hauteur + imposte_hauteur - allege_hauteur
+													else		baie_hauteur + imposte_hauteur - allege_hauteur
+					
+				)	else		imposte_hauteur - allege_hauteur
+				
+				--- max et min	---------------
+				if hauteur_menuis < 0 do hauteur_menuis = 0 
+				local hauteur_max = if baie_hauteur <=0 	then		hauteur + baie_hauteur - allege_hauteur					
+																				else		baie_hauteur - allege_hauteur
+				if hauteur_menuis >hauteur_max do hauteur_menuis = hauteur_max
+			)
+			
 			compo_menuis.hauteur		=	hauteur_menuis
 			compo_menuis.qualite		=	qualite
+			
+			
+			compo_menuis.menuis_epaisseur		= menuis_epaisseur
+			compo_menuis.menuis_profondeur	= menuis_profondeur
+		)
+		
+		if imposte_use do (
+			if imposte_objet == undefined do
+				imposte_objet = createInstance cp_menuiserie_fixe
+			
+			compo_imposte 				= copy imposte_objet
+			compo_imposte.longueur	=	longueur
+			compo_imposte.hauteur 	=	if baie_hauteur <=0 	then		hauteur + baie_hauteur - hauteur_menuis	 - allege_hauteur					
+																						else		baie_hauteur - hauteur_menuis - allege_hauteur
+			
+			compo_imposte.div_montants_nbr		=	imposte_montants
+			compo_imposte.div_traverses_nbr		=	imposte_traverses
+			
+			compo_imposte.menuis_epaisseur		= menuis_epaisseur
+			compo_imposte.menuis_profondeur	= menuis_profondeur
+			compo_imposte.div_largeur				=	menuis_epaisseur / 1.5
 		)
 		
 	)  --- fin composants_actualiser  ------------------
@@ -303,7 +303,7 @@ category:"CP | Facade	| Element"
 		
 		--- Construction ---------------------------------------------------------------------------------------
 		---- la BAIE	------------------
-		local hauteur_baie_tmp 		= allege_hauteur + baie_hauteur
+		local hauteur_baie_tmp 		= /* allege_hauteur +  */baie_hauteur
 		if baie_hauteur <= 0 do hauteur_baie_tmp = hauteur +	baie_hauteur
 		
 		---- Allege -----
@@ -369,6 +369,9 @@ category:"CP | Facade	| Element"
 		if menuiserie_objet != undefined do 
 			mgr_mesh.attacher		mesh		compo_menuis 	transf:[0,profondeur,allege_hauteur]
 		
+		--- l'imposte	------------
+		if imposte_use do 
+			mgr_mesh.attacher		mesh		compo_imposte 	transf:[0,profondeur,allege_hauteur + compo_menuis.hauteur]
 		
 		
 	)  ----- fin on buld mesh ---------------------------------------------------------------------

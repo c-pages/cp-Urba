@@ -30,10 +30,10 @@ category:"CP | Menuiserie"
 	
 	parameters params_global rollout:roll_global	(
 		hauteur	 				type:#worldUnits 	ui:spn_hauteur 			default:0.
-		profondeur	 			type:#worldUnits 	ui:spn_profondeur		default:5.
+		menuis_profondeur	 			type:#worldUnits 	ui:spn_profondeur		default:5.
 		
 		cadre						type:#boolean 		ui:shk_cadre				default:true
-		cadre_epaisseur		type:#worldUnits 	ui:spn_cadre_ep			default:5.
+		menuis_epaisseur		type:#worldUnits 	ui:spn_cadre_ep			default:5.
 	)
 	parameters params_general rollout:roll_parametres	(
 		
@@ -73,7 +73,7 @@ category:"CP | Menuiserie"
 	
 	rollout roll_global  "Global"	(
 		spinner 	spn_hauteur 			"Hauteur" 				type:#worldunits 	range:[0,1e20,0]
-		spinner 	spn_profondeur 		"Profondeur" 			type:#worldunits 	range:[0,1e20,0]
+		spinner 	spn_profondeur 		"menuis_profondeur" 			type:#worldunits 	range:[0,1e20,0]
 		group "cadre" (
 			checkbox	shk_cadre				"Cadre"
 			spinner 	spn_cadre_ep 			"Epaisseur" 			type:#worldunits 	range:[0,1e20,0]
@@ -112,14 +112,14 @@ category:"CP | Menuiserie"
 		if cadre and compo_cadre 	== undefined	do	compo_cadre		= createInstance  	cp_menuisElem_cadre
 		
 		-----	le vitrage 	-------------
-		compo_vitrage.longueur						=	if cadre then longueur - cadre_epaisseur*2 else longueur
-		compo_vitrage.hauteur							=	if cadre then hauteur  - cadre_epaisseur*2 else hauteur
+		compo_vitrage.longueur						=	if cadre then longueur - menuis_epaisseur*2 else longueur
+		compo_vitrage.hauteur							=	if cadre then hauteur  - menuis_epaisseur*2 else hauteur
 		
 		compo_vitrage.vitrage_epaisseur	 		= vitrage_epaisseur
 		compo_vitrage.div_montants_nbr 			= div_montants_nbr
 		compo_vitrage.div_traverses_nbr 			= div_traverses_nbr
 		compo_vitrage.div_largeur				 		= div_largeur
-		compo_vitrage.div_profondeur			 	= profondeur	--	div_profondeur		
+		compo_vitrage.div_profondeur			 	= menuis_profondeur	--	div_profondeur		
 		compo_vitrage.div_calage_verti		 		= div_calage_verti		
 		
 -- 		compo_vitrage.low_poly			 			= low_poly		
@@ -132,10 +132,10 @@ category:"CP | Menuiserie"
 		if cadre do	(
 			compo_cadre.longueur						=	longueur
 			compo_cadre.hauteur						=	hauteur
-			compo_cadre.profondeur					=	profondeur
-			compo_cadre.menuis_epaisseur			=	cadre_epaisseur
+			compo_cadre.profondeur					=	menuis_profondeur
+			compo_cadre.menuis_epaisseur			=	menuis_epaisseur
 			compo_cadre.travBasse					=	true
-			compo_cadre.travBasse_hauteur			=	cadre_epaisseur
+			compo_cadre.travBasse_hauteur			=	menuis_epaisseur
 			
 			compo_cadre.qualite			 				= qualite		
 			compo_cadre.matId_menuis	 			= matId_menuis
@@ -162,9 +162,9 @@ category:"CP | Menuiserie"
 		delete mesh
 		
 		--- le vitrage --------		
-		local calage_X = if cadre 			then cadre_epaisseur else 0
-		local calage_Y = if qualite != 3	then profondeur / 2 else 0
-		local calage_Z = if cadre 			then cadre_epaisseur else 0
+		local calage_X = if cadre 			then menuis_epaisseur else 0
+		local calage_Y = if qualite != 3	then menuis_profondeur / 2 else 0
+		local calage_Z = if cadre 			then menuis_epaisseur else 0
 		mgr_mesh.attacher		mesh		compo_vitrage 	transf:[calage_X, calage_Y , calage_Z ]
 		
 		
