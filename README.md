@@ -36,7 +36,7 @@ M
 
 1.  Copier le dossier _'cp-Urba'_ dans _'C:\Users\\...\AppData\Local\Autodesk\3dsMax\20xx - 64bit\ENU\scripts\'_
 
-    ...     : le nom du User;   
+    ...     : le nom du User;
     20xx    : la version de 3ds max
 
     On doit avoir au final l'arbo suivante :  _'C:\Users\\...\AppData\Local\Autodesk\3dsMax\20xx - 64bit\ENU\scripts\cp-Urba\'_.
@@ -57,15 +57,22 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
 
 
  ----------
-### CP - Urba V0.4.1
+### TODO | CP - Urba V0.4.1
 
 
 #### __Bâtiment__
   - [x] Gestion des hauteurs d'étages spécifiques. (07/02/2019)
   - [x] Prise en compte des contrainte d'orientation cardinale des façades.
   - [x] Mise au propre des menuiseries.
-  - [x] Prise en compte de 3 niveaux de détails des géometries (full, medium et low).
+  - [x] Prise en compte de 3 niveaux de détails des géometries (full, medium et low) + Volume !!.
   - [ ] Début de l'intégration des presets, il y a questionnement sur enregistrement ou plutot sur la lecture des parametres des maxObjects inclus dans des parametres (tableau) de nos preset a sauvegarder...
+  - [ ] Façade, duplication de facade
+  - [ ] Toitures à 1 pan, toiture à 2 pans
+  - [ ] donc il faut trouver les goutereaux et pignons (cf squeletisation)
+  - [ ] les occultations des baies (volets roulant, battants et stores bans)
+  - [ ] façades : Les chaînages
+  - [ ] façades : trouver le moyen de faire des corniches (comment les placer sur Z ?)
+  - [ ] façades : portiques/porches ?
 
 
 #### __Terrain__

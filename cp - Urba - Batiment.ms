@@ -762,7 +762,9 @@ category:"CP | Urba"
 				subroll_3.height	=	roll_editeur_facade.height - 20
 				subroll_4.height	=	roll_editeur_facade.height - 20
 				
-				if subroll_3.rollouts.count == 0 then
+				if subroll_2.rollouts.count == 0 then
+					roll_editeur_facade.width = 210
+				else if subroll_3.rollouts.count == 0 then
 					roll_editeur_facade.width = 410
 				else 	if subroll_4.rollouts.count == 0 then
 					roll_editeur_facade.width = 610
