@@ -278,6 +278,7 @@ category:"CP | Facade	| Element"
 			
 			compo_imposte.div_montants_nbr		=	imposte_montants
 			compo_imposte.div_traverses_nbr		=	imposte_traverses
+			compo_imposte.qualite						=	qualite
 			
 			compo_imposte.menuis_epaisseur		= menuis_epaisseur
 			compo_imposte.menuis_profondeur	= menuis_profondeur

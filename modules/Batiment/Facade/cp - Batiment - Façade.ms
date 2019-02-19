@@ -113,9 +113,8 @@ category:"CP | Bâtiment	| Element"
 	(
 				--- UI ----------------------------------------------------------------------------------------------
 		GroupBox grp1 "Répartition" pos:[4,7] width:170 height:97 align:#left
-		dropdownList ddl_repartition "" pos:[13,26] width:154 height:21 items:#("Répartir", "Centrer", "Aligner à gauche", "Aligner à droite") align:#left--	across:2
---	across:2
---	across:2
+		dropdownList ddl_repartition "" pos:[13,26] width:154 height:21 items:#( "Répartir", "Centrer", "Aligner à gauche", "Aligner à droite", "Espacer" ) align:#left
+		
 			
 		label lbl_decalage "Décallage:" pos:[20,49] width:55 height:19 align:#left
 		spinner spn_decalage "" pos:[90,49] width:75 height:16 range:[-1e+20,1e+20,0] type:#worldunits align:#left
@@ -145,7 +144,7 @@ category:"CP | Bâtiment	| Element"
 		on ddl_repartition selected val do
 			actualiser ()
 	)
-	rollout roll_sequence  					"Façade"		(
+	rollout roll_sequence  					"Séquence"		(
 	
 		------------ TRee view -----------------------------
 		local m_dragDropEffect		=dotNetClass "System.Windows.Forms.DragDropEffects"		
@@ -155,7 +154,7 @@ category:"CP | Bâtiment	| Element"
 		
 		
 		--- UI ----------------------------------------------------------------------------------------------
-		group "Séquence" (
+-- 		group "Séquence" (
 			
 			button 		btn_ajouter_mur 			"Mur"			width:50		height:17		across:3		align:#left
 			button 		btn_ajouter_baie 			"Baie"			width:50		height:17		align:#left		--	enabled:false
@@ -178,9 +177,9 @@ category:"CP | Bâtiment	| Element"
 			button 		btn_rendreUnique	 	"Uni."				width:27	height:17			align:#center
 			button 		btn_retirer	 				"Sup."			width:27	height:17			align:#center
 			
-			editText 	edTxt_nom		 	"Nom:" 	
+-- 			editText 	edTxt_nom		 	"Nom:" 	
 		
-		)
+-- 		)
 		
 		
 		---------- Treeview -----------------------------------------------------------------------------
@@ -488,7 +487,7 @@ category:"CP | Bâtiment	| Element"
 			if roll_editeur_facade == undefined then
 				subroll_dest	 = roll_parametres_element.subroll_param
 			else
-				subroll_dest	=	roll_editeur_facade.subroll_3
+				subroll_dest	=	roll_editeur_facade.subroll_2
 			
 			---- on vide le subrolll -----------------
 			if subroll_dest.rollouts.count > 0 do 
@@ -498,8 +497,8 @@ category:"CP | Bâtiment	| Element"
 			
 			--- si on a un element selectionné on ouvre ses parametres dans le subroll, sinon non ^^ ----
 			if elem_selec	!= undefined then (
-					edTxt_nom.text	=	elem_selec.nom
-					edTxt_nom.enabled = true
+-- 					edTxt_nom.text	=	elem_selec.nom
+-- 					edTxt_nom.enabled = true
 				
 					addSubRollout 	subroll_dest		elem_selec.roll_parametres
 				
@@ -515,8 +514,8 @@ category:"CP | Bâtiment	| Element"
 				)
 				
 			) else (
-					edTxt_nom.text	=	""
-					edTxt_nom.enabled = false
+-- 					edTxt_nom.text	=	""
+-- 					edTxt_nom.enabled = false
 					tv_sequence.SelectedNode = undefined
 			)
 			

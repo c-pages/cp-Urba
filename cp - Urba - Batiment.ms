@@ -209,57 +209,86 @@ category:"CP | Urba"
 	
 	)
 	
-	rollout roll_surface "Surface" (
+	rollout roll_surface "Surface" width:180 height:160
+	(
 		
 		fn shape_filt 		obj = superclassof obj == shape
 		--- Surface ------
-		pickbutton btn_pick_perimetre "Pick shape"  width:160 height:20 filter:shape_filt	autoDisplay:true-- align:#left
+		pickbutton 'btn_pick_perimetre' "Pick shape" pos:[1,2] width:170 height:20 filter:shape_filt autoDisplay:true align:#left
 		
-		group "Optimiser" (
+		GroupBox 'grp1' "Optimiser" pos:[4,23] width:170 height:101 align:#left
 			
-			checkbox 	chk_souder 	"Souder" 		across:2
-			spinner 	spn_souder 	"" range:[0,10000,0] type:#worldUnits	width:60	align:#right
+		checkbox 'chk_souder' "Souder" pos:[13,42] width:57 height:15 across:2 align:#left
+		spinner 'spn_souder' "" pos:[90,42] width:75 height:16 range:[0,10000,0] type:#worldunits align:#left
 			
-			checkbox 	chk_ortho 		"Orthonorm." 		across:2
-			spinner 	spn_ortho 		"" range:[0,100,0] type:#float 	width:60	align:#right
+		checkbox 'chk_ortho' "Orthonorm." pos:[13,57] width:77 height:15 across:2 align:#left
+		spinner 'spn_ortho' "" pos:[90,57] width:75 height:16 range:[0,100,0] type:#float align:#left
 			
-			checkbox 	chk_aplanir 	"Aplanir" 	across:2
-			spinner 	spn_aplanir 	""  range:[0,40,0] 	width:60	align:#right
+		checkbox 'chk_aplanir' "Aplanir" pos:[13,72] width:56 height:15 across:2 align:#left
+		spinner 'spn_aplanir' "" pos:[90,72] width:75 height:16 range:[0,40,0] align:#left
 			
 
-			checkbox 	chk_aligner 	"Aligner"	across:2
-			spinner 	spn_aligner 	""  range:[0,100,0] 	width:60	align:#right
+		checkbox 'chk_aligner' "Aligner" pos:[13,87] width:56 height:15 across:2 align:#left
+		spinner 'spn_aligner' "" pos:[90,87] width:75 height:16 range:[0,100,0] align:#left
 
-			checkbox 	chk_projeter 	"Projeter"  
-		)
+		checkbox 'chk_projeter' "Projeter" pos:[13,102] width:61 height:15 align:#left  
+  
+  
 		
-	)	---- fin rollout Surface ---------------------------
+	)
 	
-	rollout roll_etages "Etages"	(
-		group "Général" (
-			spinner spn_etages_nbres 		"Nombre" 			type:#integer 				range:[0,1000,1]
-			spinner spn_etages_hauteur		"Hauteur" 			type:#worldUnits 		range:[0,1e20,0]
+	rollout roll_etages "Etages" width:180 height:270
+	(
+		GroupBox 'grp_general' "Général" pos:[4,1] width:170 height:88 align:#left
+		spinner 'spn_etages_nbres' "" pos:[90,20] width:75 height:16 range:[0,1000,1] type:#integer align:#left
+		spinner 'spn_etages_hauteur' "" pos:[90,35] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 			
-			spinner spn_dalle_epaisseur				"Epaisseur dalle" 			type:#worldUnits 		range:[0,1e20,0]
-			spinner spn_soubassement_hauteur	"Soubassement" 			type:#worldUnits 		range:[0,1e20,0]
-			
+		spinner 'spn_dalle_epaisseur' "" pos:[90,50] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		spinner 'spn_soubassement_hauteur' "" pos:[90,65] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		GroupBox 'grp2' "Etages spécifiques" pos:[4,90] width:170 height:139 align:#left
 	
-		)
-		group "Etages spécifiques" (	
 			
-			button 	btn_etages_nouveau 	"Nouv." width:35 height:16 toolTip:"Ajouter	étages spécifiques" across:2
-			button 	btn_etages_supprimer 	"Sup."  width:35 height:16 toolTip:"Supprimer étages spécifiques"
-			listbox	lbx_etages_specifiques 	""  height:4
+		button 'btn_etages_nouveau' "Nouveau" pos:[20,112] width:70 height:16 toolTip:"Ajouter	étages spécifiques" across:2 align:#left
+		button 'btn_etages_supprimer' "Supprimer" pos:[93,112] width:70 height:16 toolTip:"Supprimer étages spécifiques" align:#left
+		listbox 'lbx_etages_specifiques' "" pos:[20,131] width:146 height:4 align:#left
 			
-			label				lbl_etage_specifiques 		"Etages :"  width:45 height:19  across:4		align:#left 
-			spinner 		spn_etageMin_specifiques 	""  width:40 height:16 range:[0,1e+13,0] type:#integer scale:1 
+		label 'lbl_etage_specifiques' "Etages :" pos:[20,190] width:45 height:19 across:4 align:#left 
+ 
+ 
+ 
+ 
+ 
+		spinner 'spn_etageMin_specifiques' "" pos:[90,190] width:35 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left 
+ 
+ 
+ 
+ 
+ 
 -- 			checkbutton 	ckb_etageMax_specifiques ">"  width:16 height:16 
-			label 			lbl_etageMax_specifiques ">"  width:16 height:16 
-			spinner 		spn_etageMax_specifiques "" width:40 height:16 range:[0,1e+13,0] type:#integer	align:#right
-			label				lbl_hauteur_specifiques 	"Hauteur :"  width:55 height:22	across:2	align:#left
-			spinner 		spn_hauteur_specifiques "" width:92 height:16 range:[0,1e+13,0] type:#worldunits 	align:#right
+		label 'lbl_etageMax_specifiques' ">" pos:[125,190] width:7 height:16 align:#left 
+ 
+ 
+ 
+ 
+ 
+		spinner 'spn_etageMax_specifiques' "" pos:[130,190] width:35 height:16 range:[0,1e+13,0] type:#integer align:#left
+		label 'lbl_hauteur_specifiques' "Hauteur :" pos:[20,205] width:55 height:18 across:2 align:#left
+		spinner 'spn_hauteur_specifiques' "" pos:[90,205] width:75 height:16 range:[0,1e+13,0] type:#worldunits align:#left
+		
+		
+		label 'lbl_nombre' "Nombre:" pos:[20,20] width:67 height:14 align:#left
 			
-		)
+		
+		label 'lbl_hauteur' "Hauteur:" pos:[20,35] width:67 height:14 align:#left
+		label 'lbl_dalle_ep' "Dalle ép.:" pos:[20,50] width:67 height:14 align:#left
+		label 'lbl11' "Ss bas.:" pos:[20,65] width:67 height:14 align:#left
+		
+		
+		
+		
+		
+		
+		
 		
 		fn actualiser =(
 			
@@ -309,44 +338,47 @@ category:"CP | Urba"
 			
 		)
 		
-		on roll_etages open do actualiser ()
 		
-		on btn_etages_nouveau pressed do (
-			ajouter_etage_spe	()
+		
+		
+		on roll_etages open do
 			actualiser ()
-		)
-		on btn_etages_supprimer pressed do (
-			supprimer_etage_spe	lbx_etages_specifiques.selection
-			actualiser ()
-		)
-		
-		
+		on btn_etages_nouveau pressed do
+		(
+					ajouter_etage_spe	()
+					actualiser ()
+				)
+		on btn_etages_supprimer pressed do
+		(
+					supprimer_etage_spe	lbx_etages_specifiques.selection
+					actualiser ()
+				)
 		on lbx_etages_specifiques selected sel do
 			actualiser ()
-		
-		on spn_etageMin_specifiques changed val do (
-			local selec = lbx_etages_specifiques.selection			
-			etages_spe_min[selec] = val
-			if etages_spe_max[selec] < val do
-				etages_spe_max[selec] = val
-			actualiser ()
-		)
-		on spn_etageMax_specifiques changed val do (
-			local selec = lbx_etages_specifiques.selection			
-			etages_spe_max[selec] = val
-			if etages_spe_min[selec] > val do
-				etages_spe_min[selec] = val
-			actualiser ()
-		)
-		on spn_hauteur_specifiques changed val do (
-			local selec = lbx_etages_specifiques.selection			
-			etages_spe_hauteur[selec] = val
-			actualiser ()
-			redrawViews ()
-		)
-			
-		
-	)	---- fin rollout etages ---------------------------
+		on spn_etageMin_specifiques changed val do
+		(
+					local selec = lbx_etages_specifiques.selection			
+					etages_spe_min[selec] = val
+					if etages_spe_max[selec] < val do
+						etages_spe_max[selec] = val
+					actualiser ()
+				)
+		on spn_etageMax_specifiques changed val do
+		(
+					local selec = lbx_etages_specifiques.selection			
+					etages_spe_max[selec] = val
+					if etages_spe_min[selec] > val do
+						etages_spe_min[selec] = val
+					actualiser ()
+				)
+		on spn_hauteur_specifiques changed val do
+		(
+					local selec = lbx_etages_specifiques.selection			
+					etages_spe_hauteur[selec] = val
+					actualiser ()
+					redrawViews ()
+				)
+	)
 	
 	rollout roll_facades "Facades"	(
 		
@@ -710,18 +742,18 @@ category:"CP | Urba"
 		
 		
 		----- rollout editeur ---------------------
-		rollout roll_editeur_facade "Editeur de façade"	 height:700	 width:715	--	width:480	--	width:500
+		rollout roll_editeur_facade "Editeur de façade"	 height:700	 width:410	--	width:480	--	width:500
 		(
 			
 			local facade_cible
 			local batiment_parent
 			
-			editText 	edTxt_nom		 	"" 	pos:[13,7] width:224
+			editText 	edTxt_nom		 	"" 	pos:[10,7] width:190		
 			
-			subRollout 'subroll_1' "" pos:[13,27] width:224 height:280 align:#left	
-			subRollout 'subroll_2' "" pos:[246,7] width:224 height:300 align:#left
-			subRollout 'subroll_3' "" pos:[479,7] width:224 height:300 align:#left
-			subRollout 'subroll_4' "" pos:[712,7] width:224 height:300 align:#left
+			subRollout 'subroll_1' "" pos:[10,27] width:190		height:280 align:#left	
+			subRollout 'subroll_2' "" pos:[210,7] width:190		height:300 align:#left
+			subRollout 'subroll_3' "" pos:[410,7] width:190		height:300 align:#left
+			subRollout 'subroll_4' "" pos:[610,7] width:190		height:300 align:#left
 			
 			fn resize_rollout	=(
 				
@@ -731,11 +763,11 @@ category:"CP | Urba"
 				subroll_4.height	=	roll_editeur_facade.height - 20
 				
 				if subroll_3.rollouts.count == 0 then
-					roll_editeur_facade.width = 480
+					roll_editeur_facade.width = 410
 				else 	if subroll_4.rollouts.count == 0 then
-					roll_editeur_facade.width = 715
+					roll_editeur_facade.width = 610
 				else
-					roll_editeur_facade.width = 950
+					roll_editeur_facade.width = 810
 				
 			)
 			
@@ -752,7 +784,7 @@ category:"CP | Urba"
 				
 				addSubRollout 	subroll_1		facade.roll_contraintes
 				addSubRollout 	subroll_1		facade.roll_repartition
-				addSubRollout 	subroll_2		facade.roll_sequence
+				addSubRollout 	subroll_1		facade.roll_sequence
 				
 			)
 			
@@ -1204,6 +1236,4 @@ category:"CP | Urba"
 	on create  	do initialiser ()
 	on load  		do initialiser ()
 	
-) --------- fin plugin -------------------------------------------------------------------------------------------
-
-
+) --------- fin plugin ---------------------------------------------------------------------------------------
