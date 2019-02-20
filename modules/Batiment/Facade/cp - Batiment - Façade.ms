@@ -78,19 +78,19 @@ category:"CP | Bâtiment	| Element"
 		etages_min_use		type:#boolean 		ui:chk_etages_min			default:false	
 		etages_min				type:#integer			ui:spn_etages_min			default:0
 		etages_max_use		type:#boolean 		ui:chk_etages_max			default:false
-		etages_max			type:#integer			ui:spn_etages_max			default:0
+		etages_max				type:#integer			ui:spn_etages_max			default:0
 		
 		longueur_min_use		type:#boolean 		ui:chk_longueur_min			default:false
 		longueur_min			type:#integer			ui:spn_longueur_min			default:0
-		longueur_max_use	type:#boolean 		ui:chk_longueur_max		default:false
+		longueur_max_use		type:#boolean 		ui:chk_longueur_max		default:false
 		longueur_max			type:#integer			ui:spn_longueur_max		default:0
 		
-		mur_nord			type:#boolean 		ui:ckb_mur_nord			default:false
-		mur_sud				type:#boolean 		ui:ckb_mur_sud			default:false
-		mur_est				type:#boolean 		ui:ckb_mur_est			default:false
-		mur_ouest			type:#boolean 		ui:ckb_mur_ouest			default:false
+		mur_nord					type:#boolean 		ui:ckb_mur_nord			default:false
+		mur_sud					type:#boolean 		ui:ckb_mur_sud			default:false
+		mur_est					type:#boolean 		ui:ckb_mur_est			default:false
+		mur_ouest					type:#boolean 		ui:ckb_mur_ouest			default:false
 		
-		murs				type:#integer			ui:ddl_murs					default:1
+		murs							type:#integer			ui:ddl_murs					default:1
 		
 	)
 	parameters params_hasard 			rollout:roll_hasard		(
@@ -607,29 +607,18 @@ category:"CP | Bâtiment	| Element"
 	rollout roll_contraintes "Contraintes" width:180 height:318
 	(
 		label 'lbl_etages' "Etages:" pos:[15,7] width:55 height:16 align:#left
-		
-		
-		
-		
 		label 'lbl6' "Façades:" pos:[14,109] width:78 height:16 align:#left
-		spinner 'spn_etages_min' "" pos:[31,23] width:50 height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#left
+		spinner 'spn_etages_min' "" pos:[31,23] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
 		label 'lbl9' ">" pos:[85,24] width:12 height:15 align:#left
 		checkbutton 'chk_etages_min' "" pos:[16,23] width:16 height:16 align:#left
-		spinner 'spn_etages_max' "" pos:[110,23] width:50 height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#left
+		spinner 'spn_etages_max' "" pos:[110,23] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
 		checkbutton 'chk_etages_max' "" pos:[95,23] width:16 height:16 align:#left
 		label 'lbl28' "Longueurs:" pos:[15,41] width:55 height:16 align:#left
-		spinner 'spn_longueur_min' "" pos:[31,57] width:50 height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#left
+		spinner 'spn_longueur_min' "" pos:[31,57] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
 		label 'lbl29' ">" pos:[85,58] width:12 height:15 align:#left
 		checkbutton 'chk_longueur_min' "" pos:[16,57] width:16 height:16 align:#left
-		spinner 'spn_longueur_max' "" pos:[110,57] width:50 height:16 range:[-1e+13,1e+13,0] type:#integer scale:1 align:#left
+		spinner 'spn_longueur_max' "" pos:[110,57] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
 		checkbutton 'chk_longueur_max' "" pos:[95,57] width:16 height:16 align:#left
-		
-		
-		
-		
-		
-		
-		
 		checkbutton 'ckb_mur_nord' "N." pos:[15,90] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
 		checkbutton 'ckb_mur_sud' "S." pos:[52,90] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
 		checkbutton 'ckb_mur_est' "E." pos:[89,90] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
