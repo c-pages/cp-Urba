@@ -195,18 +195,17 @@ category:"CP | Urba"
 		
 	) 	---- fin rollout Presets ---------------------------
 	
-	rollout	roll_affichage		"Affichage"		rolledUp:true		(
+	rollout roll_affichage "Affichage" width:180 height:57
+	(
 		
-		group "Viewport" (
-			checkButton	ckb_afficher_longueur	"Long"	width:35	across:4 	align:#right
-			checkButton	ckb_autre_1	""	width:35	align:#right
-			checkButton	ckb_autre_2	""	width:35	align:#right
-			checkButton	ckb_autre_3	""	width:35	align:#right
-		)
+		groupBox 'grp1' "Viewport" pos:[4,7] width:169 height:46 align:#left
+		checkbutton 'ckb_afficher_longueur' "Long" pos:[12,26] width:38 height:21 across:4 align:#left
+		checkbutton 'ckb_autre_1' "" pos:[49,26] width:38 height:21 align:#left
+		checkbutton 'ckb_autre_2' "" pos:[86,26] width:38 height:21 align:#left
+		checkbutton 'ckb_autre_3' "" pos:[122,26] width:38 height:21 align:#left
 		
-		on ckb_afficher_longueur changed state do 
+		on ckb_afficher_longueur changed state do
 			afficher_longueurs state
-	
 	)
 	
 	rollout roll_surface "Surface" width:180 height:160
@@ -216,7 +215,7 @@ category:"CP | Urba"
 		--- Surface ------
 		pickbutton 'btn_pick_perimetre' "Pick shape" pos:[1,2] width:170 height:20 filter:shape_filt autoDisplay:true align:#left
 		
-		GroupBox 'grp1' "Optimiser" pos:[4,23] width:170 height:101 align:#left
+		GroupBox 'grp1' "Optimiser" pos:[4,23] width:169 height:101 align:#left
 			
 		checkbox 'chk_souder' "Souder" pos:[13,42] width:57 height:15 across:2 align:#left
 		spinner 'spn_souder' "" pos:[90,42] width:75 height:16 range:[0,10000,0] type:#worldunits align:#left
@@ -239,13 +238,13 @@ category:"CP | Urba"
 	
 	rollout roll_etages "Etages" width:180 height:270
 	(
-		GroupBox 'grp_general' "Général" pos:[4,1] width:170 height:88 align:#left
+		GroupBox 'grp_general' "Général" pos:[4,1] width:169 height:88 align:#left
 		spinner 'spn_etages_nbres' "" pos:[90,20] width:75 height:16 range:[0,1000,1] type:#integer align:#left
 		spinner 'spn_etages_hauteur' "" pos:[90,35] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 			
 		spinner 'spn_dalle_epaisseur' "" pos:[90,50] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		spinner 'spn_soubassement_hauteur' "" pos:[90,65] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
-		GroupBox 'grp2' "Etages spécifiques" pos:[4,90] width:170 height:139 align:#left
+		GroupBox 'grp2' "Etages spécifiques" pos:[4,90] width:169 height:139 align:#left
 	
 			
 		button 'btn_etages_nouveau' "Nouveau" pos:[20,112] width:70 height:16 toolTip:"Ajouter	étages spécifiques" across:2 align:#left
@@ -382,17 +381,15 @@ category:"CP | Urba"
 	
 	rollout roll_facades "Facades"	(
 		
-		button 		btn_ajouter 		"+"			across:4 --	align:#left
-		button 		btn_retirer	 		"-"			
-		button 		btn_monter			"/\\"			
-		button 		btn_descendre	"\\/"	--align:#right
+		button 'btn_ajouter' "Nouv." pos:[3,3] width:45 height:19 across:4 align:#left
+		button 'btn_retirer' "Supp." pos:[91,3] width:45 height:19 align:#left
+		button 'btn_dupliquer' "Dupl." pos:[47,3] width:45 height:19 across:4 align:#left
+		button 'btn_monter' "/\\" pos:[135,3] width:19 height:19 align:#left
+		button 'btn_descendre' "\\/" pos:[153,3] width:19 height:19 align:#left
+		listbox 'lbx_facades' "" pos:[3,22] width:170 height:5 align:#left
+		edittext 'edTxt_nom' "" pos:[-1,94] width:174 height:17 align:#left
 		
-		listBox		lbx_facades		""	height:5
-	
-		editText 	edTxt_nom		 	"" 	
-		
-		checkbutton		btn_editer_facade		"Editeur de façade"	width:140 height:25
-		
+		checkbutton		btn_editer_facade		"Editeur de façade"	pos:[2,112] width:171 height:25 -- width:140 height:25
 		
 		fn actualiser =(
 			
@@ -408,13 +405,14 @@ category:"CP | Urba"
 			
 			---- les boutons ------
 			btn_retirer.enabled 				= lbx_facades.selection != 0
+			btn_dupliquer.enabled 			= lbx_facades.selection != 0
 			btn_monter.enabled 				= lbx_facades.selection > 1
-			btn_descendre.enabled 		= lbx_facades.selection < facades.count and lbx_facades.selection != 0
+			btn_descendre.enabled 			= lbx_facades.selection < facades.count and lbx_facades.selection != 0
 			
 			edTxt_nom.enabled 				= lbx_facades.selection != 0
-			edTxt_nom.text	 				= if lbx_facades.selection != 0	then	facades[  lbx_facades.selection ].nom	else ""
+			edTxt_nom.text	 					= if lbx_facades.selection != 0	then	facades[  lbx_facades.selection ].nom	else ""
 			
-			btn_editer_facade.enabled 	= lbx_facades.selection != 0
+			btn_editer_facade.enabled 		= lbx_facades.selection != 0
 			
 			
 		) --- fin actualiser -----------
@@ -442,13 +440,14 @@ category:"CP | Urba"
 		
 	) --- fin rollout facades-------------------------
 	
-	rollout roll_toiture "Toiture"	(
+	rollout roll_toiture "Toiture" width:180 height:203
+	(
 		
 		
-		dropDownList	ddl_toiture_type		""	 items:#("Sans",  "Terrasse",   "1 pan",   "2 pans",   "n pans" )
-		subrollout			subroll_param			""	height:150
+		dropdownList 'ddl_toiture_type' "" pos:[5,3] width:165 height:21 items:#("Sans", "Terrasse", "1 pan", "2 pans", "n pans") align:#left
+		subRollout 'subRoll_param' "" pos:[5,25] width:165 height:160 align:#left
 		
-		dotNetControl 	btn_resize 	"System.Windows.Forms.Button" 		align:#left /* width:150 */ height:10
+		dotNetControl 'btn_resize' "System.Windows.Forms.Button" pos:[5,188] width:165 height:10 align:#left
 		
 		fn actualiser = (
 			
@@ -473,47 +472,54 @@ category:"CP | Urba"
 		local subRoll_hauteur_init		=	0
 		local btnResize_pos_init		=	[0,0]
 		local roll_hauteur_init			=	[0,0]
-		fn resize_surbRoll =(
+		fn resize_init	=(
+					resize_enCours 				= true
+					pos_initial						=	mouse.posUnscaled
+					subRoll_hauteur_init		= 	subroll_param.height
+					btnResize_pos_init			=	btn_resize.pos
+					roll_hauteur_init			=	roll_toiture.height
+					debug "pos_initial"	var:pos_initial
+				)
+		fn resizer =(
 			if resize_enCours do (
-				local mouse_pos 			= mouse.posUnscaled
-				local changement_ht 	= mouse_pos.y - pos_initial.y
-				local subRoll_nvl_ht 	= subRoll_hauteur_init 		+ 	changement_ht
+				local changement_ht 	= mouse.posUnscaled.y - pos_initial.y
+				local subRoll_nvl_ht 		= subRoll_hauteur_init 		+ 	changement_ht
 				
 				if subRoll_nvl_ht >	50 do (
+					debug "mouse_pos"	var:mouse_pos
+					debug "changement_ht"	var:changement_ht
+					
+					
 					subroll_param.height		=	subRoll_nvl_ht
 					btn_resize.pos.y			=	btnResize_pos_init.y		+	changement_ht
-					roll_toiture.height	=	roll_hauteur_init 	+ 	changement_ht
+					roll_toiture.height			=	roll_hauteur_init 	+ 	changement_ht
 				)
 			)
 		)
-		
-		
-		
-		on roll_toiture		open 				do 	(
-			actualiser ()
-			
-			---- le bouton resize -----------------------
-			btn_resize.FlatStyle	=		(dotNetClass "System.Windows.Forms.FlatStyle").flat	
-			btn_resize.BackColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
-			btn_resize.ForeColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
-		)
-		
-		
-		
 		------------ le bouton resize -----------------------
-		on	btn_resize	MouseDown 	do (
-			resize_enCours 				= true
-			pos_initial						=	mouse.posUnscaled
-			subRoll_hauteur_init			= 	subroll_param.height
-			btnResize_pos_init			=	btn_resize.pos
-			roll_hauteur_init				=	roll_toiture.height
-		)
-		on	btn_resize	MouseUp 		do	resize_enCours = false		
-		on	btn_resize	MouseMove 	do 	resize_surbRoll ()
-		on	btn_resize	MouseLeave 	do	resize_enCours = false		
+		on btn_resize mouseDown 		do 	resize_init		()
+		on btn_resize mouseMove 		do	resizer ()
+		on btn_resize mouseUp 			do	resize_enCours = false
+		on btn_resize MouseLeave 		do	resize_enCours = false
 		
-		on 	ddl_toiture_type		selected val		do actualiser()
-	) ----- fin rollout toiture -----------------------
+		
+		
+		
+		
+		
+		on roll_toiture open do
+		(
+					actualiser ()
+					
+					---- le bouton resize -----------------------
+					btn_resize.FlatStyle	=		(dotNetClass "System.Windows.Forms.FlatStyle").flat	
+					btn_resize.BackColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
+					btn_resize.ForeColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
+				)
+		on ddl_toiture_type selected val		do
+			actualiser()
+		
+	)
 	
 	rollout roll_divers  "Divers"	(
 -- 		group "Qualité" (
@@ -1238,4 +1244,4 @@ category:"CP | Urba"
 	on create  	do initialiser ()
 	on load  		do initialiser ()
 	
-) --------- fin plugin ---------------------------------------------------------------------------------------
+) --------- fin plugin ------------------------------------------------------------------------------------

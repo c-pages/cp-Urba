@@ -8,7 +8,7 @@
 		button 'btn_monter' "/\\" pos:[135,3] width:19 height:19 align:#left
 		button 'btn_descendre' "\\/" pos:[153,3] width:19 height:19 align:#left
 		listbox 'lbx_facades' "" pos:[3,22] width:170 height:5 align:#left
-		edittext 'edTxt_nom' "" pos:[-1,94] width:175 height:17 align:#left
+		edittext 'edTxt_nom' "" pos:[-1,94] width:174 height:17 align:#left
 		
 		
 		label 'lbl_etages' "Etages:" pos:[15,128] width:55 height:16 align:#left

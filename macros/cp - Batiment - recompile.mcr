@@ -11,6 +11,6 @@ buttonText:"Recomp. Bati."
 	filein "$userScripts\\cp-Urba\\Startup\\cp - Urba - Batiment - Startup.ms"
 	
 	for nd in  selectBack do selectMore  nd
-	
+	clearlistener ()
 	format "RELOAD ok\n"
 )
