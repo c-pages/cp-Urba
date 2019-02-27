@@ -65,7 +65,7 @@ category:"CP | Urba"
 	
 	
 	---- pré déclaration -----------
-	local basculer_editeurFacade, ajouter_facade, retirer_facade, monter_facade, descendre_facade, renommer_facade, actualiser_shape
+	local basculer_editeurFacade, ajouter_facade, retirer_facade, dupliquer_facade,  monter_facade, descendre_facade, renommer_facade, actualiser_shape
 	local ajouter_etage_spe, supprimer_etage_spe
 	local afficher_longueurs
 	local roll_editeur_facade
@@ -431,6 +431,7 @@ category:"CP | Urba"
 			
 		on btn_ajouter 		pressed 			do 	ajouter_facade ()
 		on btn_retirer 		pressed 			do	retirer_facade			lbx_facades.selection 
+		on btn_dupliquer 		pressed 			do	dupliquer_facade		lbx_facades.selection 
 		on btn_monter 		pressed 			do	monter_facade		lbx_facades.selection 
 		on btn_descendre 	pressed		 	do	descendre_facade	lbx_facades.selection 
 	
@@ -863,6 +864,25 @@ category:"CP | Urba"
 		
 		if roll_facades.open do	(
 			roll_facades.lbx_facades.selection -= 1 
+			roll_facades.actualiser ()	
+		)
+		
+	)
+	fn dupliquer_facade					_id	 				=(
+		
+		local nvl_facade			=  copy facades[_id]
+		
+		if _id	!= facades.count	then	
+			insertItem nvl_facade					facades 					_id
+		else		
+			append facades						nvl_facade
+
+		nvl_facade.nom += " - copie"
+		---- actualisations -----------
+		actualiser ()
+		
+		if roll_facades.open do	(
+			roll_facades.lbx_facades.selection += 1 
 			roll_facades.actualiser ()	
 		)
 		

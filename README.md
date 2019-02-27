@@ -66,7 +66,7 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
   - [x] Mise au propre des menuiseries.
   - [x] Prise en compte de 3 niveaux de détails des géometries (full, medium et low) + Volume !!.
   - [ ] Début de l'intégration des presets, il y a questionnement sur enregistrement ou plutot sur la lecture des parametres des maxObjects inclus dans des parametres (tableau) de nos preset a sauvegarder...
-  - [ ] Façade, duplication de facade
+  - [x] Façade, duplication de facade
   - [ ] Toitures à 1 pan, toiture à 2 pans
   - [ ] donc il faut trouver les goutereaux et pignons (cf squeletisation)
   - [ ] les occultations des baies (volets roulant, battants et stores bans)
@@ -74,10 +74,10 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
   - [ ] façades : trouver le moyen de faire des corniches (comment les placer sur Z ?)
   - [ ] façades : portiques/porches ?
   - [ ] façades : repartiion mode espacement.
-  - [ ] Toitures : integration d'elemnts secondaire (chien assis, lucarnes, cheminets, locaux techniques, ...)
+  - [ ] Toitures : integration d'elements secondaire (chien assis, lucarnes, cheminets, locaux techniques, ...)
   - [ ] Toiture, deboguer la squeletisation, y'a un fichier max avec un exemple du bug dans recherche/3D. c'est un decalage sur Z d'un point.
   - [ ] Peut etre essayer d'integrer l'editeur de facades dans l'interface principal du Batiment ... ?
-  - [ ] Facades : gerer la connexion entre deux baies. 
+  - [ ] Facades : gerer la connexion entre deux baies.
 
 
 
