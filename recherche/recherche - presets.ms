@@ -124,6 +124,126 @@ struct str_mgr_batiment_presets (
 		fn ajouter_maxObj_a_param		_param		=(
 			
 		),
+		fn set_parameters_fromTextBACK		_cible 	_preset	= (
+			
+			format  "set_parameters_fromText	:\n\n"
+			
+			local stream 				= _preset as stringStream
+			local param_aRemplir	=	undefined
+			local compo_aRemplir	=	undefined
+			
+			while not eof stream do (
+				
+				local ligne 				= readLine  stream
+				local param_nom 	= ( filterString  ligne "=" )[1]
+				local param_value 	= ( filterString  ligne "=" )[2]
+				
+				
+				
+				---- le parametre est une LISTE DE MAXOBJECTS ---------
+				if param_value == "maxObjs#(" then (
+					debug "	---------------DEBUT Liste maxObjects -----------"
+-- 					local param_parent = getProperty 	_cible		param_nom -- execute ( _cible + "." + param_nom )
+-- 					debug "	param_parent" var:(param_parent as string)
+					
+					param_aRemplir = param_nom
+					
+					
+				---- le parametre est la FIN de la LISTE DE MAXOBJECTS ---------
+				) else	if param_nom ==  ")" then (
+					debug "	---------------FIN Liste maxObjects -----------"
+					
+					param_aRemplir	=	undefined
+					
+					
+				---- le parametre est un MAXOBJECTS ---------
+				) else	if param_nom ==  "itemClasse" then (
+					debug "	--------------- MAXOBJECT -----------"
+					if param_aRemplir != undefined and compo_aRemplir != undefined do
+					
+					compo_aRemplir = 	createInstance	( execute param_value )
+					
+				----  parametre ordinaire ---------		
+				) else (
+					
+					debug "param_nom" 		var:param_nom
+					debug "param_value" 	var:param_value
+-- 					if compo_aRemplir != undefined then (
+-- 						setProperty 	compo_aRemplir		param_nom		( execute param_value )
+-- 					) else (
+-- 						setProperty 	_cible		param_nom		( execute param_value )
+-- 					)
+-- 					try (
+-- 	 				setProperty 	_cible		param_nom		( execute param_value )
+-- 					)	catch ()
+					
+				)	--
+				
+			) --- while eof ---------
+			
+			
+			
+		),
+		fn get_parameters_asText		_node = (
+			
+			local txtResult 						= ""
+			local parametres_noms 			=  getpropNames 	_node
+			
+			for param_nom in parametres_noms where not est_param_a_ignorer	param_nom do (
+				
+				local param_propriete 	= getProperty  _node 	param_nom 
+				local param_class 		= classof	param_propriete
+				
+				case param_class of (
+					ArrayParameter: (
+								if param_propriete.count > 0 then (
+									
+									local a_params 			= 	a_des_parametres	param_propriete[1]
+									
+									--- si il a des parametres, alors c'est un plug, faut aller chercher les 'sous parametres' -----
+									if a_params then (
+										txtResult +=	param_nom as string  + "=maxObjs#(\n"
+										for i = 1 to param_propriete.count do (
+											
+											local sous_param 	=	 param_propriete[i]
+											local classOf_item 	=	classOf sous_param
+											
+											txtResult +=  "itemClasse=" + classOf_item as string + "\n"											
+											txtResult +=	get_parameters_asText		sous_param
+											txtResult +=  "FINitemClasse\n"		
+											
+										)
+										txtResult +=	")\n"
+										
+									---- sinon c'est juste un tableau de trucs de base ----------
+									) else	txtResult +=	param_nom as string  + "=" + param_propriete as string +  "\n"
+									
+								---- sinon, le tableau est vide ------------
+								) else 	txtResult +=	param_nom as string  + "=#()\n"
+								
+							)
+					string:	txtResult +=	param_nom as string  + "=\"" + param_propriete as string  + "\"\n"
+					default:	(
+						
+						local a_params 	= 	a_des_parametres	param_propriete
+						if a_params then (
+							txtResult +=  "itemClasse=" + param_class as string + "\n"											
+							txtResult +=	get_parameters_asText		param_propriete
+							txtResult +=  "FINitemClasse\n"		
+						) else (
+						
+							txtResult +=	param_nom as string  + "=" + param_propriete as string +  "\n"
+						)
+						
+					)
+				) -- fin case param_class  ----
+			) -- fin for param_nom
+			
+			txtResult
+			
+		),
+		
+		
 		fn set_parameters_fromText		_cible 	_preset	= (
 			
 			format  "set_parameters_fromText	:\n\n"
@@ -168,11 +288,11 @@ struct str_mgr_batiment_presets (
 					
 					debug "param_nom" 		var:param_nom
 					debug "param_value" 	var:param_value
-					if compo_aRemplir != undefined then (
-						setProperty 	compo_aRemplir		param_nom		( execute param_value )
-					) else (
-						setProperty 	_cible		param_nom		( execute param_value )
-					)
+-- 					if compo_aRemplir != undefined then (
+-- 						setProperty 	compo_aRemplir		param_nom		( execute param_value )
+-- 					) else (
+-- 						setProperty 	_cible		param_nom		( execute param_value )
+-- 					)
 -- 					try (
 -- 	 				setProperty 	_cible		param_nom		( execute param_value )
 -- 					)	catch ()
@@ -184,55 +304,11 @@ struct str_mgr_batiment_presets (
 			
 			
 		),
-		fn get_parameters_asText		_node = (
+		
+		fn get_composant	_paramsText		=(
 			
-			local txtResult 						= ""
-			local parametres_noms 			=  getpropNames 	_node
-			
-			for param_nom in parametres_noms where not est_param_a_ignorer	param_nom do (
-				
-				local param_propriete 	= getProperty  _node 	param_nom 
-				local param_class 		= classof	param_propriete
-				
-				case param_class of (
-					ArrayParameter: (
-								if param_propriete.count > 0 then (
-									
-									local a_params 			= 	a_des_parametres	param_propriete[1]
-									
-									--- si il a des parametres, alors c'est un plug, faut aller chercher les 'sous parametres' -----
-									if a_params then (
-										txtResult +=	param_nom as string  + "=maxObjs#(\n"
-										for i = 1 to param_propriete.count do (
-											
-											local sous_param 	=	 param_propriete[i]
-											local classOf_item 	=	classOf sous_param
-											
-											txtResult +=  "itemClasse=" + classOf_item as string + "\n"											
-											txtResult +=	get_parameters_asText		sous_param
-											
-										)
-										txtResult +=	")\n"
-										
-									---- sinon c'est juste un tableau de trucs de base ----------
-									) else	txtResult +=	param_nom as string  + "=" + param_propriete as string +  "\n"
-									
-								---- sinon, le tableau est vide ------------
-								) else 	txtResult +=	param_nom as string  + "=#()\n"
-								
-							)
-					string:	txtResult +=	param_nom as string  + "=\"" + param_propriete as string  + "\"\n"
-					default:	txtResult +=	param_nom as string  + "=" + param_propriete as string +  "\n"
-				) -- fin case param_class  ----
-			) -- fin for param_nom
-			
-			txtResult
 			
 		),
-		
-		
-		
-		
 		
 		
 		
@@ -312,15 +388,10 @@ clearListener ()
 
 
 
-
 mgr_preset_test.enregistrer		$cp_batiment001	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
 mgr_preset_test.charger		 	$cp_batiment002	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
 
-
-
-
-
-
+ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
 
 
 

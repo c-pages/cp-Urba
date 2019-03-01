@@ -77,7 +77,9 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
   - [ ] Toitures : integration d'elements secondaire (chien assis, lucarnes, cheminets, locaux techniques, ...)
   - [ ] Toiture, deboguer la squeletisation, y'a un fichier max avec un exemple du bug dans recherche/3D. c'est un decalage sur Z d'un point.
   - [ ] Peut etre essayer d'integrer l'editeur de facades dans l'interface principal du Batiment ... ?
-  - [ ] Facades : gerer la connexion entre deux baies.
+  - [ ] Facades : gerer la connexion entre deux baies pour creer une baie avec differents hauteur d'allège par exemple.
+  - [ ] creations des dalles a chaques etages.
+  - [ ] a voir comment on pourrait creer des murs interieurs (cf squeletisation)
 
 
 

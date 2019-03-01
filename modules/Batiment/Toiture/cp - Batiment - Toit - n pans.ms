@@ -46,7 +46,7 @@ category:"CP | Bâtiment	| Element"
 	
 	parameters params_divers rollout:roll_divers	(
 		
-		nom	 							type:#string 			default:"Facade"
+		nom	 							type:#string 			default:"Toiture n pans"
 		
 		------ options --------------
 -- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false

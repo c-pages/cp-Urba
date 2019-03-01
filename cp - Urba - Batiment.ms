@@ -873,7 +873,7 @@ category:"CP | Urba"
 		local nvl_facade			=  copy facades[_id]
 		
 		if _id	!= facades.count	then	
-			insertItem nvl_facade					facades 					_id
+			insertItem nvl_facade					facades 					(_id + 1 )
 		else		
 			append facades						nvl_facade
 
