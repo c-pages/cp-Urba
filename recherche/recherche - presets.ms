@@ -226,7 +226,10 @@ struct str_mgr_batiment_presets (
 					default:	(
 						
 						local a_params 	= 	a_des_parametres	param_propriete
+						
 						if a_params then (
+							txtResult +=	param_nom as string  + "=" + param_propriete as string +  "\n"
+-- 							txtResult +=	"\n" + param_nom as string  + "=" --+ param_propriete as string  + "\"\n"
 							txtResult +=  "itemClasse=" + param_class as string + "\n"											
 							txtResult +=	get_parameters_asText		param_propriete
 							txtResult +=  "FINitemClasse\n"		
@@ -244,29 +247,35 @@ struct str_mgr_batiment_presets (
 		),
 		
 		
-		fn set_parameters_fromText		_cible 	_preset	= (
+		fn set_parameters_fromText		_cible 	_preset		pos:	= (
 			
 			format  "set_parameters_fromText	:\n\n"
 			
 			local stream 				= _preset as stringStream
 			local param_aRemplir	=	undefined
 			local compo_aRemplir	=	undefined
+			local onContinue			=	true
 			
-			while not eof stream do (
+			if pos != unsupplied do seek  stream	pos
+			
+			while not eof stream or onContinue	do (
 				
 				local ligne 				= readLine  stream
 				local param_nom 	= ( filterString  ligne "=" )[1]
 				local param_value 	= ( filterString  ligne "=" )[2]
 				
-				
+				debug "param_nom" 		var:param_nom
+				debug "param_value" 	var:param_value
 				
 				---- le parametre est une LISTE DE MAXOBJECTS ---------
 				if param_value == "maxObjs#(" then (
+					
 					debug "	---------------DEBUT Liste maxObjects -----------"
 -- 					local param_parent = getProperty 	_cible		param_nom -- execute ( _cible + "." + param_nom )
 -- 					debug "	param_parent" var:(param_parent as string)
 					
-					param_aRemplir = param_nom
+-- 					param_aRemplir = execute ( classof (getProperty 	_cible		param_nom ) as string )
+-- 					debug "	---------------param_aRemplir -----------" var:param_aRemplir
 					
 					
 				---- le parametre est la FIN de la LISTE DE MAXOBJECTS ---------
@@ -278,21 +287,38 @@ struct str_mgr_batiment_presets (
 					
 				---- le parametre est un MAXOBJECTS ---------
 				) else	if param_nom ==  "itemClasse" then (
-					debug "	--------------- MAXOBJECT -----------"
-					if param_aRemplir != undefined and compo_aRemplir != undefined do
 					
-					compo_aRemplir = 	createInstance	( execute param_value )
+					debug "	--------------- MAXOBJECT -----------"
+					
+-- 					if param_aRemplir != undefined and compo_aRemplir != undefined do (
+					
+-- 						param_aRemplir = execute ( classof (getProperty 	_cible		param_nom ) as string )
+-- 						debug "	---------------param_aRemplir -----------" var:param_aRemplir
+						
+						
+						compo_aRemplir = 	createInstance	( execute param_value )
+						
+						debug "********stream" 		var:( filePos stream )
+						set_parameters_fromText		compo_aRemplir 	stream pos:( filePos stream )
+						
+						
+						param_aRemplir = compo_aRemplir
+-- 					)
+					
+				---- FIN d'un  MAXOBJECTS ---------
+				) else	if param_nom ==  "FINitemClasse" then (
+					
+					compo_aRemplir = undefined
+					onContinue = false
 					
 				----  parametre ordinaire ---------		
 				) else (
 					
-					debug "param_nom" 		var:param_nom
-					debug "param_value" 	var:param_value
--- 					if compo_aRemplir != undefined then (
+					if compo_aRemplir != undefined then (
 -- 						setProperty 	compo_aRemplir		param_nom		( execute param_value )
 -- 					) else (
 -- 						setProperty 	_cible		param_nom		( execute param_value )
--- 					)
+					)
 -- 					try (
 -- 	 				setProperty 	_cible		param_nom		( execute param_value )
 -- 					)	catch ()
@@ -366,7 +392,7 @@ struct str_mgr_batiment_presets (
 				)
 				close  stream
 				
-				set_parameters_fromText 	_node 	datas
+				set_parameters_fromText 		_node 	datas
 			)
 			
 		)
