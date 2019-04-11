@@ -419,6 +419,57 @@ mgr_preset_test.charger		 	$cp_batiment002	fichier:"C:\\Users\\kris\\AppData\\Lo
 
 ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
 
+/* 
+
+
+ss 			= stringstream "ABC\nDE\nPOPO"
+st 			= ss as string
+ss_count 	= st.count
+
+ss_line 	= readLine ss
+ss_pos 	= filePos  ss
+
+st_sub 	= substring st	( ss_pos + 1 ) 	(ss_count - ss_pos )
+ss_sub 	= st_sub as stringstream
+
+
+
+ */
+
+
+
+
+
+/*
+
+
+--------------------------------------------------------------------------------------------------------
+	Fonction remplissage des parametres d'un plug
+		-	param_strg	<string>
+--------------------------------------------------------------------------------------------------------
+
+1	-	On recupère le string 	( param_strg ) en stream ( param_strm )
+2	-	On creer l'objet plug courant
+3	-	On lit chaque ligne du stream	( param_strm )
+		a	-	On a un parametre classique
+			--->	On rempli le parametere du plug courant
+		b	-	On a un parametre contenant un ou plusieurs plugs enfant
+			--->	On lance la fonction recursivement	avec la suite du string
+					On recupere la suite du string
+					On ajoute le plug courant dans le parametre du plug parent
+		c	-	On a une fin de déclaration de plug
+			--->	On renvois le plug courant et la suite du string
+
+
+
+
+ */
+
+
+
+
+
+
 
 
 
