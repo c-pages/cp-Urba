@@ -89,7 +89,7 @@ category:"CP | Urba"
 		etages_hauteur_global		type: #worldUnits 		default:250.	 	ui:spn_etages_hauteur	 			animatable:false		invisibleInTV:true
 		
 		dalle_epaisseur				type: #worldUnits 		default:20.	 		ui:spn_dalle_epaisseur	 			animatable:false		invisibleInTV:true
-		soubassement_hauteur		type: #worldUnits 		default:100.	 	ui:spn_soubassement_hauteur	animatable:false		invisibleInTV:true
+		soubassement_hauteur	type: #worldUnits 		default:100.	 	ui:spn_soubassement_hauteur	animatable:false		invisibleInTV:true
 		
 		
 		------- Etages	 specifiques		------------------

@@ -120,7 +120,7 @@ struct str_mgr_batiment_presets (
 			
 		), 
 		*/
-		
+		/* 
 		fn ajouter_maxObj_a_param		_param		=(
 			
 		),
@@ -184,6 +184,8 @@ struct str_mgr_batiment_presets (
 			
 			
 		),
+		
+		 */
 		fn get_parameters_asText		_node = (
 			
 			local txtResult 						= ""
@@ -228,11 +230,13 @@ struct str_mgr_batiment_presets (
 						local a_params 	= 	a_des_parametres	param_propriete
 						
 						if a_params then (
-							txtResult +=	param_nom as string  + "=" + param_propriete as string +  "\n"
+							
+							txtResult +=	param_nom as string  + ":itemClasse=" + param_propriete as string +  "\n"
 -- 							txtResult +=	"\n" + param_nom as string  + "=" --+ param_propriete as string  + "\"\n"
-							txtResult +=  "itemClasse=" + param_class as string + "\n"											
+-- 							txtResult +=  "itemClasse=" + param_class as string + "\n"											
 							txtResult +=	get_parameters_asText		param_propriete
-							txtResult +=  "FINitemClasse\n"		
+							txtResult +=  "FINitemClasse\n"
+							
 						) else (
 						
 							txtResult +=	param_nom as string  + "=" + param_propriete as string +  "\n"
@@ -246,7 +250,7 @@ struct str_mgr_batiment_presets (
 			
 		),
 		
-		
+		/* 
 		fn set_parameters_fromText		_cible 	_preset		pos:	= (
 			
 			format  "set_parameters_fromText	:\n\n"
@@ -335,22 +339,172 @@ struct str_mgr_batiment_presets (
 			
 			
 		),
+		 */
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		fn remplir_parametres		_params_strg		_plug		= (
+			debug "************** remplir_parametres *******************"
+			debug "_params_strg" var:_params_strg
+			debug "************** **************** *******************"
+			
+			
+			local params_strm	=	_params_strg as stringStream
+			local nv_plug	= _plug
+			
+			/* 
+			---- on créer le plugin	---------------
+			local plug_ligne 		= readLine  params_strm
+			local plug_value 		= ( filterString  param_ligne "=" )[2]	
+			local plug_courant	=	createInstance	(execute param_value )
+			*/
+			
+			
+			----- On remplie les parametres du plug	---------------
+			local onContinue	= true
+			while onContinue and not eof params_strm	do (
+				
+				local param_ligne 	= readLine  params_strm
+				local param_nom 	= ( filterString  param_ligne "=" )[1]
+				local param_value 	= ( filterString  param_ligne "=" )[2]
+				
+				debug "param_nom" 		var:param_nom
+				debug "param_value" 		var:param_value
+				
+				
+				/* 
+				case param_value of (
+					
+					---- le parametre est un MAXOBJECTS ---------
+					"itemClasse": (
+						
+					)
+					---- FIN d'un  MAXOBJECTS ---------
+					"FINitemClasse": (
+						
+					)
+					---- le parametre est une LISTE DE MAXOBJECTS ---------
+					"maxObjs#(": (
+						
+					)
+					---- le parametre est la FIN de la LISTE DE MAXOBJECTS ---------
+					")": (
+						
+					)
+					----  parametre ordinaire ---------		
+					default: (
+						
+					)
+					
+				) ----- fin remplissage des parametres ------------
+				*/
+				
+				
+				
+				---- le parametre est un MAXOBJECTS ---------
+				if matchPattern param_nom pattern:"*:itemClasse*"		then (
+					
+					debug "	-----	le parametre est un MAXOBJECTS "
+					
+					---- on créer le plugin	---------------
+					nv_plug	=	createInstance	( execute param_value )
+					
+					debug "********>>>>>>>>>>>> nv_plug"	var:nv_plug
+					
+					
+					---- on recoupe le stream --------
+					st 			= params_strm as string
+					ss_pos 		= filePos  params_strm
+					st_sub 		= substring st	( ss_pos + 1 ) 	( st.count - ss_pos )
+					
+					
+					
+					
+					local retour	=  remplir_parametres		st_sub		nv_plug	
+-- 					param_value	=	retour[1]
+					debug "********>>>>>>>>>>>> retour[1]"	var:retour[1]
+					
+					local str_pos_avirer 	= findString param_nom ":itemClasse"
+					local paramNomTemp 	= substring param_nom 1  (str_pos_avirer - 1 )
+					setProperty 	_plug		paramNomTemp		retour[1]
+					
+					
+					
+					
+					if retour[2].count > 0 then 
+						params_strm	=	retour[2]  as stringStream
+					else 
+						onContinue = false
+					
+					
+					
+-- 					debug"ss_sub : " var:st_sub
+					
+				---- le parametre est une LISTE DE MAXOBJECTS ---------
+				) else	if param_value == "maxObjs#(" then (
+					
+					debug "	-----	le parametre est une LISTE DE MAXOBJECTS "
+					
+				---- le parametre est la FIN de la LISTE DE MAXOBJECTS ---------
+				) else	if param_nom ==  ")" then (
+				
+					debug"	-----	le parametre est la FIN de la LISTE DE MAXOBJECTS"
+					
+				---- FIN d'un  MAXOBJECTS ---------
+				) else	if param_nom ==  "FINitemClasse" then (
+					
+-- 					debug "	-----	FIN d'un  MAXOBJECTS "
+					onContinue = false
+					
+				----  parametre ordinaire ---------		
+				) else (
+					
+					debug "	-----	parametre ordinaire "
+					
+					setProperty 	_plug		param_nom		( execute param_value )
+					
+				) ----- fin remplissage des parametres ------------
+				
+			) --- fin du while	------------
+			
+			
+			
+			--- on renvoie ------
+			st 			= params_strm as string
+			ss_pos 		= filePos  params_strm
+			st_sub 		= substring st	( ss_pos + 1 ) 	( st.count - ss_pos )
+			
+			#( nv_plug, st_sub )
+			
+		), ---- fin fn remplir_parametres	---------------------
+
+
+		
+		
+		
+		
 		
 		
 		
 	------- interface -------------------------------------
 	public	
 		fn enregistrer 		_node	fichier:		=(
-			debug "enregistrer"
+			debug "enregistrer"	
 			if not doesFileExist fichier_dossier do makeDir  fichier_dossier
 				
 			
 			local fichierCible 	
 			if fichier == unsupplied then
 				fichierCible 	=	getSaveFileName 	caption:					"Enregistrer" 			\
-																filename:				fichier_dossier 		\
-																types:					fichier_type			\
-																historyCategory:		fichier_categorie
+																	filename:				fichier_dossier 		\
+																	types:					fichier_type			\
+																	historyCategory:		fichier_categorie
 			else 	fichierCible	=	fichier
 			
 			
@@ -392,7 +546,10 @@ struct str_mgr_batiment_presets (
 				)
 				close  stream
 				
-				set_parameters_fromText 		_node 	datas
+-- 				set_parameters_fromText 		_node 	datas
+				
+				remplir_parametres		datas	_node
+				
 			)
 			
 		)
@@ -414,10 +571,19 @@ clearListener ()
 
 
 
-mgr_preset_test.enregistrer		$cp_batiment001	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
-mgr_preset_test.charger		 	$cp_batiment002	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+mgr_preset_test.enregistrer		$cp_batiment002	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+mgr_preset_test.charger		 	$cp_batiment003	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
 
 ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
+
+
+
+/* 
+
+ */
+
+
+
 
 /* 
 
@@ -445,7 +611,7 @@ ss_sub 	= st_sub as stringstream
 
 --------------------------------------------------------------------------------------------------------
 	Fonction remplissage des parametres d'un plug
-		-	param_strg	<string>
+		-	param_strg	<string>²&é"
 --------------------------------------------------------------------------------------------------------
 
 1	-	On recupère le string 	( param_strg ) en stream ( param_strm )
@@ -464,6 +630,19 @@ ss_sub 	= st_sub as stringstream
 
 
  */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
