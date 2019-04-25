@@ -356,7 +356,7 @@ struct str_mgr_batiment_presets (
 			
 			
 			local params_strm	=	_params_strg as stringStream
-			local nv_plug	= _plug
+			local nv_plug			= 	_plug
 			
 			/* 
 			---- on créer le plugin	---------------
@@ -450,6 +450,28 @@ struct str_mgr_batiment_presets (
 				) else	if param_value == "maxObjs#(" then (
 					
 					debug "	-----	le parametre est une LISTE DE MAXOBJECTS "
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					
 				---- le parametre est la FIN de la LISTE DE MAXOBJECTS ---------
 				) else	if param_nom ==  ")" then (
@@ -571,8 +593,8 @@ clearListener ()
 
 
 
-mgr_preset_test.enregistrer		$cp_batiment002	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
-mgr_preset_test.charger		 	$cp_batiment003	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+mgr_preset_test.enregistrer		$cp_batiment001	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+-- mgr_preset_test.charger		 	$cp_batiment003	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
 
 ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
 

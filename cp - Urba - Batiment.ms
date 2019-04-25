@@ -108,12 +108,12 @@ category:"CP | Urba"
 		optim_souder					type:#boolean			default:true		ui:chk_souder		animatable:false		invisibleInTV:true
 		optim_orthonormer			type:#boolean			default:false		ui:chk_ortho			animatable:false		invisibleInTV:true
 		optim_aligner					type:#boolean			default:false		ui:chk_aligner		animatable:false		invisibleInTV:true
-		optim_projeter					type:#boolean			default:false		ui:chk_projeter		animatable:false		invisibleInTV:true
+		optim_projeter				type:#boolean			default:false		ui:chk_projeter		animatable:false		invisibleInTV:true
 		
 		------- Seuils		------------------
 		optim_aplanir_seuil			type:#float				default:20.			ui:spn_aplanir		animatable:false		invisibleInTV:true
 		optim_souder_seuil			type:#float				default:30.			ui:spn_souder		animatable:false		invisibleInTV:true
-		optim_ortho_seuil				type:#float				default:100.		ui:spn_ortho		animatable:false		invisibleInTV:true
+		optim_ortho_seuil			type:#float				default:100.		ui:spn_ortho		animatable:false		invisibleInTV:true
 		optim_aligner_seuil			type:#float				default:50.			ui:spn_aligner		animatable:false		invisibleInTV:true
 		
 	)
@@ -133,12 +133,12 @@ category:"CP | Urba"
 		
 		qualite_courante				type:#integer 			default:1
 		qualite_viewport				type:#integer 			ui:rdo_qualite_viewport				default:1
-		qualite_render					type:#integer 			ui:rdo_qualite_render				default:1
+		qualite_render				type:#integer 			ui:rdo_qualite_render				default:1
 		
 		------ mat ID ----------
-		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
+		matId_menuis				type:#integer 			ui:spn_matId_menuis	default:1
 		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
-		matId_huisserie					type:#integer 			ui:spn_matId_huisserie	default:3
+		matId_huisserie				type:#integer 			ui:spn_matId_huisserie	default:3
 		matId_mur						type:#integer 			ui:spn_matId_mur		default:4
 		
 		on qualite_viewport set val do qualite_courante = val
