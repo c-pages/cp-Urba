@@ -43,17 +43,7 @@ struct str_mgr_batiment_presetsXML (
 				if _param_nom as string == param_a_ignorer do result = true
 			result
 		),
-		
-		fn a_des_parametres	_obj	=(
-			local result = false
-			try (
-				getpropNames 	_obj
-				result = true
-			) catch ()
-			result
-		),
-		
-		
+				
 		
 		
 		
@@ -76,14 +66,16 @@ struct str_mgr_batiment_presetsXML (
 				case param_class of (
 					ArrayParameter: (
 						
-								--- on creer le parametre ----- 
-								local nv_nodeXML_param	=	xmlDoc.CreateElement		param_nom
-								_xmlNode.appendChild 	nv_nodeXML_param
 								
 							 	if param_propriete.count > 0 then (
 									
 									--- si il a des parametres, alors c'est un plug, faut aller chercher les 'sous parametres' -----
-									if a_des_parametres	param_propriete[1] then (
+									if isMSPlugin	param_propriete[1] then (
+-- 										isMSPluginClass
+										
+								--- on creer le parametre ----- 
+								local nv_nodeXML_param	=	xmlDoc.CreateElement		param_nom
+								_xmlNode.appendChild 	nv_nodeXML_param
 										
 										for i = 1 to param_propriete.count do (
 											
@@ -92,7 +84,7 @@ struct str_mgr_batiment_presetsXML (
 											nv_nodeXML_param.appendChild 	nv_nodeXML_item
 											nv_nodeXML_item.SetAttribute 	"class"		( param_propriete[i] as string )
 											
--- 											enregistrer_parametre_dansNodeXML		param_propriete		nv_nodeXML_item
+											enregistrer_parametre_dansNodeXML		param_propriete[i]		nv_nodeXML_item
 											
 										)
 										 
@@ -101,11 +93,11 @@ struct str_mgr_batiment_presetsXML (
 									
 								---- sinon, le tableau est vide ------------
 								) else 	_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
-								
+								 
 							)
 					default:	(
 						
-						if a_des_parametres	param_propriete  then (
+						if isMSPlugin	param_propriete  then (
 							
 							--- on creer le parametre ----- 
 							local nv_nodeXML_param	=	xmlDoc.CreateElement		param_nom
