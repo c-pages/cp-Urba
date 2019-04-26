@@ -15,7 +15,7 @@ optim_souder_seuil=30.0
 optim_ortho_seuil=100.0
 optim_aligner_seuil=50.0
 facades=maxObjs#(
-
+		
 		itemClasse=	CP_BATIMENTELEM_FACADE
 		longueur=0.0
 		profondeur=10.0

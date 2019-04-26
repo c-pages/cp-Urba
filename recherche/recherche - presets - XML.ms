@@ -2,10 +2,278 @@
 
 
 
-xmlDoc = dotNetObject "system.xml.xmlDocument"
+
+
+
+-------- manager de preset pour Batiment ----------------------------------------------------------------------------------
+struct str_mgr_batiment_presetsXML (
+		
+		------------ DEBUG	----------------------------------------------------------------------------------
+-- 		m_debug = false,
+		m_debug = true,		
+-- 		m_dbgPrefix ="presets_MGR",
+		m_dbgPrefix ="",
+		fn debug 	_txt  var:	 param:    =(
+			try if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
+			catch ()
+		),
+		
+		
+		
+		------------ MEMBRES	----------------------------------------------------------------------------------
+	private
+		fichier_dossier 		= "$userScripts\\cp-Urba\\lib\\",
+		fichier_categorie		= "cp_urba_batiment",		
+		fichier_extension		= "bati",		
+		fichier_type 			= fichier_categorie + "(*." + fichier_extension + ")|*." + fichier_extension + "|All|*.*|",
+		
+		xmlDoc,
+		
+		----- parametres que l'on ne veut pas enregistrer (typiquement : la spline du batiment ) -------------
+		params_a_ignorer =#("surface_node"),
+		
+		
+		
+		------------ FONCTIONS	----------------------------------------------------------------------------------
+	private
+		----------- divers ---------------------------------
+		fn est_param_a_ignorer		_param_nom =(
+			local result = false
+			for param_a_ignorer in params_a_ignorer do
+				if _param_nom as string == param_a_ignorer do result = true
+			result
+		),
+		
+		fn a_des_parametres	_obj	=(
+			local result = false
+			try (
+				getpropNames 	_obj
+				result = true
+			) catch ()
+			result
+		),
+		
+		
+		
+		
+		
+		
+		
+	private
+		fn enregistrer_parametre_dansNodeXML		_node	_xmlNode =(
+			
+			local parametres_noms 			=  getpropNames 	_node
+			
+			for param_nom in parametres_noms  where not est_param_a_ignorer	param_nom  do (
+			
+				local param_propriete 	= getProperty  _node 	param_nom 
+				
+-- 				debug "param_nom" var:param_nom
+				
+-- 				_xmlNode.SetAttribute 	param_nom		param_propriete
+				local param_class 		= classof	param_propriete
+				
+				case param_class of (
+					ArrayParameter: (
+						
+								--- on creer le parametre ----- 
+								local nv_nodeXML_param	=	xmlDoc.CreateElement		param_nom
+								_xmlNode.appendChild 	nv_nodeXML_param
+								
+							 	if param_propriete.count > 0 then (
+									
+									--- si il a des parametres, alors c'est un plug, faut aller chercher les 'sous parametres' -----
+									if a_des_parametres	param_propriete[1] then (
+										
+										for i = 1 to param_propriete.count do (
+											
+											--- on creer le l'item  ----- 
+											local nv_nodeXML_item	=	xmlDoc.CreateElement		"item"
+											nv_nodeXML_param.appendChild 	nv_nodeXML_item
+											nv_nodeXML_item.SetAttribute 	"class"		( param_propriete[i] as string )
+											
+-- 											enregistrer_parametre_dansNodeXML		param_propriete		nv_nodeXML_item
+											
+										)
+										 
+									---- sinon c'est juste un tableau de trucs de base ----------
+									) else	_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
+									
+								---- sinon, le tableau est vide ------------
+								) else 	_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
+								
+							)
+					default:	(
+						
+						if a_des_parametres	param_propriete  then (
+							
+							--- on creer le parametre ----- 
+							local nv_nodeXML_param	=	xmlDoc.CreateElement		param_nom
+							_xmlNode.appendChild 	nv_nodeXML_param
+							
+							--- on creer le l'item  ----- 
+							local nv_nodeXML_item	=	xmlDoc.CreateElement		"item"
+							nv_nodeXML_param.appendChild 	nv_nodeXML_item
+							nv_nodeXML_item.SetAttribute 	"class"		( param_propriete as string )
+							
+							enregistrer_parametre_dansNodeXML		param_propriete		nv_nodeXML_item
+							
+						) else (
+							
+							_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
+							
+						)
+						
+					)
+				) -- fin case param_class  ----
+			) --- fin for param_nom
+			
+		),
+		
+		
+	------- interface -------------------------------------
+	public	
+		fn enregistrer 		_node	fichier:		=(
+			
+			debug "enregistrer"
+			
+			--- le dossier -----
+			if not doesFileExist fichier_dossier do makeDir  fichier_dossier
+			
+			---- le fichier -----
+			local fichierCible
+			if fichier == unsupplied then
+				fichierCible 	=	getSaveFileName 	caption:					"Enregistrer" 			\
+																	filename:				fichier_dossier 		\
+																	types:					fichier_type			\
+																	historyCategory:		fichier_categorie
+			else 	fichierCible	=	fichier
+			
+			
+			---- l'enregistrement --------
+			if fichierCible != undefined do (
+				
+				---- On creer le xml et son root 	-----------
+				xmlDoc 				= dotNetObject "system.xml.xmlDocument"
+				local xmlRoot		=	xmlDoc.CreateElement "Batiment"
+				xmlDoc.appendChild xmlRoot
+				
+				---- parametres	-----
+				enregistrer_parametre_dansNodeXML		_node	xmlRoot
+				
+				
+				---- sauvegarder le xml -----------
+				xmlDoc.save 		fichierCible
+				
+			)
+			
+			
+			
+		),
+		
+		
+		fn charger  	_node 		fichier:		= (
+			debug "charger"
+			
+			local fichierCible 	
+			if fichier == unsupplied then
+					fichierCible 	=	getopenFileName 		caption:				"Charger" 				\
+																			filename:			fichier_dossier 		\
+																			types:				fichier_type			\
+																			historyCategory:	fichier_categorie
+			else 	fichierCible	=	fichier
+			
+			if fichierCible != undefined do (
+				
+				
+			)
+			
+		)
+		
+		
+	) ------------- fin struct -------------------
+	
+	
+	
+	
+	
+	
+mgr_preset_test = str_mgr_batiment_presetsXML ()
+clearListener ()
+
+
+
+mgr_preset_test.enregistrer		$cp_batiment001	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+-- mgr_preset_test.charger		 	$cp_batiment003	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+
+ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+/* 
+	
+	
+
+
+---- creer le xml et son root 	-----------
+xmlDoc 		= dotNetObject "system.xml.xmlDocument"
+xmlRoot		=	xmlDoc.CreateElement "Batiment"
+xmlDoc.appendChild xmlRoot
+
+
+
+---- ajouter un element	------------
+fn xml_ajouter_element	_xml_nodeParent		_element_nom	=(
+	
+	nvl_element	=	_xml_nodeParent.CreateElement		_element_nom
+	_xml_nodeParent.appendChild 	nvl_element
+	
+	nvl_element
+	
+)
+
+----- ajouter un attribut	-------
+fn xml_ajouter_attribut	_xml_nodeParent	_attribut_nom		_attribut_valeur	=(
+	_xml_nodeParent.SetAttribute 	_attribut_nom		_attribut_valeur
+)
+
+
+
+
+
+
+
+---- charger le xml -----------
+xmlDoc.load  ("C:\\temp\\test.xml")
+
+---- sauvegarder le xml -----------
+xmlDoc.save ("C:\\temp\\test.xml")
+
+
+
+
+
+
+
+ShellLaunch "C:\\temp\\test.xml" ""
+
+-- ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
+
+ */
+
+
+
+
+/* 
 show xmlDoc
 showmethods xmlDoc
-
 
 dotNetObject:System.Xml.XmlDocument
 
@@ -109,4 +377,7 @@ METHODS
   .Validate <System.Xml.Schema.ValidationEventHandler>validationEventHandler <System.Xml.XmlNode>nodeToValidate
   .WriteContentTo <System.Xml.XmlWriter>xw
   .WriteTo <System.Xml.XmlWriter>w
-true
+
+ */
+
+
