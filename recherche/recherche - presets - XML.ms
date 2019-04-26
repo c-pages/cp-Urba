@@ -61,33 +61,29 @@ struct str_mgr_batiment_presetsXML (
 				case param_class of (
 					ArrayParameter: (
 								
-							 	if param_propriete.count > 0 then (
+								--- si c'est un plug -----
+								if param_propriete.count > 0  and isMSPlugin	param_propriete[1] then (
 									
-									--- si c'est un plug -----
-									if isMSPlugin	param_propriete[1] then (
-										
-										--- on creer le parametre ----- 
-										local nv_nodeXML_param	=	xmlPresets.CreateElement		param_nom
-										_xmlNode.appendChild 	nv_nodeXML_param
-										
-										for i = 1 to param_propriete.count do (
-											
-											--- on creer le l'item  ----- 
-											local nv_nodeXML_item	=	xmlPresets.CreateElement		"item"
-											nv_nodeXML_param.appendChild 	nv_nodeXML_item
-											nv_nodeXML_item.SetAttribute 	"class"		( param_propriete[i] as string )
-											
-											enregistrer_parametre_dansNodeXML		param_propriete[i]		nv_nodeXML_item
-											
-										)
-										 
-									---- sinon c'est juste un tableau de trucs de base ----------
-									) else	_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
+									--- on creer le parametre ----- 
+									local nv_nodeXML_param	=	xmlPresets.CreateElement		param_nom
+									_xmlNode.appendChild 	nv_nodeXML_param
 									
-								---- sinon, le tableau est vide ------------
-								) else 	_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
-								 
-							)
+									for i = 1 to param_propriete.count do (
+										
+										--- on creer le l'item  ----- 
+										local nv_nodeXML_item	=	xmlPresets.CreateElement		"item"
+										nv_nodeXML_param.appendChild 	nv_nodeXML_item
+										nv_nodeXML_item.SetAttribute 	"class"		( param_propriete[i] as string )
+										
+										enregistrer_parametre_dansNodeXML		param_propriete[i]		nv_nodeXML_item
+										
+									)
+									 
+								---- sinon c'est juste un tableau de trucs de base ----------
+								) else	_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
+									
+							) --- fin ArrayParameter -----
+							
 					default:	(
 						
 						if isMSPlugin	param_propriete  then (
@@ -103,13 +99,9 @@ struct str_mgr_batiment_presetsXML (
 							
 							enregistrer_parametre_dansNodeXML		param_propriete		nv_nodeXML_item
 							
-						) else (
-							
-							_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
-							
-						)
+						) else 	_xmlNode.SetAttribute 	param_nom		( param_propriete as string )
 						
-					)
+					) ---- fin default ----
 				) -- fin case param_class  ----
 			) --- fin for param_nom	-------
 		),
@@ -135,36 +127,42 @@ struct str_mgr_batiment_presetsXML (
 			---- on charge les élements --------------
 			for i = 0 to _xmlNode.ChildNodes.count - 1 do (
 				
-				local childNode = _xmlNode.ChildNodes.itemOf[i]
-				
+				local childNode 	= _xmlNode.ChildNodes.itemOf[i]				
 				local prop_base 	= getProperty	_node	childNode.name
 				
+				---- soit on a un simple plugin comme parametre	-----
 				if isMSPlugin prop_base then (
 					
+					---- on creer le plugin de l'item -----
 					local childNodeItem 	= childNode.FirstChild		
-					local classItem 			= childNodeItem.GetAttribute "class"
+					local classItem 			= childNodeItem.GetAttribute "class"					
+					local nv_item				=	createInstance	(execute classItem )
 					
-					local nv_item	=	createInstance	(execute classItem )					
-					nv_item	=	charger_parametre_depuisNodeXML	nv_item		childNodeItem
+					----- on charge ses parametres-----
+					charger_parametre_depuisNodeXML	nv_item		childNodeItem
 					
+					---- et on l'ajoute a notre plug parent -------
 					setProperty	_node	childNode.name	nv_item
 					
-				) else (
+				) else (	---- soit on a un tableau de plugins	-----
 					
 					local items_aAjouter = #()
 					
 					for i = 0 to childNode.ChildNodes.count - 1 do (
 						
+						---- on creer le plugin de l'item -----
 						local childNodeItem 	= childNode.ChildNodes.itemOf[i]
-						local classItem 			= childNodeItem.GetAttribute "class"
+						local classItem 			= childNodeItem.GetAttribute "class"						
+						local nv_item				=	createInstance	(execute classItem )
 						
-						local nv_item	=	createInstance	(execute classItem )					
-						nv_item	=	charger_parametre_depuisNodeXML	nv_item		childNodeItem
+						----- on charge ses parametres-----
+						charger_parametre_depuisNodeXML	nv_item		childNodeItem
 						
 						append	items_aAjouter	nv_item
 						
 					)
 					
+					---- et on ajoute le tableau a notre plug parent -------
 					setProperty	_node	childNode.name	items_aAjouter
 					
 				)
@@ -206,18 +204,15 @@ struct str_mgr_batiment_presetsXML (
 				---- parametres	-----
 				enregistrer_parametre_dansNodeXML		_node	xmlRoot
 				
-				---- sauvegarder le xml -----------
+				---- sauvegarder le fichier xml -----------
 				xmlPresets.save 		fichierCible
 				
 			)
-			
-			
 			
 		),
 		
 		
 		fn charger  	_node 		fichier:		= (
-			debug "charger"
 			
 			local fichierCible 	
 			if fichier == unsupplied then
@@ -229,14 +224,12 @@ struct str_mgr_batiment_presetsXML (
 			
 			if fichierCible != undefined do (
 				
-				---- On charge le xml 	-----------
-				xmlPresets 				= dotNetObject "system.xml.xmlDocument"
+				---- On charge le fichier xml 	-----------
+				xmlPresets 			= dotNetObject "system.xml.xmlDocument"
 				xmlPresets.load 		fichierCible
 				
 				---- on chope le premier noeud ----------
 				local root_node = xmlPresets.FirstChild
-				debug"root_node"var:root_node.Name
-				
 				
 				charger_parametre_depuisNodeXML		_node	root_node 
 				
@@ -246,19 +239,19 @@ struct str_mgr_batiment_presetsXML (
 		
 		
 ) ------------- fin struct -------------------
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 mgr_preset_test = str_mgr_batiment_presetsXML ()
 clearListener ()
 
 
 
-mgr_preset_test.enregistrer		$cp_batiment001	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
-mgr_preset_test.charger		 	$cp_batiment002	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+mgr_preset_test.enregistrer		$cp_batiment002	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+mgr_preset_test.charger		 	$cp_batiment003	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
 
 -- ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
 
