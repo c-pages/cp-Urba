@@ -1,4 +1,4 @@
-<Batiment etages_nbre="1" etages_hauteur_global="306.8" dalle_epaisseur="20.0" soubassement_hauteur="100.0" etages_spe_min="#()" etages_spe_max="#()" etages_spe_hauteur="#()" optim_aplanir="true" optim_souder="true" optim_orthonormer="true" optim_aligner="false" optim_projeter="false" optim_aplanir_seuil="20.0" optim_souder_seuil="30.0" optim_ortho_seuil="100.0" optim_aligner_seuil="50.0" editeur_facade_ouvert="false" qualite_courante="1" qualite_viewport="1" qualite_render="1" matId_menuis="1" matId_vitrage="2" matId_huisserie="3" matId_mur="4" hasard_seed="123457" fen_proba_ouv="66.9" fen_ouvMax="50.0" toiture_type="5">
+<Batiment etages_nbre="2" etages_hauteur_global="250.0" dalle_epaisseur="20.0" soubassement_hauteur="100.0" etages_spe_min="#(0, 0)" etages_spe_max="#(0, 1)" etages_spe_hauteur="#(300.0, 270.0)" optim_aplanir="true" optim_souder="true" optim_orthonormer="true" optim_aligner="false" optim_projeter="false" optim_aplanir_seuil="20.0" optim_souder_seuil="30.0" optim_ortho_seuil="100.0" optim_aligner_seuil="50.0" editeur_facade_ouvert="false" qualite_courante="1" qualite_viewport="1" qualite_render="1" matId_menuis="1" matId_vitrage="2" matId_huisserie="3" matId_mur="4" hasard_seed="123457" fen_proba_ouv="66.9" fen_ouvMax="50.0" toiture_type="5">
   <facades>
     <item class="cp_batimentElem_facade" longueur="0.0" profondeur="10.0" hauteur="0.0" repartition="1" repart_repetitions="3" repart_decalage="0.0" repart_espacement="0.0" nom="Facade" qualite="1" matId_menuis="1" matId_vitrage="2" matId_huisserie="3" matId_mur="4" etages_min_use="false" etages_min="0" etages_max_use="true" etages_max="0" longueur_min_use="false" longueur_min="0" longueur_max_use="false" longueur_max="0" mur_nord="false" mur_sud="false" mur_est="false" mur_ouest="false" murs="1" hasard_seed="123456" fen_proba_ouv="0.0" fen_ouvMax="0.0">
       <sequence>
@@ -37,6 +37,6 @@
     </item>
   </facades>
   <toiture>
-    <item class="cp_batimentElem_toiture_nPans" points_surface="#()" pente="20.0" decallage="30.0" debord_use="true" debord_longueur="30.0" debord_hauteur="20.0" nom="Toiture n pans" qualite="1" matId_toiture="5" matId_corniche="4" />
+    <item class="cp_batimentElem_toiture_nPans" points_surface="#()" pente="51.4" decallage="30.0" debord_use="true" debord_longueur="30.0" debord_hauteur="20.0" nom="Toiture n pans" qualite="1" matId_toiture="5" matId_corniche="4" />
   </toiture>
 </Batiment>

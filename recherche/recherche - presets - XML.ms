@@ -11,7 +11,6 @@ struct str_mgr_batiment_presetsXML (
 		------------ DEBUG	----------------------------------------------------------------------------------
 -- 		m_debug = false,
 		m_debug = true,		
--- 		m_dbgPrefix ="presets_MGR",
 		m_dbgPrefix ="",
 		fn debug 	_txt  var:	 param:    =(
 			try if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
@@ -27,10 +26,10 @@ struct str_mgr_batiment_presetsXML (
 		fichier_extension		= "bati",		
 		fichier_type 			= fichier_categorie + "(*." + fichier_extension + ")|*." + fichier_extension + "|All|*.*|",
 		
-		xmlDoc,
+		xmlPresets,
 		
 		----- parametres que l'on ne veut pas enregistrer (typiquement : la spline du batiment ) -------------
-		params_a_ignorer =#("surface_node"),
+		params_a_ignorer 	= #("surface_node"),
 		
 		
 		
@@ -43,7 +42,7 @@ struct str_mgr_batiment_presetsXML (
 				if _param_nom as string == param_a_ignorer do result = true
 			result
 		),
-				
+		
 		
 		
 		
@@ -57,30 +56,24 @@ struct str_mgr_batiment_presetsXML (
 			for param_nom in parametres_noms  where not est_param_a_ignorer	param_nom  do (
 			
 				local param_propriete 	= getProperty  _node 	param_nom 
-				
--- 				debug "param_nom" var:param_nom
-				
--- 				_xmlNode.SetAttribute 	param_nom		param_propriete
 				local param_class 		= classof	param_propriete
 				
 				case param_class of (
 					ArrayParameter: (
-						
 								
 							 	if param_propriete.count > 0 then (
 									
-									--- si il a des parametres, alors c'est un plug, faut aller chercher les 'sous parametres' -----
+									--- si c'est un plug -----
 									if isMSPlugin	param_propriete[1] then (
--- 										isMSPluginClass
 										
-								--- on creer le parametre ----- 
-								local nv_nodeXML_param	=	xmlDoc.CreateElement		param_nom
-								_xmlNode.appendChild 	nv_nodeXML_param
+										--- on creer le parametre ----- 
+										local nv_nodeXML_param	=	xmlPresets.CreateElement		param_nom
+										_xmlNode.appendChild 	nv_nodeXML_param
 										
 										for i = 1 to param_propriete.count do (
 											
 											--- on creer le l'item  ----- 
-											local nv_nodeXML_item	=	xmlDoc.CreateElement		"item"
+											local nv_nodeXML_item	=	xmlPresets.CreateElement		"item"
 											nv_nodeXML_param.appendChild 	nv_nodeXML_item
 											nv_nodeXML_item.SetAttribute 	"class"		( param_propriete[i] as string )
 											
@@ -100,11 +93,11 @@ struct str_mgr_batiment_presetsXML (
 						if isMSPlugin	param_propriete  then (
 							
 							--- on creer le parametre ----- 
-							local nv_nodeXML_param	=	xmlDoc.CreateElement		param_nom
+							local nv_nodeXML_param	=	xmlPresets.CreateElement		param_nom
 							_xmlNode.appendChild 	nv_nodeXML_param
 							
 							--- on creer le l'item  ----- 
-							local nv_nodeXML_item	=	xmlDoc.CreateElement		"item"
+							local nv_nodeXML_item	=	xmlPresets.CreateElement		"item"
 							nv_nodeXML_param.appendChild 	nv_nodeXML_item
 							nv_nodeXML_item.SetAttribute 	"class"		( param_propriete as string )
 							
@@ -118,16 +111,76 @@ struct str_mgr_batiment_presetsXML (
 						
 					)
 				) -- fin case param_class  ----
-			) --- fin for param_nom
+			) --- fin for param_nom	-------
+		),
+		
+		
+		fn charger_parametre_depuisNodeXML		_node	_xmlNode =(
+			
+			---- on charge les attributs --------------
+			for i = 0 to _xmlNode.Attributes.count - 1 do (
+				local attrib = _xmlNode.Attributes.itemOf[i]
+				
+				if attrib.name != "class" do (
+					
+					local prop_base 	= getProperty	_node	attrib.name
+					case classOf prop_base of (
+						string:	setProperty 	_node		attrib.name		attrib.value
+						default:	setProperty 	_node		attrib.name		( execute attrib.value )
+					)
+					
+				)
+			)
+			
+			---- on charge les élements --------------
+			for i = 0 to _xmlNode.ChildNodes.count - 1 do (
+				
+				local childNode = _xmlNode.ChildNodes.itemOf[i]
+				
+				local prop_base 	= getProperty	_node	childNode.name
+				
+				if isMSPlugin prop_base then (
+					
+					local childNodeItem 	= childNode.FirstChild		
+					local classItem 			= childNodeItem.GetAttribute "class"
+					
+					local nv_item	=	createInstance	(execute classItem )					
+					nv_item	=	charger_parametre_depuisNodeXML	nv_item		childNodeItem
+					
+					setProperty	_node	childNode.name	nv_item
+					
+				) else (
+					
+					local items_aAjouter = #()
+					
+					for i = 0 to childNode.ChildNodes.count - 1 do (
+						
+						local childNodeItem 	= childNode.ChildNodes.itemOf[i]
+						local classItem 			= childNodeItem.GetAttribute "class"
+						
+						local nv_item	=	createInstance	(execute classItem )					
+						nv_item	=	charger_parametre_depuisNodeXML	nv_item		childNodeItem
+						
+						append	items_aAjouter	nv_item
+						
+					)
+					
+					setProperty	_node	childNode.name	items_aAjouter
+					
+				)
+				
+			)
+			
+			_node
 			
 		),
+		
+		
 		
 		
 	------- interface -------------------------------------
 	public	
 		fn enregistrer 		_node	fichier:		=(
-			
-			debug "enregistrer"
 			
 			--- le dossier -----
 			if not doesFileExist fichier_dossier do makeDir  fichier_dossier
@@ -146,16 +199,15 @@ struct str_mgr_batiment_presetsXML (
 			if fichierCible != undefined do (
 				
 				---- On creer le xml et son root 	-----------
-				xmlDoc 				= dotNetObject "system.xml.xmlDocument"
-				local xmlRoot		=	xmlDoc.CreateElement "Batiment"
-				xmlDoc.appendChild xmlRoot
+				xmlPresets 				= dotNetObject "system.xml.xmlDocument"
+				local xmlRoot		=	xmlPresets.CreateElement "Batiment"
+				xmlPresets.appendChild xmlRoot
 				
 				---- parametres	-----
 				enregistrer_parametre_dansNodeXML		_node	xmlRoot
 				
-				
 				---- sauvegarder le xml -----------
-				xmlDoc.save 		fichierCible
+				xmlPresets.save 		fichierCible
 				
 			)
 			
@@ -177,13 +229,23 @@ struct str_mgr_batiment_presetsXML (
 			
 			if fichierCible != undefined do (
 				
+				---- On charge le xml 	-----------
+				xmlPresets 				= dotNetObject "system.xml.xmlDocument"
+				xmlPresets.load 		fichierCible
+				
+				---- on chope le premier noeud ----------
+				local root_node = xmlPresets.FirstChild
+				debug"root_node"var:root_node.Name
+				
+				
+				charger_parametre_depuisNodeXML		_node	root_node 
 				
 			)
 			
 		)
 		
 		
-	) ------------- fin struct -------------------
+) ------------- fin struct -------------------
 	
 	
 	
@@ -196,9 +258,9 @@ clearListener ()
 
 
 mgr_preset_test.enregistrer		$cp_batiment001	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
--- mgr_preset_test.charger		 	$cp_batiment003	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
+mgr_preset_test.charger		 	$cp_batiment002	fichier:"C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati"
 
-ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
+-- ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\ENU\\scripts\\cp-Urba\\lib\\Batiments\\test preset 1.bati" ""
 
 
 	
@@ -215,9 +277,9 @@ ShellLaunch "C:\\Users\\kris\\AppData\\Local\\Autodesk\\3dsMax\\2018 - 64bit\\EN
 
 
 ---- creer le xml et son root 	-----------
-xmlDoc 		= dotNetObject "system.xml.xmlDocument"
-xmlRoot		=	xmlDoc.CreateElement "Batiment"
-xmlDoc.appendChild xmlRoot
+xmlPresets 		= dotNetObject "system.xml.xmlDocument"
+xmlRoot		=	xmlPresets.CreateElement "Batiment"
+xmlPresets.appendChild xmlRoot
 
 
 
@@ -243,10 +305,10 @@ fn xml_ajouter_attribut	_xml_nodeParent	_attribut_nom		_attribut_valeur	=(
 
 
 ---- charger le xml -----------
-xmlDoc.load  ("C:\\temp\\test.xml")
+xmlPresets.load  ("C:\\temp\\test.xml")
 
 ---- sauvegarder le xml -----------
-xmlDoc.save ("C:\\temp\\test.xml")
+xmlPresets.save ("C:\\temp\\test.xml")
 
 
 
@@ -264,8 +326,8 @@ ShellLaunch "C:\\temp\\test.xml" ""
 
 
 /* 
-show xmlDoc
-showmethods xmlDoc
+show xmlPresets
+showmethods xmlPresets
 
 dotNetObject:System.Xml.XmlDocument
 
@@ -307,32 +369,32 @@ ATTRIBUTES
 
 METHODS
 
-  .<System.Xml.XmlNode>AppendChild <System.Xml.XmlNode>newChild
-  .<System.Xml.XmlNode>Clone()
-  .<System.Xml.XmlNode>CloneNode <System.Boolean>deep
-  .<System.Xml.XmlAttribute>CreateAttribute <System.String>name
-  .<System.Xml.XmlAttribute>CreateAttribute <System.String>qualifiedName <System.String>namespaceURI
-  .<System.Xml.XmlAttribute>CreateAttribute <System.String>prefix <System.String>localName <System.String>namespaceURI
-  .<System.Xml.XmlCDataSection>CreateCDataSection <System.String>data
-  .<System.Xml.XmlComment>CreateComment <System.String>data
-  .<System.Xml.XmlDocumentFragment>CreateDocumentFragment()
-  .<System.Xml.XmlDocumentType>CreateDocumentType <System.String>name <System.String>publicId <System.String>systemId <System.String>internalSubset
-  .<System.Xml.XmlElement>CreateElement <System.String>name
-  .<System.Xml.XmlElement>CreateElement <System.String>qualifiedName <System.String>namespaceURI
-  .<System.Xml.XmlElement>CreateElement <System.String>prefix <System.String>localName <System.String>namespaceURI
-  .<System.Xml.XmlEntityReference>CreateEntityReference <System.String>name
-  .<System.Xml.XPath.XPathNavigator>CreateNavigator()
-  .<System.Xml.XmlNode>CreateNode <System.String>nodeTypeString <System.String>name <System.String>namespaceURI
-  .<System.Xml.XmlNode>CreateNode <System.Xml.XmlNodeType>type <System.String>name <System.String>namespaceURI
-  .<System.Xml.XmlNode>CreateNode <System.Xml.XmlNodeType>type <System.String>prefix <System.String>name <System.String>namespaceURI
-  .<System.Xml.XmlProcessingInstruction>CreateProcessingInstruction <System.String>target <System.String>data
-  .<System.Xml.XmlSignificantWhitespace>CreateSignificantWhitespace <System.String>text
-  .<System.Xml.XmlText>CreateTextNode <System.String>text
-  .<System.Xml.XmlWhitespace>CreateWhitespace <System.String>text
-  .<System.Xml.XmlDeclaration>CreateXmlDeclaration <System.String>version <System.String>encoding <System.String>standalone
-  .<System.Boolean>Equals <System.Object>obj
-  .[static]<System.Boolean>Equals <System.Object>objA <System.Object>objB
-  .<System.Xml.XmlElement>GetElementById <System.String>elementId
+  .<System.Xml.XmlNode>		AppendChild <System.Xml.XmlNode>newChild
+  .<System.Xml.XmlNode>	Clone()
+  .<System.Xml.XmlNode		>CloneNode <System.Boolean>deep
+  .<System.Xml.XmlAttribute		>CreateAttribute <System.String>name
+  .<System.Xml.XmlAttribute>		CreateAttribute <System.String>qualifiedName <System.String>namespaceURI
+  .<System.Xml.XmlAttribute>		CreateAttribute <System.String>prefix <System.String>localName <System.String>namespaceURI
+  .<System.Xml.XmlCDataSection>		CreateCDataSection <System.String>data
+  .<System.Xml.XmlComment		>CreateComment <System.String>data
+  .<System.Xml.XmlDocumentFragment>		CreateDocumentFragment()
+  .<System.Xml.XmlDocumentType>		CreateDocumentType <System.String>name <System.String>publicId <System.String>systemId <System.String>internalSubset
+  .<System.Xml.XmlElement>			CreateElement <System.String>name
+  .<System.Xml.XmlElement>			CreateElement <System.String>qualifiedName <System.String>namespaceURI
+  .<System.Xml.XmlElement>			CreateElement <System.String>prefix <System.String>localName <System.String>namespaceURI
+  .<System.Xml.XmlEntityReference>	CreateEntityReference <System.String>name
+  .<System.Xml.XPath.XPathNavigator>	CreateNavigator()
+  .<System.Xml.XmlNode>		CreateNode <System.String>nodeTypeString <System.String>name <System.String>namespaceURI
+  .<System.Xml.XmlNode>		CreateNode <System.Xml.XmlNodeType>type <System.String>name <System.String>namespaceURI
+  .<System.Xml.XmlNode>		CreateNode <System.Xml.XmlNodeType>type <System.String>prefix <System.String>name <System.String>namespaceURI
+  .<System.Xml.XmlProcessingInstruction>			CreateProcessingInstruction <System.String>target <System.String>data
+  .<System.Xml.XmlSignificantWhitespace>			CreateSignificantWhitespace <System.String>text
+  .<System.Xml.XmlText>			CreateTextNode <System.String>text
+  .<System.Xml.XmlWhitespace>			CreateWhitespace <System.String>text
+  .<System.Xml.XmlDeclaration>			CreateXmlDeclaration <System.String>version <System.String>encoding <System.String>standalone
+  .<System.Boolean>					Equals <System.Object>obj
+  .[static]<System.Boolean>			Equals <System.Object>objA <System.Object>objB
+  .<System.Xml.XmlElement>		GetElementById <System.String>elementId
   .<System.Xml.XmlNodeList>GetElementsByTagName <System.String>name
   .<System.Xml.XmlNodeList>GetElementsByTagName <System.String>localName <System.String>namespaceURI
   .<System.Collections.IEnumerator>GetEnumerator()
