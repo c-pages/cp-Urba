@@ -65,7 +65,8 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
   - [x] Prise en compte des contrainte d'orientation cardinale des façades.
   - [x] Mise au propre des menuiseries.
   - [x] Prise en compte de 3 niveaux de détails des géometries (full, medium et low) + Volume !!.
-  - [ ] Début de l'intégration des presets, il y a questionnement sur enregistrement ou plutot sur la lecture des parametres des maxObjects inclus dans des parametres (tableau) de nos preset a sauvegarder...
+  - [x] Début de l'intégration des presets, il y a questionnement sur enregistrement ou plutot sur la lecture des parametres des maxObjects inclus dans des parametres (tableau) de nos preset a sauvegarder...
+  - [x] Gestion des Presets (enregistrer, charger, copier, coller) version XML est opérationnel !!
   - [x] Façade, duplication de facade
   - [ ] Toitures à 1 pan, toiture à 2 pans
   - [ ] donc il faut trouver les goutereaux et pignons (cf squeletisation)
@@ -80,7 +81,6 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
   - [ ] Facades : gerer la connexion entre deux baies pour creer une baie avec differents hauteur d'allège par exemple.
   - [ ] creations des dalles a chaques etages.
   - [ ] a voir comment on pourrait creer des murs interieurs (cf squeletisation)
-  - [x] Gestion des Presets (enregistrer, charger, copier, coller) version XML est opérationnel !!
 
 
 
