@@ -4,6 +4,7 @@
 -------------- les fichiers à inclure ------------------------------------------------------------------------------------
 --- pour debogage -----------
 include	 "$userScripts\\cp-Urba\\modules\\Commun\\Urba - Debug.ms" 
+
 --- les fichiers necessaires au plug -----------
 include	 "$userScripts\\cp-Urba\\Startup\\cp - Urba - Batiment - FileIn.ms" 
 
@@ -14,7 +15,7 @@ include	 "$userScripts\\cp-Urba\\Startup\\cp - Urba - Batiment - FileIn.ms"
 	
 ---------- quelque variables et fonctions globales	----------------------------------------------------------------------------------------------
 global 	urba_fn_afficheur_longueurs	--- fonction pour affichage viewport 
-global	urba_clipboard_batiment		---	clipboard pour copier/coller des presets
+-- global	urba_clipboard_batiment		---	clipboard pour copier/coller des presets
 
 
 
@@ -69,6 +70,7 @@ category:"CP | Urba"
 	local ajouter_etage_spe, supprimer_etage_spe
 	local afficher_longueurs
 	local roll_editeur_facade
+	local preset_copier,	preset_coller, preset_enregistrer, preset_charger
 	
 	local definir_toiture
 	
@@ -77,8 +79,9 @@ category:"CP | Urba"
 	
 	
 	---- managers ----------
-	local mgr_shp 	= str_mgr_shape ()
-	local mgr_mesh 	= str_mgr_mesh ()
+	local mgr_shp 		= str_mgr_shape ()
+	local mgr_mesh 		= str_mgr_mesh ()
+	local mgr_presets 	= str_mgr_batiment_presetsXML ()
 	
 	
 	
@@ -179,6 +182,9 @@ category:"CP | Urba"
 			btn_coller.enabled 			= urba_clipboard_batiment != ""
 		)
 
+		
+		
+		
 		on roll_presets open do actualiser ()
 		on btn_copier pressed do	(
 				preset_copier ()
@@ -706,16 +712,16 @@ category:"CP | Urba"
 	
 	---------------- les presets-------------------------------------
 	fn preset_copier = (
-		
+		mgr_presets.copier	this
 	)
 	fn preset_coller = (
-		
+		mgr_presets.coller	this		
 	)
 	fn preset_enregistrer = (
-		
+		mgr_presets.enregistrer this
 	)
 	fn preset_charger = (
-		
+		mgr_presets.charger	this
 	)
 	
 	

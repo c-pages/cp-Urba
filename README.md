@@ -80,6 +80,7 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
   - [ ] Facades : gerer la connexion entre deux baies pour creer une baie avec differents hauteur d'allège par exemple.
   - [ ] creations des dalles a chaques etages.
   - [ ] a voir comment on pourrait creer des murs interieurs (cf squeletisation)
+  - [x] Gestion des Presets (enregistrer, charger, copier, coller) version XML est opérationnel !!
 
 
 

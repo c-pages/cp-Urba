@@ -10,6 +10,9 @@ include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Shapes.ms"
 include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Mesh.ms" 
 include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Squelettisation.ms"
 
+----- Presets ----------------
+include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Presets.ms" 
+
 ----- les primitives ---------------------
 filein ( dossier_batMod + 	"Primitives\\cp - Primitive - Plan vertical.ms"	)
 filein ( dossier_batMod + 	"Primitives\\cp - Primitive - Plan horizontal.ms"	)
