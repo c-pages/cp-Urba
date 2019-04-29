@@ -99,6 +99,11 @@ category:"CP | Facade	| Element"
 	
 	rollout roll_parametres	 "Baie" width:268 height:221
 	(
+		
+		local liste_occultants = #()
+		
+		
+		
 		edittext 'edt_nom' "" pos:[5,2] width:170 height:17 align:#left
 		
 		GroupBox 'grp_dimensions' "Dimensions" pos:[5,22] width:170 height:90 align:#left
@@ -112,11 +117,31 @@ category:"CP | Facade	| Element"
 		label 'lbl_allegePleine' "Allège pleine:" pos:[20,87] width:75 height:19 align:#left
 		spinner 'spn_allegePleine' "" pos:[90,87] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		
-		
-		
 		GroupBox 'grp_occultation' "Occultation" pos:[5,120] width:170 height:46 align:#left
 		
 		dropdownList 'ddl_occultation' "" pos:[15,139] width:150 height:21 align:#left
+		
+		
+		fn actualiser =(
+			
+			--- on fait la liste des occultants -----------
+			liste_occultants = #()
+			local liste_occultants_noms= #(	"- aucun -")
+			for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do (
+				append liste_occultants_noms 	classe_occulants.name
+				append liste_occultants 				classe_occulants
+			)
+			
+			--- on les affiche dans le menu deroulant -------
+			ddl_occultation.items = for classe_occulants in liste_occultants_noms collect  ( classe_occulants )
+			
+		)
+		
+		
+		on roll_parametres	open do actualiser ()
+		
+		
+		
 	)
 	
 	
