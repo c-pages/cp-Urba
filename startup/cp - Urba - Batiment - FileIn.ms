@@ -34,8 +34,9 @@ filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Porte.ms"	)
 filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Ensemble.ms"	)
 
 ------- occultants-----------
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\cp - Occultant - voletRoulant.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\cp - Occultant - storesBattants.ms"	)
+filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\cp - Occultant - Roulant.ms"	)
+filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\cp - Occultant - Battants.ms"	)
+filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\cp - Occultant - Pliants.ms"	)
 
 ----- les facades ----------
 filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Baie.ms"	)

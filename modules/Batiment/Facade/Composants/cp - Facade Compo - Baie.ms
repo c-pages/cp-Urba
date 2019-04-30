@@ -36,32 +36,36 @@ category:"CP | Facade	| Element"
 		
 		menuis_epaisseur		type:#worldUnits 	ui:spn_menuis_largeur				default:7.
 		menuis_profondeur	type:#worldUnits 	ui:spn_menuis_profondeur			default:5.
+		
 	)
+	
 	parameters params_general rollout:roll_parametres	(
 		
 		longueur 					type:#worldUnits 	ui:spn_longueur 				default:120.
 		baie_hauteur				type:#worldUnits 	ui:spn_baie_hauteur			default:-50.
-		profondeur	 			type:#worldUnits 	ui:spn_profondeur				default:15.
-		allege_hauteur			type:#worldUnits 	ui:spn_allegePleine			default:100.
+		profondeur	 				type:#worldUnits 	ui:spn_profondeur				default:15.
+		allege_hauteur				type:#worldUnits 	ui:spn_allegePleine			default:100.
 		
 		tablette						type:#boolean 						default:true
 		
 		menuiserie_objet			type:#maxObject		
 		
+		occultant_objet			type:#maxObject		
+		occultant_index			type:#integer 			ui:ddl_occultation				default:1
 		
 	)	-----	fin parametres --------------------
 	
 	parameters params_imposte rollout:roll_imposte	(
 		
-		imposte_use				type:#boolean 			ui:chck_imposte_use				default:false
-		imposte_hauteur		type:#worldUnits 		ui:spn_imposte_hauteur			default:210.
-		imposte_montants		type:#integer 			ui:spn_imposte_montants		default:0
-		imposte_traverses		type:#integer 			ui:spn_imposte_traverses		default:0
+		imposte_use				type:#boolean 			ui:chck_imposte_use			default:false
+		imposte_hauteur			type:#worldUnits 		ui:spn_imposte_hauteur		default:210.
+		imposte_montants		type:#integer 				ui:spn_imposte_montants		default:0
+		imposte_traverses		type:#integer 				ui:spn_imposte_traverses		default:0
 		
-		imposte_arc_use		type:#boolean 			ui:chck_imposte_arc_use		default:false
+		imposte_arc_use			type:#boolean 			ui:chck_imposte_arc_use		default:false
 		imposte_arc_rayon		type:#worldUnits 		ui:spn_imposte_arc_rayon		default:250.
 		
-		imposte_objet			type:#maxObject		
+		imposte_objet				type:#maxObject		
 		
 	)
 	parameters params_divers rollout:roll_divers	(
@@ -140,7 +144,12 @@ category:"CP | Facade	| Element"
 		
 		on roll_parametres	open do actualiser ()
 		
-		
+		on ddl_occultation selected arg do (
+			if arg == 1 then 
+				occultant_objet = undefined
+			else 
+				occultant_objet = createInstance liste_occultants[ arg - 1 ]
+		)
 		
 	)
 	
@@ -404,6 +413,16 @@ category:"CP | Facade	| Element"
 		if imposte_use do 
 			mgr_mesh.attacher		mesh		compo_imposte 	transf:[0,profondeur,allege_hauteur + compo_menuis.hauteur]
 		
+		
+		
+		
+		----- volets ----------
+		if occultant_objet != undefined do (
+			occultant_objet.longueur 	= longueur
+			occultant_objet.hauteur 	= hauteur_baie_tmp
+-- 			occultant_objet.longueur = longueur
+			mgr_mesh.attacher		mesh		occultant_objet 
+		)
 		
 	)  ----- fin on buld mesh ---------------------------------------------------------------------
 	
