@@ -46,6 +46,9 @@ category:"CP | Facade	| Element"
 -- 		low_poly				type:#boolean 		ui:shk_lowPoly				default:false
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
+		
+		est_ouvrable					type:#boolean 					default:false
+		
 		------ mat ID ----------
 		matId				type:#integer 			ui:spn_matId	default:4
 		

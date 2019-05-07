@@ -1125,11 +1125,11 @@ category:"CP | Bâtiment	| Element"
 						
 						
 						--- le mur séparant les composant 	------------------	
-						local compo_murRepart				=	createInstance cp_facadeElem_mur
-						compo_murRepart.longueur		=	longueur_repartition + decallage_sequence
+						local compo_murRepart					=	createInstance cp_facadeElem_mur
+						compo_murRepart.longueur			=	longueur_repartition + decallage_sequence
 						compo_murRepart.hauteur			=	hauteur 
 						compo_murRepart.profondeur		=	profondeur
-						compo_murRepart.qualite		=	qualite
+						compo_murRepart.qualite			=	qualite
 						compo_murRepart.matId			=	matId_mur	
 						
 						---- le premier mur ---------------
@@ -1146,9 +1146,9 @@ category:"CP | Bâtiment	| Element"
 							local compo_temp 				= 	copy sequence[i]			
 							compo_temp.longueur			=	compo_temp.get_longueur()	
 							compo_temp.hauteur			=	hauteur
-							compo_temp.qualite			=	qualite			
+							compo_temp.qualite				=	qualite			
 
-							compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv	
+							compo_temp.set_hasard				fen_ouvMax	fen_proba_ouv	
 							append sequence_aConstruire		compo_temp
 							
 							
@@ -1269,7 +1269,7 @@ category:"CP | Bâtiment	| Element"
 							--- le composant ----------------
 							local compo_temp 				= 	copy sequence[i]				
 							compo_temp.hauteur			=	hauteur
-							compo_temp.qualite			=	qualite						
+							compo_temp.qualite				=	qualite						
 							
 							compo_temp.set_hasard		fen_ouvMax	fen_proba_ouv
 							
@@ -1305,14 +1305,18 @@ category:"CP | Bâtiment	| Element"
 				
 				
 				---- le hasard -----------------------------------------------------------------------------------------
-				--  on rend unique le compo qui a besoin detre ouvert, cest plus rapide que de faire tout les composants uniques -------------
+				--  on rend unique le compo qui a besoin d'etre ouvert, cest plus rapide que de faire tout les composants uniques -------------
 				for i = 1 to sequence_aConstruire.count do (
-					if est_ouvrable	 sequence_aConstruire[i] do (
+-- 					if est_ouvrable	 sequence_aConstruire[i] do (
+					if 	 sequence_aConstruire[i].est_ouvrable	 do (
 						local est_ouverte =   ( random 0.  100. ) < fen_proba_ouv 
 						if est_ouverte 	do
 							sequence_aConstruire[i] = copy sequence_aConstruire[i]
 					)
 				)	-----------------------------------------------------------------------------------------
+				
+				
+				
 				
 			---- si on a pas la place alors on fait juste un mur ----------------
 			) else (

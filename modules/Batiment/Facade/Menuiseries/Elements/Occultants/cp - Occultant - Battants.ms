@@ -98,8 +98,8 @@ category:"CP | Menuiserie	| Element | Occultant"
 																							hauteur:		( hauteur	-	ecart ) 		\
 																							profondeur:	profondeur
 		
-		local transf_volet_G		=	transMatrix	[ ecart / 2	,0, ecart / 2  ] * rotateZMatrix -ouverture_G 
-		local transf_volet_D		=	transMatrix	[ - longueur / 2 + ecart / 2	,0, ecart / 2 ] * rotateZMatrix ouverture_D * transMatrix	[ longueur  	,0, 0]	--transMatrix	[ longueur /2  +  ecart *3 / 2 	,0,0]	--	rotateZMatrix ouverture 	* transMatrix	[ longueur /2  + ecart / 2	,0,0]
+		local transf_volet_G		=	transMatrix	[ ecart / 2	, ecart / 2 , ecart / 2  ] * rotateZMatrix -ouverture_G *	transMatrix	[ 0	, -ecart / 2 , 0 ]
+		local transf_volet_D		=	transMatrix	[ - longueur / 2 + ecart / 2	,ecart / 2 , ecart / 2 ] * rotateZMatrix ouverture_D * transMatrix	[ longueur  	, -ecart / 2 ,  0]	--transMatrix	[ longueur /2  +  ecart *3 / 2 	,0,0]	--	rotateZMatrix ouverture 	* transMatrix	[ longueur /2  + ecart / 2	,0,0]
 		
 		
 		

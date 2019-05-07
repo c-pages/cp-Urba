@@ -23,7 +23,7 @@ category:"CP | Facade	| Element"
 	local mgr_mesh = str_mgr_mesh ()
 	
 	----- les composants -----------	
-	local compo_menuis, compo_imposte
+	local compo_menuis, compo_imposte, compo_volet
 	
 	
 	
@@ -38,23 +38,22 @@ category:"CP | Facade	| Element"
 		menuis_profondeur	type:#worldUnits 	ui:spn_menuis_profondeur			default:5.
 		
 	)
-	
 	parameters params_general rollout:roll_parametres	(
 		
 		longueur 					type:#worldUnits 	ui:spn_longueur 				default:120.
 		baie_hauteur				type:#worldUnits 	ui:spn_baie_hauteur			default:-50.
-		profondeur	 				type:#worldUnits 	ui:spn_profondeur				default:15.
+		profondeur	 				type:#worldUnits 	ui:spn_profondeur			default:15.
 		allege_hauteur				type:#worldUnits 	ui:spn_allegePleine			default:100.
 		
 		tablette						type:#boolean 						default:true
 		
 		menuiserie_objet			type:#maxObject		
 		
-		occultant_objet			type:#maxObject		
-		occultant_index			type:#integer 			ui:ddl_occultation				default:1
+-- 		occultant_objet			type:#maxObjectTab		tabSizeVariable:false			tabSize:1	
+		occultant_objet			type:#maxObject			
+-- 		occultant_index			type:#integer 					ui:ddl_occultation				default:1
 		
 	)	-----	fin parametres --------------------
-	
 	parameters params_imposte rollout:roll_imposte	(
 		
 		imposte_use				type:#boolean 			ui:chck_imposte_use			default:false
@@ -75,6 +74,8 @@ category:"CP | Facade	| Element"
 		------ options --------------
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
+		est_ouvrable					type:#boolean 		default:true
+		
 		------ mat ID ----------
 		matId_menuis				type:#integer 			ui:spn_matId_menuis	default:1
 		matId_vitrage				type:#integer 			ui:spn_matId_vitrage	default:2
@@ -82,10 +83,7 @@ category:"CP | Facade	| Element"
 		matId_mur					type:#integer 			ui:spn_matId_mur		default:4
 		
 	)	-----	fin parametres --------------------
-	
-	
-	parameters params_hasard --rollout:roll_hasard
-	(
+	parameters params_hasard /* --rollout:roll_hasard */	(
 		hasard_seed					type:#integer 		/* 	ui:spn_hasard_seed	 */	default:123456
 		
 		fen_proba_ouv				type:#float 		/* 	ui:spn_fen_proba_ouv	 */	default:0.
@@ -131,13 +129,20 @@ category:"CP | Facade	| Element"
 			--- on fait la liste des occultants -----------
 			liste_occultants = #()
 			local liste_occultants_noms= #(	"- aucun -")
+-- 			for occultant_plug in occultants_liste do append liste_occultants_noms	occultant_plug
+			
 			for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do (
 				append liste_occultants_noms 	classe_occulants.name
-				append liste_occultants 				classe_occulants
+				append liste_occultants 			classe_occulants
 			)
 			
 			--- on les affiche dans le menu deroulant -------
 			ddl_occultation.items = for classe_occulants in liste_occultants_noms collect  ( classe_occulants )
+			
+			---- selection du ddl ------------
+			if occultant_objet == undefined then ddl_occultation.selection = 1 else 
+				ddl_occultation.selection = ( findItem	liste_occultants	occultant_objet ) + 1
+			
 			
 		)
 		
@@ -145,10 +150,13 @@ category:"CP | Facade	| Element"
 		on roll_parametres	open do actualiser ()
 		
 		on ddl_occultation selected arg do (
+			debug "arg " var:arg 
 			if arg == 1 then 
 				occultant_objet = undefined
 			else 
-				occultant_objet = createInstance liste_occultants[ arg - 1 ]
+				occultant_objet = createInstance liste_occultants[ arg - 1 ] 
+			debug "occultant_objet " var:occultant_objet
+			
 		)
 		
 	)
@@ -200,7 +208,7 @@ category:"CP | Facade	| Element"
 		fn actualiser	=(
 			lbl_imposte_hauteur.enabled 					= imposte_use
 			spn_imposte_hauteur.enabled 				= imposte_use
-			spn_imposte_hauteur.indeterminate		= not imposte_use
+			spn_imposte_hauteur.indeterminate			= not imposte_use
 			
 			lbl_imposte_montants.enabled 				= imposte_use
 			spn_imposte_montants.enabled 				= imposte_use
@@ -211,8 +219,8 @@ category:"CP | Facade	| Element"
 			
 			chck_imposte_arc_use.enabled 				= imposte_use
 			lbl_imposte_rayon.enabled 					= imposte_use and imposte_arc_use
-			spn_imposte_arc_rayon.enabled 			= imposte_use and imposte_arc_use
-			spn_imposte_arc_rayon.indeterminate	= not imposte_use or not imposte_arc_use
+			spn_imposte_arc_rayon.enabled 				= imposte_use and imposte_arc_use
+			spn_imposte_arc_rayon.indeterminate		= not imposte_use or not imposte_arc_use
 			
 		)
 		
@@ -253,6 +261,11 @@ category:"CP | Facade	| Element"
 		
 		if imposte_objet == undefined do
 			imposte_objet = createInstance cp_menuiserie_fixe
+		
+		/* 
+		--- on fait la liste des occultants -----------
+		occultants_liste = 	for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' collect	classe_occulants.name
+		*/
 	)
 	
 	
@@ -263,42 +276,47 @@ category:"CP | Facade	| Element"
 	)
 	fn get_longueur	=	longueur
 	
+	
+	
+	
+	
+	
+	
 	---- les composants ---------------------
 	fn actualiser_composants	= with redraw off (
 		
 		
 		------ la menuiserie principale	------------------------------------
 		local hauteur_menuis			
-		if menuiserie_objet != undefined do (
-
+		if menuiserie_objet != undefined do 
 			compo_menuis					=	copy menuiserie_objet
-			compo_menuis.longueur		=	longueur
-			
-			---- la hauteur de la menuiseire princpale, en fonction de l'imposte, de valeurs de hauteur négatives,etc ... ------------
-			if not imposte_use then (
-				hauteur_menuis		=	if baie_hauteur <=0 	then		hauteur + baie_hauteur - allege_hauteur
-																				else		baie_hauteur - allege_hauteur
-			) else (
-				hauteur_menuis		=	if imposte_hauteur <=0 	then		(
-					if baie_hauteur <=0 	then		hauteur + baie_hauteur + imposte_hauteur - allege_hauteur
-													else		baie_hauteur + imposte_hauteur - allege_hauteur
-					
-				)	else		imposte_hauteur - allege_hauteur
+		
+		compo_menuis.longueur		=	longueur
+		
+		---- la hauteur de la menuiseire princpale, en fonction de l'imposte, de valeurs de hauteur négatives,etc ... ------------
+		if not imposte_use then (
+			hauteur_menuis		=	if baie_hauteur <=0 	then		hauteur + baie_hauteur - allege_hauteur
+																			else		baie_hauteur - allege_hauteur
+		) else (
+			hauteur_menuis		=	if imposte_hauteur <=0 	then		(
+				if baie_hauteur <=0 	then		hauteur + baie_hauteur + imposte_hauteur - allege_hauteur
+												else		baie_hauteur + imposte_hauteur - allege_hauteur
 				
-				--- max et min	---------------
-				if hauteur_menuis < 0 do hauteur_menuis = 0 
-				local hauteur_max = if baie_hauteur <=0 	then		hauteur + baie_hauteur - allege_hauteur					
-																				else		baie_hauteur - allege_hauteur
-				if hauteur_menuis >hauteur_max do hauteur_menuis = hauteur_max
-			)
+			)	else		imposte_hauteur - allege_hauteur
 			
-			compo_menuis.hauteur		=	hauteur_menuis
-			compo_menuis.qualite		=	qualite
-			
-			
-			compo_menuis.menuis_epaisseur		= menuis_epaisseur
-			compo_menuis.menuis_profondeur	= menuis_profondeur
+			--- max et min	---------------
+			if hauteur_menuis < 0 do hauteur_menuis = 0 
+			local hauteur_max = if baie_hauteur <=0 	then		hauteur + baie_hauteur - allege_hauteur					
+																			else		baie_hauteur - allege_hauteur
+			if hauteur_menuis >hauteur_max do hauteur_menuis = hauteur_max
 		)
+		
+		compo_menuis.hauteur		=	hauteur_menuis
+		compo_menuis.qualite		=	qualite
+		compo_menuis.set_hasard		fen_ouvMax	fen_proba_ouv
+		
+		compo_menuis.menuis_epaisseur		= menuis_epaisseur
+		compo_menuis.menuis_profondeur	= menuis_profondeur
 		
 		------ l'imposte	------------------------------------------------
 		if imposte_use do (
@@ -308,18 +326,36 @@ category:"CP | Facade	| Element"
 			compo_imposte 				= copy imposte_objet
 			compo_imposte.longueur	=	longueur
 			compo_imposte.hauteur 	=	if baie_hauteur <=0 	then		hauteur + baie_hauteur - hauteur_menuis	 - allege_hauteur					
-																						else		baie_hauteur - hauteur_menuis - allege_hauteur
+																					else		baie_hauteur - hauteur_menuis - allege_hauteur
 			
 			compo_imposte.div_montants_nbr		=	imposte_montants
 			compo_imposte.div_traverses_nbr		=	imposte_traverses
 			compo_imposte.qualite						=	qualite
 			
 			compo_imposte.menuis_epaisseur		= menuis_epaisseur
-			compo_imposte.menuis_profondeur	= menuis_profondeur
+			compo_imposte.menuis_profondeur		= menuis_profondeur
 			compo_imposte.div_largeur				=	menuis_epaisseur / 1.5
 		)
 		
 		
+/* 
+		--------- l'occultant ---------
+		if occultant_index == 1 then 
+				occultant_objet = undefined
+			else 
+				occultant_objet = createInstance liste_occultants[ occultant_index - 1 ]
+		 */
+		
+		----- volets ----------
+		if occultant_objet != undefined do (
+			
+			local hauteur_baie_tmp 		= baie_hauteur
+			if baie_hauteur <= 0 do hauteur_baie_tmp = hauteur +	baie_hauteur
+			
+			compo_volet 				= copy occultant_objet
+			compo_volet.longueur 	= longueur
+			compo_volet.hauteur 	= hauteur_baie_tmp
+		)
 		
 	)  --- fin composants_actualiser  ------------------
 	
@@ -413,16 +449,16 @@ category:"CP | Facade	| Element"
 		if imposte_use do 
 			mgr_mesh.attacher		mesh		compo_imposte 	transf:[0,profondeur,allege_hauteur + compo_menuis.hauteur]
 		
-		
-		
-		
 		----- volets ----------
-		if occultant_objet != undefined do (
-			occultant_objet.longueur 	= longueur
-			occultant_objet.hauteur 	= hauteur_baie_tmp
--- 			occultant_objet.longueur = longueur
-			mgr_mesh.attacher		mesh		occultant_objet 
-		)
+		if occultant_objet != undefined do 
+			mgr_mesh.attacher		mesh		compo_volet 
+		
+		
+		
+		
+		
+		
+		
 		
 	)  ----- fin on buld mesh ---------------------------------------------------------------------
 	

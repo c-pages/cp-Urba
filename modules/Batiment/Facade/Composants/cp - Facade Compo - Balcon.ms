@@ -67,6 +67,8 @@ category:"CP | Facade	| Element"
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
+		est_ouvrable					type:#boolean 					default:false
+		
 		------ mat ID ----------
 		matId_huisserie				type:#integer 			ui:spn_matId_huisserie	default:3
 		matId_mur						type:#integer 			ui:spn_matId_mur		default:4
@@ -144,7 +146,7 @@ category:"CP | Facade	| Element"
 	
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
-	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeElem_ensemble
+-- 	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeElem_ensemble
 	
 	
 	

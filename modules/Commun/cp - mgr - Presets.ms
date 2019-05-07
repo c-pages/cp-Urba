@@ -21,7 +21,7 @@ struct str_mgr_batiment_presetsXML (
 		------------ MEMBRES	----------------------------------------------------------------------------------
 	private
 		fichier_dossier 		= "$userScripts\\cp-Urba\\lib\\",
-		fichier_categorie		= "cp_urba_batiment",		
+		fichier_categorie		= "cp_urba_batiment",
 		fichier_extension		= "bati",		
 		fichier_type 			= fichier_categorie + "(*." + fichier_extension + ")|*." + fichier_extension + "|All|*.*|",
 		
@@ -91,7 +91,7 @@ struct str_mgr_batiment_presetsXML (
 							local nv_nodeXML_param	=	xmlPresets.CreateElement		param_nom
 							_xmlNode.appendChild 	nv_nodeXML_param
 							
-							--- on creer le l'item  ----- 
+							--- on creer l'item  ----- 
 							local nv_nodeXML_item	=	xmlPresets.CreateElement		"item"
 							nv_nodeXML_param.appendChild 	nv_nodeXML_item
 							nv_nodeXML_item.SetAttribute 	"class"		( param_propriete as string )
@@ -130,32 +130,19 @@ struct str_mgr_batiment_presetsXML (
 				local prop_base 	= getProperty	_node	childNode.name
 				
 				---- soit on a un simple plugin comme parametre	-----
-				if isMSPlugin prop_base then (
-					
-					---- on creer le plugin de l'item -----
-					local childNodeItem 	= childNode.FirstChild		
-					local classItem 			= childNodeItem.GetAttribute "class"					
-					local nv_item				=	createInstance	(execute classItem )
-					
-					----- on charge ses parametres-----
-					charger_parametre_depuisNodeXML	nv_item		childNodeItem
-					
-					---- et on l'ajoute a notre plug parent -------
-					setProperty	_node	childNode.name	nv_item
-					
-				) else (	---- soit on a un tableau de plugins	-----
+				if classof  prop_base == ArrayParameter then (	---- soit on a un tableau de plugins	-----
 					
 					local items_aAjouter = #()
 					
 					for i = 0 to childNode.ChildNodes.count - 1 do (
 						
 						---- on creer le plugin de l'item -----
-						local childNodeItem 	= childNode.ChildNodes.itemOf[i]
+						local childNodeItem 		= childNode.ChildNodes.itemOf[i]
 						local classItem 			= childNodeItem.GetAttribute "class"						
 						local nv_item				=	createInstance	(execute classItem )
 						
 						----- on charge ses parametres-----
-						charger_parametre_depuisNodeXML	nv_item		childNodeItem
+						nv_item = charger_parametre_depuisNodeXML	nv_item		childNodeItem
 						
 						append	items_aAjouter	nv_item
 						
@@ -164,7 +151,20 @@ struct str_mgr_batiment_presetsXML (
 					---- et on ajoute le tableau a notre plug parent -------
 					setProperty	_node	childNode.name	items_aAjouter
 					
-				)
+				) else (
+					
+					---- on creer le plugin de l'item -----
+					local childNodeItem 		= childNode.FirstChild		
+					local classItem 			= childNodeItem.GetAttribute "class"					
+					local nv_item				=	createInstance	(execute classItem )
+					
+					----- on charge ses parametres-----
+					nv_item = charger_parametre_depuisNodeXML	nv_item		childNodeItem
+					
+					---- et on l'ajoute a notre plug parent -------
+					setProperty	_node	childNode.name	nv_item
+					
+				) 
 				
 			)
 			
@@ -234,6 +234,7 @@ struct str_mgr_batiment_presetsXML (
 				
 			)
 			
+			
 		),
 		
 		
@@ -248,6 +249,12 @@ struct str_mgr_batiment_presetsXML (
 			enregistrer_parametre_dansNodeXML		_node	xmlRoot
 			
 			urba_clipboard_batiment = copy xmlPresets
+			
+			
+			
+			--- debug -------
+			urba_clipboard_batiment.save  "C:\\temp\\test.bati"
+			ShellLaunch "C:\\temp\\test.bati" ""
 			
 		),
 		

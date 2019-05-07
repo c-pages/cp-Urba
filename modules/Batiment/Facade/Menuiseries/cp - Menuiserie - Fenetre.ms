@@ -70,6 +70,8 @@ category:"CP | Menuiserie"
 		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
+		est_ouvrable					type:#boolean 					default:true
+		
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
 		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
@@ -216,7 +218,6 @@ category:"CP | Menuiserie"
 		--- hasard	---------------
 		local est_ouverte =   ( random 0.  100. ) < fen_proba_ouv 
 		if est_ouverte 	then (
-			
 			ouvert_angle_1 = random 0.		fen_ouvMax
 			ouvert_angle_2 = random 0.		fen_ouvMax		
 		)

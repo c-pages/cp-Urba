@@ -11,6 +11,7 @@ include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Mesh.ms"
 include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Squelettisation.ms"
 
 ----- Presets ----------------
+-- filein	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Presets.ms" 
 include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Presets.ms" 
 
 ----- les primitives ---------------------

@@ -46,9 +46,9 @@ category:"CP | Menuiserie"
 		sequence				type:#maxObjectTab		tabSizeVariable:true
 		
 		allege_use				type:#Boolean				ui:chk_allege 						default:false
-		allege_hauteur		type:#worldUnits			ui:spn_allege_hauteur 			default:100.
+		allege_hauteur			type:#worldUnits			ui:spn_allege_hauteur 			default:100.
 		
-		alleges_use			type:#BoolTab				tabSizeVariable:true
+		alleges_use				type:#BoolTab				tabSizeVariable:true
 		alleges_hauteur		type:#worldUnitsTab		tabSizeVariable:true
 		
 	)
@@ -601,7 +601,7 @@ category:"CP | Menuiserie"
 	
 	--------- divers ------------------
 	fn est_porte			_compo	=	classof	_compo	==	cp_menuiserie_porte
-	fn est_fenetre		_compo	=	classof	_compo	==	cp_menuiserie_fenetre
+	fn est_fenetre			_compo	=	classof	_compo	==	cp_menuiserie_fenetre
 	fn est_fixe				_compo	=	classof	_compo	==	cp_menuiserie_fixe
 	
 	fn est_instance		_id		= (
@@ -811,7 +811,7 @@ category:"CP | Menuiserie"
 		compo_allege.menuis_profondeur		= menuis_profondeur
 		compo_allege.menuis_epaisseur	 		= menuis_epaisseur	
 		compo_allege.cadre			 				= false
-		compo_allege.qualite			 				= qualite		
+		compo_allege.qualite			 			= qualite		
 		
 		
 		--- maj des composants de la sequence -------------

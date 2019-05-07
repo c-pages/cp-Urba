@@ -78,6 +78,8 @@ category:"CP | Menuiserie"
 		------ options --------------
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
+		est_ouvrable					type:#boolean 					default:true
+		
 		------ mat ID ----------
 		matId_menuis					type:#integer 			ui:spn_matId_menuis	default:1
 		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
