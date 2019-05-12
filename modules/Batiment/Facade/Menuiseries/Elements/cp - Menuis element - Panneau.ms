@@ -128,14 +128,14 @@ category:"CP | Menuiserie	| Element"
 		
 		
 		----Données ------------	
-		local posY_remplis	--	=	if qualite != 3 then 	 - vitrage_epaisseur/2	else 0.01
+		local posY_remplis
 		local posY_div
 		if qualite != 3 then (
 			posY_remplis		=	- vitrage_epaisseur/2
 			posY_div			=	- ( div_profondeur/2 )		
 		) else	(
 			posY_remplis		=	.01
-			posY_div			=	0	--		- vitrage_epaisseur/2 - .1
+			posY_div			=	0
 		)
 		
 		local espace_div_H 		= ( longueur - div_montants_nbr * div_largeur ) / ( div_montants_nbr + 1 )
@@ -145,12 +145,6 @@ category:"CP | Menuiserie	| Element"
 		local depose_div_V		= [0, 	posY_div,		 espace_div_V  + div_calage_verti	]
 		
 		
-		
--- 		---- le remplis ----------
--- 		local compo_remplis = if low_poly 	then	 createInstance  cp_prim_planVertical		matId:matId_vitrage
--- 														else	 createInstance  cp_prim_boite				matId:matId_vitrage		
-		
-		
 		----- le remplissage (vitrage ) ------------
 		local compo_remplis
 		case qualite	of (
@@ -158,19 +152,16 @@ category:"CP | Menuiserie	| Element"
 			default:	compo_remplis	=	 createInstance  cp_prim_planVertical		matId:matId_vitrage
 		)
 		
-		compo_remplis.longueur			=	longueur
+		compo_remplis.longueur		=	longueur
 		compo_remplis.hauteur			=	hauteur
 		if qualite == 1 	then compo_remplis.profondeur		=	vitrage_epaisseur	
-			
+		
 		mgr_mesh.attacher		mesh		compo_remplis 	transf:[0,posY_remplis,0]
 		
 		
 		
 		
 		-------- divisions  --------------
--- 		local compo_div = if low_poly 	then	 createInstance  cp_prim_boiteU		matId:matId_menuis
--- 													else	 createInstance  cp_prim_boite			matId:matId_menuis
-		
 		local compo_div
 		case qualite	of (
 			1:	compo_div	=	 createInstance  cp_prim_boite				matId:matId_menuis

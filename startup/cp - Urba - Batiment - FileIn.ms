@@ -1,7 +1,4 @@
 	
-	
-	
-	
 dossier_batMod = "$userScripts\\cp-Urba\\modules\\Batiment\\"
 
 
@@ -11,40 +8,32 @@ include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Mesh.ms"
 include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Squelettisation.ms"
 
 ----- Presets ----------------
--- filein	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Presets.ms" 
 include	 "$userScripts\\cp-Urba\\modules\\Commun\\cp - mgr - Presets.ms" 
 
 ----- les primitives ---------------------
-filein ( dossier_batMod + 	"Primitives\\cp - Primitive - Plan vertical.ms"	)
-filein ( dossier_batMod + 	"Primitives\\cp - Primitive - Plan horizontal.ms"	)
-filein ( dossier_batMod + 	"Primitives\\cp - Primitive - Boite.ms"	)
-filein ( dossier_batMod + 	"Primitives\\cp - Primitive - Boite U.ms"	)
-filein ( dossier_batMod + 	"Primitives\\cp - Primitive - Boite L.ms"	)
+fichiers_ms = getFiles (dossier_batMod + 	"Primitives\\*.ms")
+for fichier_ms in fichiers_ms do filein	fichier_ms
 
 --- element de base menuiseries	-----------
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\cp - Menuis element - Poignée.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\cp - Menuis element - Cadre.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\cp - Menuis element - Panneau.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\cp - Menuis element - Chassis vitré.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\cp - Menuis element - Meneau.ms"	)
-
+fichiers_ms = getFiles (dossier_batMod + 	"Facade\\Menuiseries\\Elements\\*.ms")
+for fichier_ms in fichiers_ms do filein	fichier_ms	
+	
 ------- menuiseries-----------
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Fixe.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Fenetre.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Porte.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\cp - Menuiserie - Ensemble.ms"	)
-
+fichiers_ms = getFiles (dossier_batMod + 	"Facade\\Menuiseries\\*.ms")
+for fichier_ms in fichiers_ms do filein	fichier_ms
+	
 ------- occultants-----------
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\cp - Occultant - Roulant.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\cp - Occultant - Battants.ms"	)
-filein ( dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\cp - Occultant - Pliants.ms"	)
-
+fichiers_ms = getFiles (dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\*.ms")
+for fichier_ms in fichiers_ms do filein	fichier_ms
+	
+------- garde_corps-----------
+fichiers_ms = getFiles (dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Garde-corps\\*.ms")
+for fichier_ms in fichiers_ms do filein	fichier_ms
+	
 ----- les facades ----------
-filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Baie.ms"	)
-filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Mur.ms"	)
-filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Balcon.ms"	)
-filein ( dossier_batMod + 	"Facade\\Composants\\cp - Facade Compo - Groupe.ms"	)
-
+fichiers_ms = getFiles (dossier_batMod + 	"Facade\\Composants\\*.ms")
+for fichier_ms in fichiers_ms do filein	fichier_ms
+	
 ------- les composant du batiment ----------
 filein ( dossier_batMod + 	"Facade\\cp - Batiment - Façade.ms"	)
 filein ( dossier_batMod + 	"Toiture\\cp - Batiment - Toit - n pans.ms"	)

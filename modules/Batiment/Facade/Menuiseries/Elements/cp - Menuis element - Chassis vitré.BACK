@@ -39,11 +39,7 @@ category:"CP | Menuiserie	| Element"
 		----- cadre -------------
 		cadre_use						type:#boolean 		ui:shk_cadre					default:true
 		cadre_largeur	 				type:#worldUnits 	ui:spn_cadre_largeur		default:0.
-		
-		montant_G				type:#boolean 		ui:shk_montant_G		default:true
-		montant_D				type:#boolean 		ui:shk_montant_D		default:true
-		travBasse					type:#boolean 		ui:shk_traverse_B		default:true
-		travBasse_hauteur		type:#worldUnits 	ui:spn_travBasse_ht		default:0.
+		travBasse_hauteur			type:#worldUnits 	ui:spn_travBasse_ht			default:0.
 		
 		----- vitrage -------------
 		vitrage_epaisseur				type:#worldUnits 	ui:spn_vitrage_ep			default:2.
@@ -58,6 +54,8 @@ category:"CP | Menuiserie	| Element"
 	parameters params_divers rollout:roll_divers
 	(
 		------ options --------------
+-- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
+		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		------ mat ID ----------
@@ -76,10 +74,7 @@ category:"CP | Menuiserie	| Element"
 		group "Cadre" (
 			checkbox	shk_cadre				"Cadre"
 			spinner 	spn_cadre_largeur	 "Largeur" 				type:#worldunits range:[0,1e20,0]
-			checkbox	shk_montant_G		"Montant gauche" 			
-			checkbox	shk_montant_D		"Montant droit" 		
-			checkbox	shk_traverse_B		"traverse basse" 	
-			spinner 	spn_travBasse_ht	"Hauteur" 				type:#worldunits range:[0,1e20,0]
+			spinner 	spn_travBasse_ht	"Trav. basse ht." 		type:#worldunits range:[0,1e20,0]
 		)	
 		group "Vitrage" (
 			spinner 	spn_vitrage_ep		"Epaisseur" 				type:#worldunits 	range:[0,1e20,0]
@@ -94,6 +89,9 @@ category:"CP | Menuiserie	| Element"
 	)
 	rollout roll_divers  "Divers"
 	(
+		/* group "Qualité" (
+			checkbox	shk_lowPoly			"Low poly"
+		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -105,7 +103,7 @@ category:"CP | Menuiserie	| Element"
 	
 	
 	--------------- FONCTIONS  --------------------------------------------------------------------------------------------------------------
-/* 
+
 	fn actualiser_composants	= with redraw off (
 	
 		----- les composants ----------------
@@ -114,11 +112,12 @@ category:"CP | Menuiserie	| Element"
 		
 		-----	le cadre 	-------------
 		compo_cadre.longueur					=	longueur
-		compo_cadre.hauteur						=	hauteur
+		compo_cadre.hauteur					=	hauteur
 		compo_cadre.profondeur				=	profondeur
 		compo_cadre.menuis_epaisseur			=	cadre_largeur
 		compo_cadre.travBasse_hauteur		=	travBasse_hauteur		
 		compo_cadre.matId_menuis			=	matId_menuis
+-- 		compo_cadre.low_poly					=	low_poly
 		compo_cadre.qualite						=	qualite
 		
 		local longueur_passage 	=	if cadre_use 	then longueur - 2* cadre_largeur 	else 	longueur
@@ -141,113 +140,21 @@ category:"CP | Menuiserie	| Element"
 		compo_vitrage.qualite					=	qualite
 		
 	)
-	 */
+	
 	
 	
 	--------------- ENVENEMENTS  ----------------------------------------------------------------------------------------------------------
 	on buildMesh do	(
 		
+		---- maj des composants -----
+		actualiser_composants ()
 		
 		--- vider le mesh --------
 		delete mesh
 		
-		----Données ------------	
-		local posY_remplis
-		local posY_div
-		if qualite != 3 then (
-			posY_remplis		=	- vitrage_epaisseur/2
-			posY_div			=	- ( div_profondeur/2 )		
-		) else	(
-			posY_remplis		=	.01
-			posY_div			=	0
-		)
-		
-		local longueur_passage 	=	if cadre_use 	then longueur - 2* cadre_largeur 	else 	longueur
-		local hauteur_passage		= 	if cadre_use 	then hauteur - ( cadre_largeur + travBasse_hauteur)		else 	hauteur
-		
-		
-		local espace_div_H 		= ( longueur_passage - div_montants_nbr * div_largeur ) / ( div_montants_nbr + 1 )
-		local depose_div_V		= [ espace_div_H, 	posY_div,		0	]
-		
-		local espace_div_V 		= ( hauteur_passage - div_traverses_nbr * div_largeur ) / ( div_traverses_nbr + 1 )
-		local depose_div_H		= [0, 	posY_div,		 espace_div_V  + div_calage_verti	]
-		
-		
-		local callage_G 	= 	if cadre_use 	then cadre_largeur else 0
-		local callage_B 	= 	if cadre_use 	then travBasse_hauteur else 0
-		local callage_Y	=	if qualite != 3 then profondeur/2	 else 0
-		
--- 		depose_div_H		+=	[	0	,	callage_Y,	callage_B	]
--- 		depose_div_V		+= 	[ callage_G, 	callage_Y,		0	]
-		depose_div_H		+=	[	callage_G	,	callage_Y,	callage_B	]
-		depose_div_V		+= 	[ callage_G, 	callage_Y,		callage_B	]
-		
-		
-		
 		---- le cadre ----
-		if cadre_use do (
-			
-			local compo_cadre
-			case qualite	of (
-				1:	compo_cadre	=	 createInstance  cp_prim_boite				matId:matId_menuis
-				2:	compo_cadre	=	 createInstance  cp_prim_boiteL				matId:matId_menuis
-				3:	compo_cadre	=	 createInstance  cp_prim_planVertical		matId:matId_menuis
-			)
-			
-			
-			
-			--- montant  gauche ----------
-			if montant_G do (
-				compo_cadre.longueur			=	cadre_largeur
-				compo_cadre.hauteur			=	hauteur
-				if qualite != 3 do	
-					compo_cadre.profondeur		=	profondeur
-				
-				mgr_mesh.attacher		mesh		compo_cadre
-				
-			)
-			
-			--- montant droite ----------
-			if montant_D do (
-				compo_cadre.longueur			=	cadre_largeur
-				compo_cadre.hauteur			=	hauteur
-				if qualite != 3 do	(
-					compo_cadre.profondeur		=	profondeur
-					compo_cadre.symetrie			=	true
-				)
-				mgr_mesh.attacher		mesh		compo_cadre 	transf:[longueur - cadre_largeur,0,0]				
-			)
-			
-			--- traverse basse ----------
-			if travBasse do (			
-				compo_cadre.longueur			=	longueur_passage
-				compo_cadre.hauteur			=	travBasse_hauteur
-				if qualite != 3 do	(
-					compo_cadre.profondeur		=	profondeur
-					compo_cadre.symetrie			=	false
-					compo_cadre.horizontal		=	true
-				)
-				mgr_mesh.attacher		mesh		compo_cadre 	transf:[callage_G,0,0]				
-			)
-			
-			--- traverse	haute ----------
-			compo_cadre.longueur			=	longueur_passage
-			compo_cadre.hauteur			=	cadre_largeur
-			if qualite != 3 do	 (
-				compo_cadre.profondeur		=	profondeur
-				compo_cadre.symetrie			=	true
-				compo_cadre.horizontal		=	true
-			)
-			
-			mgr_mesh.attacher		mesh		compo_cadre 	transf:[callage_G,0,hauteur - cadre_largeur]
-			
-			
-			
-		) ------- fin cadre ------------------
-		
-		
-		
-		
+		if cadre_use do
+			mgr_mesh.attacher		mesh		compo_cadre
 		
 		--- les cotés du cadre en qualite medium, pour quand on ouvre la fenetre ...  ---------
 		if qualite == 2 do (
@@ -256,71 +163,12 @@ category:"CP | Menuiserie	| Element"
 			mgr_mesh.attacher		mesh		plan_vertical		transf:( rotateZMAtrix	-90 * transMatrix [0, profondeur,0]  )
 		)
 		
-		
-		
-		
-		
-		
 		---- le vitrage ----
-		local compo_vitrage
-		case qualite	of (
-			1:			compo_vitrage	=	 createInstance  cp_prim_boite				matId:matId_vitrage
-			default:	compo_vitrage	=	 createInstance  cp_prim_planVertical		matId:matId_vitrage
-		)
+		local callage_G 	= 	if cadre_use 	then cadre_largeur else 0
+		local callage_B 	= 	if cadre_use 	then travBasse_hauteur else 0
+		local callage_Y	=	if qualite != 3 then profondeur/2	 else 0
 		
-		compo_vitrage.longueur		=	longueur_passage
-		compo_vitrage.hauteur		=	hauteur_passage
-		if qualite == 1 	then compo_vitrage.profondeur		=	vitrage_epaisseur	
-		
-		mgr_mesh.attacher		mesh		compo_vitrage 	transf:[callage_G,callage_Y,callage_B]
-		
-		
-		
-		
-		
-		
-		-------- divisions  --------------
-		local compo_div
-		case qualite	of (
-			1:	compo_div	=	 createInstance  cp_prim_boite				matId:matId_menuis
-			2:	compo_div	=	 createInstance  cp_prim_boiteU				matId:matId_menuis
-			3:	compo_div	=	 createInstance  cp_prim_planVertical		matId:matId_menuis
-		)
-		
-		
-		
-		-------- divisions horizontales --------------
-		for i = 1 to div_montants_nbr do (
-			
-			compo_div.longueur			=	div_largeur
-			compo_div.hauteur			=	hauteur_passage
-			if qualite != 3 do	(
-				compo_div.profondeur		=	div_profondeur
-				compo_div.symetrie			=	false
-				compo_div.horizontal		=	false
-			)
-			
-			mgr_mesh.attacher		mesh		compo_div 	transf:depose_div_V
-			
-			depose_div_V.x += espace_div_H + div_largeur
-		)
-		
-		-------- divisions verticales --------------
-		for i = 1 to div_traverses_nbr do (
-			
-			compo_div.longueur			=	longueur_passage
-			compo_div.hauteur			=	div_largeur
-			if qualite != 3 do	(
-				compo_div.profondeur		=	div_profondeur
-				compo_div.symetrie			=	false
-				compo_div.horizontal		=	true
-			)
-			
-			mgr_mesh.attacher		mesh		compo_div 	transf:depose_div_H
-			
-			depose_div_H.z += espace_div_V + div_largeur
-		)
-		
+		mgr_mesh.attacher		mesh		compo_vitrage		transf:[ callage_G, callage_Y, callage_B]
 		
 		----- le mapping 	--------------
 		meshop.applyUVWMap 	mesh  #box		tm:(scaleMatrix [2,2,2]	)

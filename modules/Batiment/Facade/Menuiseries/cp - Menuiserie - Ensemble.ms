@@ -600,9 +600,9 @@ category:"CP | Menuiserie"
 	
 	
 	--------- divers ------------------
-	fn est_porte			_compo	=	classof	_compo	==	cp_menuiserie_porte
-	fn est_fenetre			_compo	=	classof	_compo	==	cp_menuiserie_fenetre
-	fn est_fixe				_compo	=	classof	_compo	==	cp_menuiserie_fixe
+	fn est_porte			_compo	=	( classof	_compo	) as string 	==	"cp_menuiserie_porte"
+	fn est_fenetre		_compo	=	( classof	_compo	) as string 	==	"cp_menuiserie_fenetre"
+	fn est_fixe				_compo	=	( classof	_compo	) as string 	==	"cp_menuiserie_fixe"
 	
 	fn est_instance		_id		= (
 		
@@ -787,7 +787,8 @@ category:"CP | Menuiserie"
 		---- creation des composants ------------------
 		if compo_cadre 			== undefined	do	compo_cadre		= 	createInstance  cp_menuisElem_cadre
 		if compo_meneau		== undefined	do	compo_meneau	= 	createInstance  cp_menuisElem_meneau
-		if compo_allege			== undefined	do	compo_allege	= 	createInstance  cp_menuiserie_fixe
+-- 		if compo_allege			== undefined	do	compo_allege	= 	createInstance  cp_menuiserie_fixe
+		if compo_allege			== undefined	do	compo_allege	= 	createInstance  cp_menuisElem_chassisVitre
 		
 		----- maj du cadre ----------------------
 		compo_cadre.longueur 						= longueur
@@ -808,9 +809,9 @@ category:"CP | Menuiserie"
 		
 		
 		----- maj du allege ----------------------
-		compo_allege.menuis_profondeur		= menuis_profondeur
-		compo_allege.menuis_epaisseur	 		= menuis_epaisseur	
-		compo_allege.cadre			 				= false
+		compo_allege.profondeur					= menuis_profondeur
+-- 		compo_allege.menuis_epaisseur	 		= menuis_epaisseur	
+-- 		compo_allege.cadre			 				= false
 		compo_allege.qualite			 			= qualite		
 		
 		
@@ -832,7 +833,7 @@ category:"CP | Menuiserie"
 			
 			
 			
-			if not est_fixe compo_temp do compo_temp.ouvrant_cadre_larg		=	menuis_epaisseur
+			if not est_fixe 	compo_temp do compo_temp.ouvrant_cadre_larg		=	menuis_epaisseur
 			
 			
 			compo_temp.menuis_profondeur	=	menuis_profondeur

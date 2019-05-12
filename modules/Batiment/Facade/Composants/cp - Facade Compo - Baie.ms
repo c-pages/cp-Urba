@@ -128,20 +128,19 @@ category:"CP | Facade	| Element"
 			
 			--- on fait la liste des occultants -----------
 			liste_occultants = #()
-			local liste_occultants_noms= #(	"- aucun -")
--- 			for occultant_plug in occultants_liste do append liste_occultants_noms	occultant_plug
-			
+			local liste_occultants_noms= #( "- aucun -")			
 			for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do (
 				append liste_occultants_noms 	classe_occulants.name
-				append liste_occultants 			classe_occulants
+				append liste_occultants 				classe_occulants
 			)
 			
-			--- on les affiche dans le menu deroulant -------
+			--- qu'on  affiche dans le menu deroulant -------
 			ddl_occultation.items = for classe_occulants in liste_occultants_noms collect  ( classe_occulants )
 			
-			---- selection du ddl ------------
+			---- puis on selectionne le bon  ------------
 			if occultant_objet == undefined then ddl_occultation.selection = 1 else 
-				ddl_occultation.selection = ( findItem	liste_occultants	occultant_objet ) + 1
+				ddl_occultation.selection = ( findItem	liste_occultants	( classof occultant_objet ) ) + 1
+			
 			
 			
 		)
@@ -150,13 +149,11 @@ category:"CP | Facade	| Element"
 		on roll_parametres	open do actualiser ()
 		
 		on ddl_occultation selected arg do (
-			debug "arg " var:arg 
 			if arg == 1 then 
 				occultant_objet = undefined
 			else 
 				occultant_objet = createInstance liste_occultants[ arg - 1 ] 
-			debug "occultant_objet " var:occultant_objet
-			
+			redrawviews  ()
 		)
 		
 	)

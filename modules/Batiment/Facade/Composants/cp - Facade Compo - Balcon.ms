@@ -44,7 +44,7 @@ category:"CP | Facade	| Element"
 		elements				type:#maxObjectTab		tabSizeVariable:true
 		
 		gardeCorps				type:#integer		 	ui:ddl_gardeCorps 			default:1
-		
+		gardeCorps_objet		type:#maxObject		
 -- 		
 -- 		on elements 	tabChanged  	_operation		 _index	_count		do (
 -- 			longueur = 0
@@ -114,6 +114,12 @@ category:"CP | Facade	| Element"
 	
 	--------------- ROLLOUTS  ----------------------------------------------------------------------------------------------------------------------
 	rollout roll_parametres 				"Paramètres"	(
+		
+		
+		
+		local liste_gardeCorps = #()
+		
+		
 -- 		editText 	edTxt_nom		 		"Nom:" 	
 -- 		spinner 	spn_longueur 		"Longueur" 				type:#worldunits 	range:[0,1e20,0]
 		group  "Dimensions" (
@@ -126,8 +132,38 @@ category:"CP | Facade	| Element"
 		)
 		group "Garde corps" (
 			dropDownList	ddl_gardeCorps	""	items:#("Aucun", "Simple", "Bareaudage")
+		)
+		
+		fn actualiser =(
+			
+			--- on fait la liste des occultants -----------
+			liste_gardeCorps = #()
+			local liste_gardeCorps_noms= #( "- aucun -")			
+			for classe_gardeCorps in GeometryClass.classes where classe_gardeCorps.category == #'CP | Menuiserie	| Element | Garde Corps' do (
+				append liste_gardeCorps_noms 		classe_gardeCorps.name
+				append liste_gardeCorps 				classe_gardeCorps
+			)
+			
+			--- qu'on  affiche dans le menu deroulant -------
+			ddl_gardeCorps.items = for classe_gardeCorps in liste_gardeCorps_noms collect  ( classe_gardeCorps )
+			
+			---- puis on selectionne le bon  ------------
+			if gardeCorps_objet == undefined then ddl_gardeCorps.selection = 1 else 
+				ddl_gardeCorps.selection = ( findItem	liste_gardeCorps	( classof gardeCorps_objet ) ) + 1
 			
 		)
+		
+		
+		on roll_parametres	open do actualiser ()
+		on ddl_gardeCorps selected arg do (
+			if arg == 1 then 
+				gardeCorps_objet = undefined
+			else 
+				gardeCorps_objet = createInstance liste_gardeCorps[ arg - 1 ] 
+			redrawviews  ()
+		)
+		
+		
 	)
 	
 	rollout roll_divers  "Divers"	(
@@ -146,8 +182,6 @@ category:"CP | Facade	| Element"
 	
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
--- 	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeElem_ensemble
-	
 	
 	
 	fn get_longueur	=	(
