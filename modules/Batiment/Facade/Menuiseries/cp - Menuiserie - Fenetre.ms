@@ -66,8 +66,6 @@ category:"CP | Menuiserie"
 		nom	 							type:#string 			default:"Fenêtre"
 		
 		------ options --------------
--- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
-		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		est_ouvrable					type:#boolean 					default:true
@@ -77,9 +75,6 @@ category:"CP | Menuiserie"
 		matId_vitrage					type:#integer 			ui:spn_matId_vitrage	default:2
 		
 	)	-----	fin parametres --------------------
-	
-	
-	
 	parameters params_hasard --rollout:roll_hasard
 	(
 		hasard_seed					type:#integer 		/* 	ui:spn_hasard_seed	 */	default:123456
@@ -139,9 +134,6 @@ category:"CP | Menuiserie"
 		on shk_tierce	 		changed state 	do actualiser ()
 	)
 	rollout roll_divers  "Divers"	(
-		/* group "Qualité" (
-			checkbox	shk_lowPoly			"Low poly" 		
-		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -177,8 +169,7 @@ category:"CP | Menuiserie"
 		
 		
 		---- maj ouvrant		----
-		compo_ouvrant_1.profondeur 				= menuis_profondeur /2	--	ouvrant_profondeur
--- 		compo_ouvrant_1.hauteur 					= hauteur
+		compo_ouvrant_1.profondeur 				= menuis_profondeur /2
 		compo_ouvrant_1.hauteur						=	if cadre then hauteur  - menuis_epaisseur*2 else hauteur
 		compo_ouvrant_1.cadre_largeur 			= ouvrant_cadre_larg
 		compo_ouvrant_1.travBasse_hauteur		= ouvrant_cadre_larg		
@@ -186,24 +177,20 @@ category:"CP | Menuiserie"
 		compo_ouvrant_1.div_montants_nbr 		= div_montants_nbr
 		compo_ouvrant_1.div_traverses_nbr 		= div_traverses_nbr
 		compo_ouvrant_1.div_largeur					= div_largeur
-		compo_ouvrant_1.div_profondeur			= menuis_profondeur /2	--	div_profondeur
+		compo_ouvrant_1.div_profondeur			= menuis_profondeur /2
 		compo_ouvrant_1.div_calage_verti			= div_calage_verti
 		compo_ouvrant_1.vitrage_epaisseur		= vitrage_epaisseur
 		
--- 		compo_ouvrant_1.low_poly			 		= low_poly
 		compo_ouvrant_1.qualite				 		= qualite
-		compo_ouvrant_1.matId_menuis	 			= matId_menuis
-		compo_ouvrant_1.matId_vitrage	 			= matId_vitrage		
+		compo_ouvrant_1.matId_menuis	 		= matId_menuis
+		compo_ouvrant_1.matId_vitrage	 		= matId_vitrage		
 	
 		if not ouvrant_double then (
--- 			compo_ouvrant_1.longueur 				= longueur
 			compo_ouvrant_1.longueur				=	if cadre then longueur - menuis_epaisseur*2 else longueur
 		) else (
--- 			compo_ouvrant_1.longueur 				= longueur 	*  ouvrant_tierce_pourcent / 100 
 			compo_ouvrant_1.longueur				=	if cadre then (longueur 	*  ouvrant_tierce_pourcent / 100 ) - menuis_epaisseur else (longueur 	*  ouvrant_tierce_pourcent / 100 )
 			
-			compo_ouvrant_2 							= copy compo_ouvrant_1
--- 			compo_ouvrant_2.longueur 				=  longueur	* ( 100 - ouvrant_tierce_pourcent ) / 100
+			compo_ouvrant_2 								= copy compo_ouvrant_1
 			compo_ouvrant_2.longueur 				=  if cadre then ( longueur	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) - menuis_epaisseur else	( longueur	* ( 100 - ouvrant_tierce_pourcent ) / 100 ) 
 			compo_ouvrant_2.div_montants_nbr 	=  div_montants_nbr_2
 			
@@ -226,10 +213,10 @@ category:"CP | Menuiserie"
 		-----	le cadre 	-------------
 		if cadre do	(
 			compo_cadre.longueur						=	longueur
-			compo_cadre.hauteur						=	hauteur
+			compo_cadre.hauteur							=	hauteur
 			compo_cadre.profondeur					=	menuis_profondeur
 			compo_cadre.menuis_epaisseur			=	menuis_epaisseur
-			compo_cadre.travBasse					=	true
+			compo_cadre.travBasse						=	true
 			compo_cadre.travBasse_hauteur			=	menuis_epaisseur
 			
 			compo_cadre.qualite			 				= qualite		
@@ -263,12 +250,12 @@ category:"CP | Menuiserie"
 		local origine_ouv_2, rotate_ouv_2, recalle_ouv_2
 		
 		
-		local longueur_ouvrant 	= 	compo_ouvrant_1.longueur 
-		local callage_montant_G 	= 		0
+		local longueur_ouvrant 		= 	compo_ouvrant_1.longueur 
+		local callage_montant_G 	= 	0
 		local callage_montant_D 	=	callage_montant_G
-		local ouvrant_pos_z 		= 	callage_montant_G
-		local profondeur_temp		=	menuis_profondeur	--		if cadre	then menuis_profondeur	else 0
-		local ouvrant_callage_y	= 	if qualite != 3 then	profondeur_temp  /* + ouvrant_profondeur	 */else 0
+		local ouvrant_pos_z 			= 	callage_montant_G
+		local profondeur_temp		=	menuis_profondeur
+		local ouvrant_callage_y		= 	if qualite != 3 	then	profondeur_temp	else 0
 		
 		
 		local recalage_X = if cadre 			then menuis_epaisseur else 0
@@ -282,8 +269,7 @@ category:"CP | Menuiserie"
 				origine_ouv_1	=	transMatrix	[ -longueur_ouvrant, - menuis_profondeur / 2 ,	ouvrant_pos_z ]	
 			else
 				origine_ouv_1	=	transMatrix	[ -longueur_ouvrant, 0 ,	ouvrant_pos_z ]	
-			rotate_ouv_1		=	rotateZMatrix -ouvert_angle_1
-			
+			rotate_ouv_1			=	rotateZMatrix -ouvert_angle_1
 			recalle_ouv_1		=	transMatrix	[longueur - callage_montant_G - recalage_X , ouvrant_callage_y  ,	recalage_Z ]
 			
 			
@@ -320,11 +306,10 @@ category:"CP | Menuiserie"
 		if cadre do	
 			mgr_mesh.attacher		mesh		compo_cadre
 		
-		
 		---- 1er ouvrant ------------
 		local transf_ouvrant_1	=	origine_ouv_1 * rotate_ouv_1 * recalle_ouv_1
 		mgr_mesh.attacher		mesh		compo_ouvrant_1 	transf:transf_ouvrant_1
-				
+		
 		---- 2nd ouvrant	------------
 		if  ouvrant_double do (
 			
@@ -350,7 +335,7 @@ category:"CP | Menuiserie"
 		on mousePoint click do
 			case click of
 			(
-				1: (	
+				1: (
 						pt_debut 		=  gridPoint
 						nodeTM.translation = pt_debut
 				)
@@ -368,7 +353,6 @@ category:"CP | Menuiserie"
 					nodeTM.translation 	= pt_debut
 					
 					pt_hauteur				=	gridPoint
-					
 					
 				)
 				3:	(

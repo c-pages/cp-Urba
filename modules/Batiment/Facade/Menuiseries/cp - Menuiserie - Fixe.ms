@@ -56,8 +56,6 @@ category:"CP | Menuiserie"
 		nom	 							type:#string 			default:"Fixe"
 		
 		------ options --------------
--- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
-		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		
@@ -106,7 +104,11 @@ category:"CP | Menuiserie"
 	
 
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
-	fn actualiser_composants	= with redraw off (
+	fn	est_ouvrant 	= false
+	fn get_longueur	=	longueur
+	fn set_hasard	_fen_ouvMax	_fen_proba_ouv =()
+	
+		fn actualiser_composants	= with redraw off (
 		
 		if compo_vitrage 	== undefined					do	compo_vitrage		= createInstance  	cp_menuisElem_panneau
 		if cadre and compo_cadre 	== undefined	do	compo_cadre		= createInstance  	cp_menuisElem_cadre
@@ -143,12 +145,7 @@ category:"CP | Menuiserie"
 		
 		
 	)  --- fin actualiser_composants  ------------------
-	
-	fn	est_ouvrant 	= false
-	fn get_longueur	=	longueur
-	fn set_hasard	_fen_ouvMax	_fen_proba_ouv =()
-	
-	
+
 	
 	
 	

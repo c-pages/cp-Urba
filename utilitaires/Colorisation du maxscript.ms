@@ -4,7 +4,7 @@
 	UTILITAIRE :
 	Sert juste a colorer les mots de code désignant mes plugins
 	
-	scan les plugin et creer le fichier 'MXS_EditorUser.properties' correspondant
+	scan les plugins et creer le fichier 'MXS_EditorUser.properties' correspondant
 	
 	13 mai 2019
 	
@@ -24,7 +24,7 @@
 			local ligne 	= readLine  fichier_stream
 			local mots 	=  filterString ligne		" 	"
 			if mots[1] == "plugin" do (
-				plugin_nom =  mots[3]
+				plugin_nom =  toLower mots[3]
 				on_a_trouve = true
 			)
 		)

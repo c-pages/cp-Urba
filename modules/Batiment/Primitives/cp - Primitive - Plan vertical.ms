@@ -58,17 +58,6 @@ category:"CP | Primitives"
 		---- on clean les edges ---------
 		setEdgeVis mesh 1 3 false
 		setEdgeVis mesh 2 1 false
-
-		/* ----- real world mapping 	--------------
-		setNumTVerts mesh pts.count		
-		setTVert mesh 1 [ pts[1].x, pts[1].z, pts[1].y ]
-		setTVert mesh 2 [ pts[2].x, pts[2].z, pts[2].y ]
-		setTVert mesh 3 [ pts[3].x, pts[3].z, pts[3].y ]
-		setTVert mesh 4 [ pts[4].x, pts[4].z, pts[4].y ]
-		buildTVFaces mesh false		
-		for i = 1 to faces.count do		
-			setTVFace mesh i faces[i]
-		 */
 		
 		----- le mapping 	--------------
 		meshop.applyUVWMap 	mesh  #box		tm:(scaleMatrix [2,2,2]	)

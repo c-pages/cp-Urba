@@ -51,7 +51,6 @@ category:"CP | Menuiserie	| Element"
 	parameters params_divers rollout:roll_divers
 	(
 		------ mat ID ----------
--- 		low_poly					type:#boolean 		ui:shk_lowPoly				default:false
 		matId_menuis			type:#integer 			ui:spn_matId_menuis	default:1
 		
 		qualite					type:#integer 			ui:rdo_qualite				default:1
@@ -81,9 +80,7 @@ category:"CP | Menuiserie	| Element"
 		on shk_traverse_B	changed state 	do actualiser ()
 	)
 	rollout roll_divers  "Divers" (
-		/* group "Qualité" (
-			checkbox	shk_lowPoly		"Low poly"
-		) */
+		
 		group "Qualité" (
 			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -131,12 +128,10 @@ category:"CP | Menuiserie	| Element"
 		
 		
 		
+		
+		
 		--- Construction ---------------------------------------------------------------------------------------
-		----- les composants ----------------
--- 		local composant	=	if low_poly 	then	 createInstance  cp_prim_boiteL		matId:matId_menuis
--- 													else	 createInstance  cp_prim_boite		matId:matId_menuis
-		
-		
+		----- les composants ----------------		
 		local composant
 		case qualite	of (
 			1:	composant	=	 createInstance  cp_prim_boite				matId:matId_menuis
@@ -173,8 +168,8 @@ category:"CP | Menuiserie	| Element"
 			composant.longueur			=	long_trav
 			composant.hauteur			=	travBasse_hauteur
 			if qualite != 3 do	(
-				composant.profondeur		=	profondeur
-				composant.symetrie			=	false
+				composant.profondeur	=	profondeur
+				composant.symetrie		=	false
 				composant.horizontal		=	true
 			)
 			mgr_mesh.attacher		mesh		composant 	transf:[posX_traverses,0,0]				
@@ -184,8 +179,8 @@ category:"CP | Menuiserie	| Element"
 		composant.longueur			=	long_trav
 		composant.hauteur			=	menuis_epaisseur
 		if qualite != 3 do	 (
-			composant.profondeur		=	profondeur
-			composant.symetrie			=	true
+			composant.profondeur	=	profondeur
+			composant.symetrie		=	true
 			composant.horizontal		=	true
 		)
 		

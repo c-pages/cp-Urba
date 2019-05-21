@@ -103,46 +103,7 @@ category:"CP | Menuiserie	| Element"
 		)
 	) ---- fin rollout	----------
 	
-	
-	--------------- FONCTIONS  --------------------------------------------------------------------------------------------------------------
-/* 
-	fn actualiser_composants	= with redraw off (
-	
-		----- les composants ----------------
-		if compo_cadre 	== undefined do compo_cadre 	= createInstance	cp_menuisElem_cadre
-		if compo_vitrage	== undefined do compo_vitrage	= createInstance	cp_menuisElem_panneau
-		
-		-----	le cadre 	-------------
-		compo_cadre.longueur					=	longueur
-		compo_cadre.hauteur						=	hauteur
-		compo_cadre.profondeur				=	profondeur
-		compo_cadre.menuis_epaisseur			=	cadre_largeur
-		compo_cadre.travBasse_hauteur		=	travBasse_hauteur		
-		compo_cadre.matId_menuis			=	matId_menuis
-		compo_cadre.qualite						=	qualite
-		
-		local longueur_passage 	=	if cadre_use 	then longueur - 2* cadre_largeur 	else 	longueur
-		local hauteur_passage		= 	if cadre_use 	then hauteur - ( cadre_largeur + travBasse_hauteur)		else 	hauteur
-		
-		-----	le vitrage 	-------------
-		compo_vitrage.longueur				=	longueur_passage
-		compo_vitrage.hauteur					=	hauteur_passage
-		
-		compo_vitrage.div_montants_nbr	=	div_montants_nbr
-		compo_vitrage.div_traverses_nbr	=	div_traverses_nbr
-		compo_vitrage.div_calage_verti		=	div_calage_verti
-		
-		compo_vitrage.vitrage_epaisseur	=	vitrage_epaisseur
-		
-		compo_vitrage.div_largeur				=	div_largeur		
-		compo_vitrage.div_profondeur		=	div_profondeur		
-		compo_vitrage.matId_vitrage			=	matId_vitrage				
-		compo_vitrage.matId_menuis			=	matId_menuis
-		compo_vitrage.qualite					=	qualite
-		
-	)
-	 */
-	
+
 	
 	--------------- ENVENEMENTS  ----------------------------------------------------------------------------------------------------------
 	on buildMesh do	(
@@ -167,20 +128,18 @@ category:"CP | Menuiserie	| Element"
 		
 		
 		local espace_div_H 		= ( longueur_passage - div_montants_nbr * div_largeur ) / ( div_montants_nbr + 1 )
-		local depose_div_V		= [ espace_div_H, 	posY_div,		0	]
+		local depose_div_H		= [ espace_div_H, 	posY_div,		0	]
 		
 		local espace_div_V 		= ( hauteur_passage - div_traverses_nbr * div_largeur ) / ( div_traverses_nbr + 1 )
-		local depose_div_H		= [0, 	posY_div,		 espace_div_V  + div_calage_verti	]
+		local depose_div_V		= [0, 	posY_div,		 espace_div_V  + div_calage_verti	]
 		
 		
 		local callage_G 	= 	if cadre_use 	then cadre_largeur else 0
 		local callage_B 	= 	if cadre_use 	then travBasse_hauteur else 0
 		local callage_Y	=	if qualite != 3 then profondeur/2	 else 0
 		
--- 		depose_div_H		+=	[	0	,	callage_Y,	callage_B	]
--- 		depose_div_V		+= 	[ callage_G, 	callage_Y,		0	]
-		depose_div_H		+=	[	callage_G	,	callage_Y,	callage_B	]
-		depose_div_V		+= 	[ callage_G, 	callage_Y,		callage_B	]
+		depose_div_V		+=	[	callage_G	,	callage_Y,	callage_B	]
+		depose_div_H		+= 	[ callage_G, 	callage_Y,		callage_B	]
 		
 		
 		
@@ -232,16 +191,22 @@ category:"CP | Menuiserie	| Element"
 			
 			--- traverse	haute ----------
 			compo_cadre.longueur			=	longueur_passage
-			compo_cadre.hauteur			=	cadre_largeur
+			compo_cadre.hauteur				=	cadre_largeur
 			if qualite != 3 do	 (
-				compo_cadre.profondeur		=	profondeur
-				compo_cadre.symetrie			=	true
+				compo_cadre.profondeur	=	profondeur
+				compo_cadre.symetrie		=	true
 				compo_cadre.horizontal		=	true
 			)
 			
 			mgr_mesh.attacher		mesh		compo_cadre 	transf:[callage_G,0,hauteur - cadre_largeur]
 			
 			
+			--- les cotés du cadre en qualite medium, pour quand on ouvre la fenetre ...  ---------
+			if qualite == 2 do (
+				local plan_vertical = createInstance	cp_prim_planVertical		longueur:profondeur	hauteur:hauteur
+				mgr_mesh.attacher		mesh		plan_vertical		transf:( rotateZMAtrix	90  * transMatrix [longueur, 0,0] )
+				mgr_mesh.attacher		mesh		plan_vertical		transf:( rotateZMAtrix	-90 * transMatrix [0, profondeur,0]  )
+			)
 			
 		) ------- fin cadre ------------------
 		
@@ -249,12 +214,6 @@ category:"CP | Menuiserie	| Element"
 		
 		
 		
-		--- les cotés du cadre en qualite medium, pour quand on ouvre la fenetre ...  ---------
-		if qualite == 2 do (
-			local plan_vertical = createInstance	cp_prim_planVertical		longueur:profondeur	hauteur:hauteur
-			mgr_mesh.attacher		mesh		plan_vertical		transf:( rotateZMAtrix	90  * transMatrix [longueur, 0,0] )
-			mgr_mesh.attacher		mesh		plan_vertical		transf:( rotateZMAtrix	-90 * transMatrix [0, profondeur,0]  )
-		)
 		
 		
 		
@@ -300,9 +259,9 @@ category:"CP | Menuiserie	| Element"
 				compo_div.horizontal		=	false
 			)
 			
-			mgr_mesh.attacher		mesh		compo_div 	transf:depose_div_V
+			mgr_mesh.attacher		mesh		compo_div 	transf:depose_div_H
 			
-			depose_div_V.x += espace_div_H + div_largeur
+			depose_div_H.x += espace_div_H + div_largeur
 		)
 		
 		-------- divisions verticales --------------
@@ -316,9 +275,9 @@ category:"CP | Menuiserie	| Element"
 				compo_div.horizontal		=	true
 			)
 			
-			mgr_mesh.attacher		mesh		compo_div 	transf:depose_div_H
+			mgr_mesh.attacher		mesh		compo_div 	transf:depose_div_V
 			
-			depose_div_H.z += espace_div_V + div_largeur
+			depose_div_V.z += espace_div_V + div_largeur
 		)
 		
 		

@@ -35,7 +35,6 @@ category:"CP | Menuiserie	| Element | Garde Corps"
 	parameters params_divers rollout:roll_divers
 	(
 		------ mat ID ----------
--- 		low_poly					type:#boolean 		ui:shk_lowPoly				default:false
 		matId					type:#integer 			ui:spn_matId				default:1
 		
 		qualite					type:#integer 			ui:rdo_qualite				default:1
@@ -50,9 +49,6 @@ category:"CP | Menuiserie	| Element | Garde Corps"
 		
 	)
 	rollout roll_divers  "Divers" (
-		/* group "Qualité" (
-			checkbox	shk_lowPoly		"Low poly"
-		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -75,6 +71,28 @@ category:"CP | Menuiserie	| Element | Garde Corps"
 		
 		
 		--- Construction ---------------------------------------------------------------------------------------
+		local compo_gardCorps	=	 createInstance  cp_prim_planVertical				matId:matId
+		
+		
+		--- garde corps G ----
+		compo_gardCorps.longueur		=	profondeur
+		compo_gardCorps.hauteur			=	hauteur
+		mgr_mesh.attacher		mesh		compo_gardCorps	transf:( rotateZMatrix	-90 )
+		
+		--- garde corps face ----
+		compo_gardCorps.longueur		=	longueur
+		compo_gardCorps.hauteur			=	hauteur
+		mgr_mesh.attacher		mesh		compo_gardCorps	transf:[0,-profondeur,0]
+		
+		--- garde corps D ----
+		compo_gardCorps.longueur		=	profondeur
+		compo_gardCorps.hauteur			=	hauteur
+		mgr_mesh.attacher		mesh		compo_gardCorps	transf:( ( rotateZMatrix	90 ) * transMatrix [longueur,-profondeur,0] )
+		
+		
+		
+		
+		
 -- 		local composant=	if low_poly 	then	 createInstance  cp_prim_boiteU		matId:matId
 -- 													else	 createInstance  cp_prim_boite		matId:matId
 		/* 

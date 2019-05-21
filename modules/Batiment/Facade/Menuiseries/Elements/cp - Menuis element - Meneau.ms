@@ -33,7 +33,6 @@ category:"CP | Menuiserie	| Element"
 	parameters params_divers rollout:roll_divers
 	(
 		------ mat ID ----------
--- 		low_poly					type:#boolean 		ui:shk_lowPoly				default:false
 		matId					type:#integer 			ui:spn_matId				default:1
 		
 		qualite					type:#integer 			ui:rdo_qualite				default:1
@@ -48,9 +47,6 @@ category:"CP | Menuiserie	| Element"
 		
 	)
 	rollout roll_divers  "Divers" (
-		/* group "Qualité" (
-			checkbox	shk_lowPoly		"Low poly"
-		) */
 		group "Qualité" (
 			radioButtons rdo_qualite 		"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -73,9 +69,6 @@ category:"CP | Menuiserie	| Element"
 		
 		
 		--- Construction ---------------------------------------------------------------------------------------
--- 		local composant=	if low_poly 	then	 createInstance  cp_prim_boiteU		matId:matId
--- 													else	 createInstance  cp_prim_boite		matId:matId
-		
 		local composant
 		case qualite	of (
 			1:	composant	=	 createInstance  cp_prim_boite				matId:matId

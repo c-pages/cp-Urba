@@ -15,10 +15,12 @@ category:"CP | Facade	| Element"
 	
 	
 	---- pré déclaration -----------
-	local corriger_parametres 
+	local corriger_parametres , assigner_gardeCorps
+	local liste_gardeCorps =#()
+	
 	
 	--- composant ---
-	local compo_cadre, compo_vitrage
+	local compo_gardeCorps
 	
 	---- manager de mesh -------------------
 	local mgr_mesh = str_mgr_mesh ()
@@ -32,8 +34,6 @@ category:"CP | Facade	| Element"
 		
 		nom	 					type:#string 		/* 	ui:edTxt_nom	 */				default:"Balcon"
 		
--- 		etirable					type:#boolean 	/* 	ui:shk_etirable			 */		default:false
-		
 		longueur 				type:#worldUnits 	/* ui:spn_longueur 	 */			default:0.
 		hauteur	 				type:#worldUnits 	/* ui:spn_hauteur  */			default:0.
 		dalle_epaisseur 		type:#worldUnits /* 	ui:spn_dalle_epaisseur	 */		default:20.
@@ -43,28 +43,11 @@ category:"CP | Facade	| Element"
 		
 		elements				type:#maxObjectTab		tabSizeVariable:true
 		
-		gardeCorps				type:#integer		 	ui:ddl_gardeCorps 			default:1
 		gardeCorps_objet		type:#maxObject		
--- 		
--- 		on elements 	tabChanged  	_operation		 _index	_count		do (
--- 			longueur = 0
--- 			for elem in elements do
--- 				longueur += elem.longueur
--- 		)
-		/* 
-		on longueur 	get 	_arg do (
-			local result_longueur = 0
-			for elem in elements do
-				result_longueur += elem.longueur
-			result_longueur
-		) */
 	)
-	parameters params_divers rollout:roll_divers
-	(
+	parameters params_divers rollout:roll_divers	(
 		
 		------ options --------------
--- 		low_poly							type:#boolean 		ui:shk_lowPoly				default:false
-		
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		est_ouvrable					type:#boolean 					default:false
@@ -74,9 +57,7 @@ category:"CP | Facade	| Element"
 		matId_mur						type:#integer 			ui:spn_matId_mur		default:4
 		
 	)	-----	fin parametres --------------------
-	
-	parameters params_hasard rollout:roll_hasard
-	(
+	parameters params_hasard rollout:roll_hasard	(
 		hasard_seed					type:#integer 			ui:spn_hasard_seed		default:123456
 		
 		fen_proba_ouv				type:#float 			ui:spn_fen_proba_ouv		default:0.
@@ -97,6 +78,71 @@ category:"CP | Facade	| Element"
 	
 	
 	
+	
+	
+	
+	
+	
+	--------------- ROLLOUTS  ----------------------------------------------------------------------------------------------------------------------
+	rollout roll_parametres 				"Paramètres"	(
+		
+-- 		local liste_gardeCorps = #()
+		
+		
+		group  "Dimensions" (
+			spinner 	spn_dalle_porteAFaux 		"Porte-à-faux" 			type:#worldunits 	range:[0,1e20,0]
+			spinner 	spn_profondeur 		"Profondeur" 			type:#worldunits 	range:[0,1e20,0]
+		)
+		group "Garde corps" (
+			dropDownList	ddl_gardeCorps	""	items:#("Aucun", "Simple", "Bareaudage")
+		)
+		
+		fn actualiser =(
+			/* 
+			--- on fait la liste des occultants -----------
+			liste_gardeCorps = #()
+			local liste_gardeCorps_noms= #( "- aucun -")			
+			for classe_gardeCorps in GeometryClass.classes where classe_gardeCorps.category == #'CP | Menuiserie	| Element | Garde Corps' do (
+				append liste_gardeCorps_noms 		classe_gardeCorps.name
+				append liste_gardeCorps 				classe_gardeCorps
+			)
+			 */
+			--- qu'on  affiche dans le menu deroulant -------
+			local liste_gardeCorps_noms= #( "- aucun -")			
+			for classe_gardeCorps in GeometryClass.classes where classe_gardeCorps.category == #'CP | Menuiserie	| Element | Garde Corps' do 
+				append liste_gardeCorps_noms 		classe_gardeCorps.name
+			ddl_gardeCorps.items = for classe_gardeCorps in liste_gardeCorps_noms collect  ( classe_gardeCorps )
+			
+			---- puis on selectionne le bon  ------------
+			if gardeCorps_objet == undefined then ddl_gardeCorps.selection = 1 else 
+				ddl_gardeCorps.selection = ( findItem	liste_gardeCorps	( classof gardeCorps_objet ) ) + 1
+			
+		)
+		
+		
+		on roll_parametres	open do actualiser ()
+		on ddl_gardeCorps selected arg do	assigner_gardeCorps arg
+			
+			/*  (
+			if arg == 1 then 
+				gardeCorps_objet = undefined
+			else 
+				gardeCorps_objet = createInstance liste_gardeCorps[ arg - 1 ] 
+			redrawviews  ()
+		) */
+		
+		
+	)
+	rollout roll_divers  "Divers"	(
+		
+		group "Qualité" (
+			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
+		)
+		group "Material ID" (
+			spinner spn_matId_huisserie 	"Huisserie" 				type:#integer range:[1,1000,1]
+			spinner spn_matId_mur 			"Mur" 					type:#integer range:[1,1000,1]
+		)
+	) 	---- fin rollout	-----------------------
 	rollout roll_hasard  "Hasard"	(
 		
 		spinner spn_hasard_seed 			"Seed" 					type:#integer		 range:[0,1e20,0]
@@ -112,77 +158,18 @@ category:"CP | Facade	| Element"
 	
 	
 	
-	--------------- ROLLOUTS  ----------------------------------------------------------------------------------------------------------------------
-	rollout roll_parametres 				"Paramètres"	(
+	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
+	fn initialiser =(
 		
-		
-		
-		local liste_gardeCorps = #()
-		
-		
--- 		editText 	edTxt_nom		 		"Nom:" 	
--- 		spinner 	spn_longueur 		"Longueur" 				type:#worldunits 	range:[0,1e20,0]
-		group  "Dimensions" (
--- 			spinner 	spn_dalle_epaisseur 		"Ep. dalle" 				type:#worldunits 	range:[0,1e20,0]
-			spinner 	spn_dalle_porteAFaux 		"Porte-à-faux" 			type:#worldunits 	range:[0,1e20,0]
--- 		)
--- 		group "loggia" (
-			
-			spinner 	spn_profondeur 		"Profondeur" 			type:#worldunits 	range:[0,1e20,0]
+		--- on fait la liste des occultants -----------
+		liste_gardeCorps = #()
+		local liste_gardeCorps_noms= #( "- aucun -")			
+		for classe_gardeCorps in GeometryClass.classes where classe_gardeCorps.category == #'CP | Menuiserie	| Element | Garde Corps' do (
+-- 			append liste_gardeCorps_noms 		classe_gardeCorps.name
+			append liste_gardeCorps 				classe_gardeCorps
 		)
-		group "Garde corps" (
-			dropDownList	ddl_gardeCorps	""	items:#("Aucun", "Simple", "Bareaudage")
-		)
-		
-		fn actualiser =(
-			
-			--- on fait la liste des occultants -----------
-			liste_gardeCorps = #()
-			local liste_gardeCorps_noms= #( "- aucun -")			
-			for classe_gardeCorps in GeometryClass.classes where classe_gardeCorps.category == #'CP | Menuiserie	| Element | Garde Corps' do (
-				append liste_gardeCorps_noms 		classe_gardeCorps.name
-				append liste_gardeCorps 				classe_gardeCorps
-			)
-			
-			--- qu'on  affiche dans le menu deroulant -------
-			ddl_gardeCorps.items = for classe_gardeCorps in liste_gardeCorps_noms collect  ( classe_gardeCorps )
-			
-			---- puis on selectionne le bon  ------------
-			if gardeCorps_objet == undefined then ddl_gardeCorps.selection = 1 else 
-				ddl_gardeCorps.selection = ( findItem	liste_gardeCorps	( classof gardeCorps_objet ) ) + 1
-			
-		)
-		
-		
-		on roll_parametres	open do actualiser ()
-		on ddl_gardeCorps selected arg do (
-			if arg == 1 then 
-				gardeCorps_objet = undefined
-			else 
-				gardeCorps_objet = createInstance liste_gardeCorps[ arg - 1 ] 
-			redrawviews  ()
-		)
-		
 		
 	)
-	
-	rollout roll_divers  "Divers"	(
-		
-		group "Qualité" (
-			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
-		)
-		group "Material ID" (
-			spinner spn_matId_huisserie 	"Huisserie" 				type:#integer range:[1,1000,1]
-			spinner spn_matId_mur 			"Mur" 					type:#integer range:[1,1000,1]
-		)
-	) 	---- fin rollout	-----------------------
-	
-	
-	
-	
-	
-	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
-	
 	
 	fn get_longueur	=	(
 		local result_longueur = 0
@@ -198,19 +185,15 @@ category:"CP | Facade	| Element"
 		for elem in elements do
 			elem.set_hasard	_fen_ouvMax	_fen_proba_ouv
 	)
-	/* 
-	-----elements -------------
-	fn ajouter_element		_elem	id:		=(
-		append elements		_elem
-		_elem.parent = this
-	)
-	fn retirer_element		_id		=(
-		local elem_avirer	=	elements[_id]
-		deleteItem	 elements	_id
-		elem_avirer.parent = undefined
-		
-		elem_avirer
-	) */
+	
+	fn assigner_gardeCorps	_index =(
+		if _index == 1 then 
+				gardeCorps_objet = undefined
+			else 
+				gardeCorps_objet = createInstance liste_gardeCorps[ _index - 1 ] 
+			redrawviews  ()
+	)	
+	
 	
 	
 	
@@ -218,18 +201,33 @@ category:"CP | Facade	| Element"
 	
 	fn actualiser_composants	= with redraw off (
 		
-		sequence_aConstruire 				= 	#()
 		
+		--------	la sequence du balcon ------------
+		sequence_aConstruire 				= 	#()
 		for elem in elements do (
 			
 			--- le composant ----------------
-			local compo_temp 				= 	copy elem				
+			local compo_temp 			= 	copy elem				
 			compo_temp.hauteur			=	hauteur
 			compo_temp.qualite			=	qualite
 			compo_temp.set_hasard	fen_ouvMax	fen_proba_ouv 
 			append sequence_aConstruire		compo_temp
 			
 		) --- fin for sequence ------------------
+		
+		
+		
+		
+		----------- le garde corps -----------
+		if gardeCorps_objet != undefined do (
+			
+			compo_gardeCorps					= copy gardeCorps_objet
+			compo_gardeCorps.longueur 		= longueur
+			compo_gardeCorps.hauteur 		= 100.
+			compo_gardeCorps.profondeur 	= profondeur
+			
+		)
+		
 		
 	)  --- fin actualiser_composants  ------------------
 	
@@ -253,8 +251,8 @@ category:"CP | Facade	| Element"
 		
 		
 		--- Construction ---------------------------------------------------------------------------------------		
-		local compo_dalle		= 	createInstance 	cp_prim_boite	matId:matId_mur
-		compo_dalle.hauteur 		= 	dalle_epaisseur
+		local compo_dalle				= 	createInstance 	cp_prim_boite	matId:matId_mur
+		compo_dalle.hauteur 			= 	dalle_epaisseur
 		compo_dalle.profondeur		=	dalle_porteAFaux
 		compo_dalle.longueur		=	get_longueur()
 		mgr_mesh.attacher		mesh		compo_dalle			transf:[0,-dalle_porteAFaux ,-dalle_epaisseur]
@@ -265,9 +263,8 @@ category:"CP | Facade	| Element"
 			
 			---- le composant -----
 			local composant 		= sequence_aConstruire [i]
--- 			local align_y 			=	profondeur
 			mgr_mesh.attacher		mesh		composant	transf:( depos_composant + [0,profondeur,0] )
-						
+			
 			depos_composant.x += composant.get_longueur()
 			
 		)
@@ -300,7 +297,14 @@ category:"CP | Facade	| Element"
 		)
 		
 		
-	)
+		
+		
+		---- le garde corps -------------
+		if gardeCorps_objet != undefined do 
+			mgr_mesh.attacher		mesh		compo_gardeCorps 	--transf:[0,0,allege_hauteur]
+		
+		
+	)	---- fin buildMesh --------------
 	
 	
 	
@@ -336,6 +340,16 @@ category:"CP | Facade	| Element"
 			)
 	) --- fin tool create ---------
 	
+	------ events ----------------------------------------------------------
+	on create do (
+		initialiser ()
+	)
+	on load do (
+		initialiser ()
+	)
+	on update do (
+		initialiser ()
+	)
 	
 	
 ) ---- fin du plugin --------------------------

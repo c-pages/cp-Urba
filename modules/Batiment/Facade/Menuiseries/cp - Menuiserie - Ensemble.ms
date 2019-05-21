@@ -27,6 +27,10 @@ category:"CP | Menuiserie"
 	---- composants ---------
 	local compo_cadre, compo_meneau, compo_allege
 	
+	
+	
+	
+	
 	---- manager de mesh -------------------
 	local mgr_mesh = str_mgr_mesh ()
 	
@@ -52,8 +56,7 @@ category:"CP | Menuiserie"
 		alleges_hauteur		type:#worldUnitsTab		tabSizeVariable:true
 		
 	)
-	parameters params_divers rollout:roll_divers
-	(
+	parameters params_divers rollout:roll_divers	(
 		
 		------ options --------------
 		qualite							type:#integer 			ui:rdo_qualite				default:1
@@ -65,9 +68,7 @@ category:"CP | Menuiserie"
 		matId_mur					type:#integer 			ui:spn_matId_mur			default:4
 		
 	)	-----	fin parametres --------------------
-	
-	parameters params_hasard rollout:roll_hasard
-	(
+	parameters params_hasard rollout:roll_hasard	(
 		hasard_seed					type:#integer 			ui:spn_hasard_seed		default:123456
 		
 		fen_proba_ouv				type:#float 			ui:spn_fen_proba_ouv		default:0.
@@ -76,8 +77,7 @@ category:"CP | Menuiserie"
 	
 	
 	
-	rollout roll_global "Global" width:180 height:161
-	(
+	rollout roll_global "Global" width:180 height:161	(
 		
 		GroupBox 'grp_dimensions' "Dimensions" pos:[5,0] width:170 height:53 align:#left
 		
@@ -94,11 +94,7 @@ category:"CP | Menuiserie"
 		spinner 'spn_menuis_profondeur' "" pos:[90,86] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		label 'lbl_menuis_profondeur' "menuis_profondeur:" pos:[20,86] width:67 height:16 align:#left
 	)
-	
-	
-	
-	rollout roll_parametres "Menuiseries" width:180 height:548
-	(
+	rollout roll_parametres "Menuiseries" width:180 height:548	(
 		
 		
 		------------ TRee view -----------------------------
@@ -551,13 +547,6 @@ category:"CP | Menuiserie"
 					redrawViews ()
 				)
 	)
-	
-	
-	
-	
-	
-	
-	
 	rollout roll_divers  "Divers"	(
 		
 		group "Qualité" (
@@ -570,8 +559,6 @@ category:"CP | Menuiserie"
 			spinner spn_matId_mur 			"Mur" 					type:#integer range:[1,1000,1]
 		)
 	) 	---- fin rollout	-----------------------
-	
-	
 	rollout roll_hasard  "Hasard"	(
 		
 		spinner spn_hasard_seed 			"Seed" 					type:#integer		 range:[0,1e20,0]
@@ -787,7 +774,6 @@ category:"CP | Menuiserie"
 		---- creation des composants ------------------
 		if compo_cadre 			== undefined	do	compo_cadre		= 	createInstance  cp_menuisElem_cadre
 		if compo_meneau		== undefined	do	compo_meneau	= 	createInstance  cp_menuisElem_meneau
--- 		if compo_allege			== undefined	do	compo_allege	= 	createInstance  cp_menuiserie_fixe
 		if compo_allege			== undefined	do	compo_allege	= 	createInstance  cp_menuisElem_chassisVitre
 		
 		----- maj du cadre ----------------------
@@ -810,9 +796,7 @@ category:"CP | Menuiserie"
 		
 		----- maj du allege ----------------------
 		compo_allege.profondeur					= menuis_profondeur
--- 		compo_allege.menuis_epaisseur	 		= menuis_epaisseur	
--- 		compo_allege.cadre			 				= false
-		compo_allege.qualite			 			= qualite		
+		compo_allege.qualite			 				= qualite		
 		
 		
 		--- maj des composants de la sequence -------------
@@ -881,10 +865,11 @@ category:"CP | Menuiserie"
 		--- Construction ---------------------------------------------------------------------------------------
 
 		---- le cadre  -------
-		mgr_mesh.attacher		mesh		compo_cadre 	--	transf:[0, menuis_profondeur  , 0 ]
+		mgr_mesh.attacher		mesh		compo_cadre
 		
 		---- la sequence	-----
-		local compo_travBas		= 	if qualite ==3	then	createInstance  cp_prim_boiteL  horizontal:true	else createInstance 	cp_prim_boite
+		local compo_travBas		= 	if qualite ==3	then	createInstance  	cp_prim_boiteL  horizontal:true	
+																		else createInstance 	cp_prim_boite
 		
 		local depos_composant 	= [ menuis_epaisseur, 0  , 0 ]
 		

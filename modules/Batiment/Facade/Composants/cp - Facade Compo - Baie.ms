@@ -17,7 +17,9 @@ category:"CP | Facade	| Element"
 	
 	
 	--- Prédéfinitions ------------------
-	local corriger_parametres
+	local assigner_occultants
+	
+		local liste_occultants = #()
 	
 	---- manager de mesh -------------------
 	local mgr_mesh = str_mgr_mesh ()
@@ -40,18 +42,16 @@ category:"CP | Facade	| Element"
 	)
 	parameters params_general rollout:roll_parametres	(
 		
-		longueur 					type:#worldUnits 	ui:spn_longueur 				default:120.
-		baie_hauteur				type:#worldUnits 	ui:spn_baie_hauteur			default:-50.
-		profondeur	 				type:#worldUnits 	ui:spn_profondeur			default:15.
+		longueur 						type:#worldUnits 	ui:spn_longueur 				default:120.
+		baie_hauteur					type:#worldUnits 	ui:spn_baie_hauteur			default:-50.
+		profondeur	 				type:#worldUnits 	ui:spn_profondeur				default:15.
 		allege_hauteur				type:#worldUnits 	ui:spn_allegePleine			default:100.
 		
-		tablette						type:#boolean 						default:true
+		tablette							type:#boolean 						default:true
 		
 		menuiserie_objet			type:#maxObject		
 		
--- 		occultant_objet			type:#maxObjectTab		tabSizeVariable:false			tabSize:1	
-		occultant_objet			type:#maxObject			
--- 		occultant_index			type:#integer 					ui:ddl_occultation				default:1
+		occultant_objet				type:#maxObject			
 		
 	)	-----	fin parametres --------------------
 	parameters params_imposte rollout:roll_imposte	(
@@ -83,7 +83,7 @@ category:"CP | Facade	| Element"
 		matId_mur					type:#integer 			ui:spn_matId_mur		default:4
 		
 	)	-----	fin parametres --------------------
-	parameters params_hasard /* --rollout:roll_hasard */	(
+	parameters params_hasard 	(
 		hasard_seed					type:#integer 		/* 	ui:spn_hasard_seed	 */	default:123456
 		
 		fen_proba_ouv				type:#float 		/* 	ui:spn_fen_proba_ouv	 */	default:0.
@@ -99,10 +99,9 @@ category:"CP | Facade	| Element"
 	
 	
 	
-	rollout roll_parametres	 "Baie" width:268 height:221
-	(
+	rollout roll_parametres	 "Baie" width:268 height:221	(
 		
-		local liste_occultants = #()
+-- 		local liste_occultants = #()
 		
 		
 		
@@ -125,16 +124,20 @@ category:"CP | Facade	| Element"
 		
 		
 		fn actualiser =(
-			
+			/* 
 			--- on fait la liste des occultants -----------
 			liste_occultants = #()
 			local liste_occultants_noms= #( "- aucun -")			
 			for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do (
 				append liste_occultants_noms 	classe_occulants.name
 				append liste_occultants 				classe_occulants
-			)
+			) */
 			
 			--- qu'on  affiche dans le menu deroulant -------
+			local liste_occultants_noms= #( "- aucun -")			
+			for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do 
+				append liste_occultants_noms 	classe_occulants.name
+				
 			ddl_occultation.items = for classe_occulants in liste_occultants_noms collect  ( classe_occulants )
 			
 			---- puis on selectionne le bon  ------------
@@ -148,21 +151,17 @@ category:"CP | Facade	| Element"
 		
 		on roll_parametres	open do actualiser ()
 		
-		on ddl_occultation selected arg do (
+		on ddl_occultation selected arg do assigner_occultants  arg	
+			/* (
 			if arg == 1 then 
 				occultant_objet = undefined
 			else 
 				occultant_objet = createInstance liste_occultants[ arg - 1 ] 
 			redrawviews  ()
-		)
+		) */
 		
 	)
-	
-	
-	
-	
-	rollout rol_global "Global" width:162 height:106
-	(
+	rollout rol_global "Global" width:162 height:106	(
 		spinner 'spn_hauteur' "Hauteur" pos:[42,7] width:70 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		
 		spinner 'spn_menuis_largeur' "" pos:[90,29] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
@@ -170,10 +169,7 @@ category:"CP | Facade	| Element"
 		spinner 'spn_menuis_profondeur' "" pos:[90,44] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
 		label 'lbl_menuis_profondeur' "Profondeur:" pos:[20,44] width:67 height:16 align:#left
 	)
-	
-	
-	rollout roll_menuiserie "Menuiserie" 
-	(
+	rollout roll_menuiserie "Menuiserie" 	(
 		
 		subrollout		subRoll_param	""		pos:[0,0]	height:320	width:179 align:#left
 		
@@ -184,10 +180,7 @@ category:"CP | Facade	| Element"
 		)
 		on roll_menuiserie open do actualiser ()
 	)
-	
-	
-	rollout roll_imposte "Imposte" width:162 height:106
-	(
+	rollout roll_imposte "Imposte" width:162 height:106	(
 		
 		checkbox 'chck_imposte_use' "Imposte" pos:[18,1] width:69 height:16 align:#left		
 		
@@ -228,8 +221,6 @@ category:"CP | Facade	| Element"
 		on chck_imposte_arc_use	changed state  do actualiser()
 		
 	)
-	
-	
 	rollout roll_divers  "Divers"	(
 		
 		group "Qualité" (
@@ -248,9 +239,7 @@ category:"CP | Facade	| Element"
 	
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
-
 	fn initialiser	=(
-		
 		
 		---- si pas encore de mnuiserie on applique la menuiserie par defaut	------------------
 		if menuiserie_objet == undefined do 
@@ -259,24 +248,28 @@ category:"CP | Facade	| Element"
 		if imposte_objet == undefined do
 			imposte_objet = createInstance cp_menuiserie_fixe
 		
-		/* 
+		
 		--- on fait la liste des occultants -----------
-		occultants_liste = 	for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' collect	classe_occulants.name
-		*/
+		liste_occultants = #()
+		local liste_occultants_noms= #( "- aucun -")			
+		for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do (
+-- 			append liste_occultants_noms 	classe_occulants.name
+			append liste_occultants 				classe_occulants
+		)
 	)
-	
-	
-	
 	fn set_hasard	_fen_ouvMax	_fen_proba_ouv =(
 		fen_ouvMax 		= _fen_ouvMax
 		fen_proba_ouv 	= _fen_proba_ouv
 	)
 	fn get_longueur	=	longueur
 	
-	
-	
-	
-	
+	fn assigner_occultants	_index =(
+		if _index == 1 then 
+				occultant_objet = undefined
+			else 
+				occultant_objet = createInstance liste_occultants[ _index - 1 ] 
+			redrawviews  ()
+	)	
 	
 	
 	---- les composants ---------------------
@@ -323,35 +316,29 @@ category:"CP | Facade	| Element"
 			compo_imposte 				= copy imposte_objet
 			compo_imposte.longueur	=	longueur
 			compo_imposte.hauteur 	=	if baie_hauteur <=0 	then		hauteur + baie_hauteur - hauteur_menuis	 - allege_hauteur					
-																					else		baie_hauteur - hauteur_menuis - allege_hauteur
+																						else		baie_hauteur - hauteur_menuis - allege_hauteur
 			
 			compo_imposte.div_montants_nbr		=	imposte_montants
 			compo_imposte.div_traverses_nbr		=	imposte_traverses
 			compo_imposte.qualite						=	qualite
 			
 			compo_imposte.menuis_epaisseur		= menuis_epaisseur
-			compo_imposte.menuis_profondeur		= menuis_profondeur
+			compo_imposte.menuis_profondeur	= menuis_profondeur
 			compo_imposte.div_largeur				=	menuis_epaisseur / 1.5
 		)
 		
 		
-/* 
-		--------- l'occultant ---------
-		if occultant_index == 1 then 
-				occultant_objet = undefined
-			else 
-				occultant_objet = createInstance liste_occultants[ occultant_index - 1 ]
-		 */
 		
 		----- volets ----------
 		if occultant_objet != undefined do (
 			
-			local hauteur_baie_tmp 		= baie_hauteur
-			if baie_hauteur <= 0 do hauteur_baie_tmp = hauteur +	baie_hauteur
+			local hauteur_occultant 		= hauteur_menuis
+			if imposte_use do hauteur_occultant += compo_imposte.hauteur 
 			
-			compo_volet 				= copy occultant_objet
+			compo_volet 					= copy occultant_objet
 			compo_volet.longueur 	= longueur
-			compo_volet.hauteur 	= hauteur_baie_tmp
+			compo_volet.hauteur 		= hauteur_occultant
+			
 		)
 		
 	)  --- fin composants_actualiser  ------------------
@@ -376,7 +363,7 @@ category:"CP | Facade	| Element"
 		
 		--- Construction ---------------------------------------------------------------------------------------
 		---- la BAIE	------------------
-		local hauteur_baie_tmp 		= /* allege_hauteur +  */baie_hauteur
+		local hauteur_baie_tmp 		= baie_hauteur
 		if baie_hauteur <= 0 do hauteur_baie_tmp = hauteur +	baie_hauteur
 		
 		---- Allege -----
@@ -394,7 +381,7 @@ category:"CP | Facade	| Element"
 		local pt_8	=	[0,					0,						hauteur_baie_tmp]
 		
 		----- tableau droit ------
-		local pt_9	=	[longueur,			0,						hauteur_baie_tmp]
+		local pt_9		=	[longueur,			0,					hauteur_baie_tmp]
 		local pt_10	=	[longueur,			profondeur,	hauteur_baie_tmp]
 		
 		----- Imposte ------
@@ -448,16 +435,16 @@ category:"CP | Facade	| Element"
 		
 		----- volets ----------
 		if occultant_objet != undefined do 
-			mgr_mesh.attacher		mesh		compo_volet 
-		
-		
-		
-		
-		
+			mgr_mesh.attacher		mesh		compo_volet 	transf:[0,0,allege_hauteur]
 		
 		
 		
 	)  ----- fin on buld mesh ---------------------------------------------------------------------
+	
+	
+	
+	
+	
 	
 	
 	

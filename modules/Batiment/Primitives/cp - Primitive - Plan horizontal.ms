@@ -59,15 +59,6 @@ category:"CP | Primitives"
 		setEdgeVis mesh 1 3 false
 		setEdgeVis mesh 2 1 false
 		
-		/* ------ real world mapping 	--------------
-		setNumTVerts mesh pts.count
-		for i = 1 to pts.count do	
-			setTVert mesh i pts[i]
-		buildTVFaces mesh false
-		for i = 1 to faces.count do	
-			setTVFace mesh i faces[i]
-		 */
-		
 		----- le mapping 	--------------
 		meshop.applyUVWMap 	mesh  #box		tm:(scaleMatrix [2,2,2]	)
 		

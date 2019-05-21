@@ -32,7 +32,6 @@ category:"CP | Menuiserie	| Element"
 		symetrie				type:#boolean 		ui:shk_symetrie		default:false
 		
 		------ options --------------
--- 		low_poly				type:#boolean 		ui:shk_lowPoly		default:false
 		qualite							type:#integer 			ui:rdo_qualite				default:1
 		
 		matId				type:#integer 			ui:spn_matId		default:3
@@ -41,9 +40,8 @@ category:"CP | Menuiserie	| Element"
 	rollout roll_general  "Poignee"
 	(
 		
-			checkbox	shk_symetrie_sens	"symetrie_sens"
-			checkbox	shk_symetrie			"symetrie"
--- 			checkbox	shk_lowPoly			"Low poly"
+		checkbox	shk_symetrie_sens	"symetrie_sens"
+		checkbox	shk_symetrie			"symetrie"
 		group "Qualité" (
 			radioButtons rdo_qualite 			"" labels:#("Full", "Medium", "Low poly") align:#left
 		)
@@ -62,10 +60,10 @@ category:"CP | Menuiserie	| Element"
 		
 		--- vider le mesh --------
 		delete mesh
-			
+		
 		local compo_base = if  qualite == 3  then  cp_prim_planVertical	 else cp_prim_boite
 		composant_boite =createinstance	compo_base 	matId:matId
-
+		
 		---- plaque	----------
 		composant_boite.longueur			=	4	
 		composant_boite.hauteur			=	18	
@@ -73,6 +71,9 @@ category:"CP | Menuiserie	| Element"
 		local posY = if symetrie then  posY = -.5	else 0
 		
 		mgr_mesh.attacher mesh composant_boite 	transf:[0, posY, 0]
+		
+		
+		
 		
 		---- poignée part 1	----------
 		composant_boite.longueur		=	if not  qualite == 3   then	1		else 2.5
@@ -87,7 +88,7 @@ category:"CP | Menuiserie	| Element"
 																	else	rotateZMatrix 	90	*	transMatrix	[1.5, posY, 11.5] 
 			
 			mgr_mesh.attacher mesh composant_boite 	transf:transfo
-			 
+			
 		)
 		
 		---- poignée part 2	----------
