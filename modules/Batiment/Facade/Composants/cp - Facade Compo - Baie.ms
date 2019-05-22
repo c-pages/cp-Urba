@@ -17,9 +17,9 @@ category:"CP | Facade	| Element"
 	
 	
 	--- Prédéfinitions ------------------
-	local assigner_occultants
+	local assigner_occultants, init_liste_occultants
 	
-		local liste_occultants = #()
+	local liste_occultants = #()
 	
 	---- manager de mesh -------------------
 	local mgr_mesh = str_mgr_mesh ()
@@ -133,6 +133,8 @@ category:"CP | Facade	| Element"
 				append liste_occultants 				classe_occulants
 			) */
 			
+			init_liste_occultants ()
+			
 			--- qu'on  affiche dans le menu deroulant -------
 			local liste_occultants_noms= #( "- aucun -")			
 			for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do 
@@ -239,6 +241,15 @@ category:"CP | Facade	| Element"
 	
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
+	fn init_liste_occultants =(
+		if liste_occultants.count == 0 do (
+			liste_occultants = #()
+			local liste_occultants_noms= #( "- aucun -")			
+			for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do
+				append liste_occultants 				classe_occulants
+		)
+	)
+	
 	fn initialiser	=(
 		
 		---- si pas encore de mnuiserie on applique la menuiserie par defaut	------------------
@@ -250,12 +261,8 @@ category:"CP | Facade	| Element"
 		
 		
 		--- on fait la liste des occultants -----------
-		liste_occultants = #()
-		local liste_occultants_noms= #( "- aucun -")			
-		for classe_occulants in GeometryClass.classes where classe_occulants.category == #'CP | Menuiserie	| Element | Occultant' do (
--- 			append liste_occultants_noms 	classe_occulants.name
-			append liste_occultants 				classe_occulants
-		)
+		init_liste_occultants ()
+		
 	)
 	fn set_hasard	_fen_ouvMax	_fen_proba_ouv =(
 		fen_ouvMax 		= _fen_ouvMax
@@ -264,6 +271,9 @@ category:"CP | Facade	| Element"
 	fn get_longueur	=	longueur
 	
 	fn assigner_occultants	_index =(
+		
+		init_liste_occultants ()
+		
 		if _index == 1 then 
 				occultant_objet = undefined
 			else 
@@ -498,6 +508,9 @@ category:"CP | Facade	| Element"
 	on update do (
 		initialiser ()
 	)
+	/* on clone _orig do (
+		initialiser ()
+	) */
 	
 	
 	

@@ -15,7 +15,7 @@ category:"CP | Facade	| Element"
 	
 	
 	---- pré déclaration -----------
-	local corriger_parametres , assigner_gardeCorps
+	local corriger_parametres , assigner_gardeCorps, init_liste_gardeCorps
 	local liste_gardeCorps =#()
 	
 	
@@ -107,6 +107,9 @@ category:"CP | Facade	| Element"
 				append liste_gardeCorps 				classe_gardeCorps
 			)
 			 */
+			
+			init_liste_gardeCorps ()
+			
 			--- qu'on  affiche dans le menu deroulant -------
 			local liste_gardeCorps_noms= #( "- aucun -")			
 			for classe_gardeCorps in GeometryClass.classes where classe_gardeCorps.category == #'CP | Menuiserie	| Element | Garde Corps' do 
@@ -159,15 +162,22 @@ category:"CP | Facade	| Element"
 	
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
+	fn init_liste_gardeCorps =(
+		
+		if liste_gardeCorps.count == 0 do (
+			liste_gardeCorps = #()
+			local liste_gardeCorps_noms= #( "- aucun -")			
+			for classe_gardeCorps in GeometryClass.classes where classe_gardeCorps.category == #'CP | Menuiserie	| Element | Garde Corps' do
+				append liste_gardeCorps 				classe_gardeCorps
+		)
+		
+	)
+	
+	
 	fn initialiser =(
 		
 		--- on fait la liste des occultants -----------
-		liste_gardeCorps = #()
-		local liste_gardeCorps_noms= #( "- aucun -")			
-		for classe_gardeCorps in GeometryClass.classes where classe_gardeCorps.category == #'CP | Menuiserie	| Element | Garde Corps' do (
--- 			append liste_gardeCorps_noms 		classe_gardeCorps.name
-			append liste_gardeCorps 				classe_gardeCorps
-		)
+		init_liste_gardeCorps ()
 		
 	)
 	
@@ -187,6 +197,9 @@ category:"CP | Facade	| Element"
 	)
 	
 	fn assigner_gardeCorps	_index =(
+		
+		init_liste_gardeCorps ()
+		
 		if _index == 1 then 
 				gardeCorps_objet = undefined
 			else 
@@ -349,7 +362,10 @@ category:"CP | Facade	| Element"
 	)
 	on update do (
 		initialiser ()
-	)
+	)/* 
+	on clone _orig do (
+		initialiser ()
+	) */
 	
 	
 ) ---- fin du plugin --------------------------

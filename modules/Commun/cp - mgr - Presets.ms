@@ -20,10 +20,10 @@ struct str_mgr_batiment_presetsXML (
 		
 		------------ MEMBRES	----------------------------------------------------------------------------------
 	private
-		fichier_dossier 		= "$userScripts\\cp-Urba\\lib\\",
+		fichier_dossier 			= "$userScripts\\cp-Urba\\lib\\",
 		fichier_categorie		= "cp_urba_batiment",
 		fichier_extension		= "bati",		
-		fichier_type 			= fichier_categorie + "(*." + fichier_extension + ")|*." + fichier_extension + "|All|*.*|",
+		fichier_type 				= fichier_categorie + "(*." + fichier_extension + ")|*." + fichier_extension + "|All|*.*|",
 		
 		xmlPresets,
 		
@@ -254,7 +254,7 @@ struct str_mgr_batiment_presetsXML (
 			
 			--- debug -------
 			urba_clipboard_batiment.save  "C:\\temp\\test.bati"
-			ShellLaunch "C:\\temp\\test.bati" ""
+-- 			ShellLaunch "C:\\temp\\test.bati" ""
 			
 		),
 		
