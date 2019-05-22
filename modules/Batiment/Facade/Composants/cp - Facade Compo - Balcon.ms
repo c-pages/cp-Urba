@@ -37,7 +37,7 @@ category:"CP | Facade	| Element"
 		longueur 				type:#worldUnits 	/* ui:spn_longueur 	 */			default:0.
 		hauteur	 				type:#worldUnits 	/* ui:spn_hauteur  */			default:0.
 		dalle_epaisseur 		type:#worldUnits /* 	ui:spn_dalle_epaisseur	 */		default:20.
-		dalle_porteAFaux	 	type:#worldUnits 	ui:spn_dalle_porteAFaux 	default:60.
+		porteAFaux_longueur	 	type:#worldUnits 	ui:spn_porteAFaux_longueur 	default:60.
 		profondeur	 			type:#worldUnits 	ui:spn_profondeur 			default:60.
 		
 		
@@ -90,7 +90,7 @@ category:"CP | Facade	| Element"
 		
 		
 		group  "Dimensions" (
-			spinner 	spn_dalle_porteAFaux 		"Porte-à-faux" 			type:#worldunits 	range:[0,1e20,0]
+			spinner 	spn_porteAFaux_longueur 		"Porte-à-faux" 			type:#worldunits 	range:[0,1e20,0]
 			spinner 	spn_profondeur 		"Profondeur" 			type:#worldunits 	range:[0,1e20,0]
 		)
 		group "Garde corps" (
@@ -237,7 +237,7 @@ category:"CP | Facade	| Element"
 			compo_gardeCorps					= copy gardeCorps_objet
 			compo_gardeCorps.longueur 		= longueur
 			compo_gardeCorps.hauteur 		= 100.
-			compo_gardeCorps.profondeur 	= profondeur
+			compo_gardeCorps.profondeur 	= porteAFaux_longueur
 			
 		)
 		
@@ -266,9 +266,9 @@ category:"CP | Facade	| Element"
 		--- Construction ---------------------------------------------------------------------------------------		
 		local compo_dalle				= 	createInstance 	cp_prim_boite	matId:matId_mur
 		compo_dalle.hauteur 			= 	dalle_epaisseur
-		compo_dalle.profondeur		=	dalle_porteAFaux
+		compo_dalle.profondeur		=	porteAFaux_longueur
 		compo_dalle.longueur		=	get_longueur()
-		mgr_mesh.attacher		mesh		compo_dalle			transf:[0,-dalle_porteAFaux ,-dalle_epaisseur]
+		mgr_mesh.attacher		mesh		compo_dalle			transf:[0,-porteAFaux_longueur ,-dalle_epaisseur]
 		
 		---- la sequence	-----		
 		local depos_composant = [ 0, 0, 0 ]
