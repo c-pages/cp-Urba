@@ -1,6 +1,6 @@
 
 plugin simpleObject		cp_facadeElem_chainage
-name:"Mur"
+name:"Chaînage"
 classID:#(0x2d4f9648, 0x5cfcec16)
 category:"CP | Facade	| Element"
 -- invisible:true

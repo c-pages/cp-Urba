@@ -391,41 +391,37 @@ category:"CP | Urba"
 			tv_elementsFacade.Nodes.Clear()
 		)
 		------- treeview -------------------------
-		fn ajouter_TV_item	_item_aAjouter	_itemParent	=(
+		fn ajouter_TV_element	_item_aAjouter	_itemParent	=(
 			
-			---- pour element vide ---------
-			struct tv_elem_vide (
-				nom ="..."
-			)
 		
-			local nv_node 	=	_itemParent.Nodes.add 		_item_aAjouter.nom
-			
-			if est_instance 	_item_aAjouter	( nv_node.index + 1 )	(get_element_parent nv_node)	do nv_node.text += " *"
-				
-			case classof _item_aAjouter of (
-				cp_facadeElem_mur:			nv_node.imageIndex = nv_node.selectedImageIndex	=	1
-				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	2
-				cp_facadeElem_balcon:		nv_node.imageIndex = nv_node.selectedImageIndex	=	3
-				cp_facadeElem_groupe:		nv_node.imageIndex = nv_node.selectedImageIndex	=	4
+			local nv_node 	=	_itemParent.Nodes.add 		_item_aAjouter
+-- 			
+-- 			if est_instance 	_item_aAjouter	( nv_node.index + 1 )	(get_element_parent nv_node)	do nv_node.text += " *"
+-- 				
+-- 			case classof _item_aAjouter of (
+-- 				cp_facadeElem_mur:			nv_node.imageIndex = nv_node.selectedImageIndex	=	1
+-- 				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	2
+-- 				cp_facadeElem_balcon:		nv_node.imageIndex = nv_node.selectedImageIndex	=	3
+-- 				cp_facadeElem_groupe:		nv_node.imageIndex = nv_node.selectedImageIndex	=	4
 -- 				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	5
-				
-				default:	nv_node.imageIndex = nv_node.selectedImageIndex	=	0
-			)
+-- 				
+-- 				default:	nv_node.imageIndex = nv_node.selectedImageIndex	=	0
+-- 			)
 			
-			
+			/* 
 			if hasProperty	_item_aAjouter	"elements" do (
 				if _item_aAjouter.elements.count == 0 then (
-						local elem_vide = ajouter_TV_item	(tv_elem_vide () )	nv_node
+						local elem_vide = ajouter_TV_element	(tv_elem_vide () )	nv_node
 						elem_vide.tag	="vide"
 				) else (
 					for elem in _item_aAjouter.elements	do (
-						local elem_enfant = ajouter_TV_item	elem	nv_node
+						local elem_enfant = ajouter_TV_element	elem	nv_node
 						
 					)
 				)
 			)
 			
-			nv_node.expand ()
+			nv_node.expand () */
 			nv_node
 		)
 		fn initialiser_tv = (
@@ -465,20 +461,63 @@ category:"CP | Urba"
 		)
 		
 		----- UI	divers ----------------------------------------------------------------------------------------------------
+		
+		------ recuperre le nom du plugin de chaque fichier --------------------------
+		fn get_plugin_nom 	_fichier	= (
+			local fichier_stream		=	openFile 	_fichier 	mode:"r"
+			local plugin_nom
+			local on_a_trouve = false
+			while not on_a_trouve	or eof  fichier_stream		do (
+				local ligne 	= readLine  fichier_stream
+				local mots 	=  filterString ligne		" 	:\""
+				if mots[1] == "name" do (
+					plugin_nom =  /* toLower  */mots[2]
+					on_a_trouve = true
+				)
+			)
+			close fichier_stream	
+			plugin_nom
+		) --- fin get_plugin_nom ----------
+		
+		
 		fn actualiser_TV 	=(
-			/* 
-			---- tree view --------------------------------------------------
+			
 			vider_tv ()
-			for i = 1 to sequence.count do 				
-				ajouter_TV_item	sequence[i]		tv_elementsFacade
-			 */
+			
+			
+			----- les dossiers -----------------------------------------
+			local chemins_elements = getDirectories 	"$userScripts\\cp-Urba\\modules\\Batiment\\Facade\\ElementsDeFacade\\*"
+			local dossier_elements = #()
+			for chemin in chemins_elements do (				
+				local tab_chemin = filterString chemin "\\"
+				
+				--- le dossier -----
+				nd_dossier = ajouter_TV_element	tab_chemin[tab_chemin.count]		tv_elementsFacade
+				
+				debug "chemin" var:chemin
+				local fichiers = getFiles ( chemin + "*.ms" )
+				debug "fichiers" var:fichiers
+				for fichier in fichiers do (
+					local nomDuPlug = get_plugin_nom 	fichier
+					ajouter_TV_element	nomDuPlug		nd_dossier
+				)
+			)
+			
+			---- on remplis avec les dossiers--------------------------------------------------
+-- 			for i = 1 to dossier_elements.count do 				
+-- 				ajouter_TV_element	dossier_elements[i]		tv_elementsFacade
+			
+			
+			
+			
+			
 		) --- fin actualiser -----------
 		
 		
 		on roll_sequence open do
 		(
 					initialiser_tv ()
--- 					actualiser ()
+					actualiser_TV ()
 					
 				)
 	)
