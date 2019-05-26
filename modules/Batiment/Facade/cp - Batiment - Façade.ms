@@ -627,6 +627,9 @@ category:"CP | Bâtiment	| Element"
 		dropdownList 'ddl_murs' "" pos:[15,122] width:150 height:21 items:#("Tous", "Pignons", "Gouttereaux") align:#left
 		label 'lbl5' "Orientation:" pos:[15,75] width:78 height:14 align:#left
 		
+		
+		
+		
 		fn actualiser= (
 			spn_etages_min.indeterminate		=	not etages_min_use
 			spn_etages_min.enabled 				=	etages_min_use 
@@ -646,10 +649,14 @@ category:"CP | Bâtiment	| Element"
 		
 		on roll_contraintes open do
 			actualiser ()
-		on chk_etages_min changed state do	actualiser()
-		on chk_etages_max changed state do	actualiser()
-		on chk_longueur_min changed state do	actualiser()
-		on chk_longueur_max changed state do	actualiser()
+		on chk_etages_min changed state do
+			actualiser()
+		on chk_etages_max changed state do
+			actualiser()
+		on chk_longueur_min changed state do
+			actualiser()
+		on chk_longueur_max changed state do
+			actualiser()
 	)
 	rollout roll_divers  			"Divers"			(
 -- 		group "Qualité" (
@@ -675,6 +682,73 @@ category:"CP | Bâtiment	| Element"
 		)
 	
 	)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	rollout roll_regles "Règles" width:180 height:212
+	(
+		
+		label 'lbl_etages' "Etages:" pos:[15,77] width:55 height:16 align:#left
+		label 'lbl6' "Façades:" pos:[14,164] width:78 height:16 align:#left
+		spinner 'spn_etages_min' "" pos:[31,91] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
+		label 'lbl9' ">" pos:[85,92] width:12 height:15 align:#left
+		checkbutton 'chk_etages_min' "" pos:[16,91] width:16 height:16 align:#left
+		spinner 'spn_etages_max' "" pos:[110,91] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
+		checkbutton 'chk_etages_max' "" pos:[95,91] width:16 height:16 align:#left
+		label 'lbl28' "Longueurs:" pos:[15,106] width:55 height:16 align:#left
+		spinner 'spn_longueur_min' "" pos:[31,120] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
+		label 'lbl29' ">" pos:[85,121] width:12 height:15 align:#left
+		checkbutton 'chk_longueur_min' "" pos:[16,120] width:16 height:16 align:#left
+		spinner 'spn_longueur_max' "" pos:[110,120] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
+		checkbutton 'chk_longueur_max' "" pos:[95,120] width:16 height:16 align:#left
+		checkbutton 'ckb_mur_nord' "N." pos:[15,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
+		checkbutton 'ckb_mur_sud' "S." pos:[52,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_est' "E." pos:[89,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_ouest' "O." pos:[125,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		
+		dropdownList 'ddl_murs' "" pos:[15,177] width:150 height:21 items:#("Tous", "Pignons", "Gouttereaux") align:#left
+		label 'lbl5' "Orientation:" pos:[15,135] width:78 height:14 align:#left
+		
+		label 'lbl_repart' "Répartition:" pos:[15,23] width:78 height:14 align:#left
+		dropdownList 'ddl_repartition' "" pos:[15,37] width:150 height:21 items:#("Répartir", "Centrer", "Aligner à gauche", "Aligner à droite", "Espacer") align:#left
+		editText 'edt1' "" pos:[10,6] width:156 height:18 align:#left
+		
+		
+		fn actualiser= (
+			spn_etages_min.indeterminate		=	not etages_min_use
+			spn_etages_min.enabled 				=	etages_min_use 
+			
+			spn_etages_max.indeterminate		=	not etages_max_use
+			spn_etages_max.enabled 				=	etages_max_use 
+			
+			spn_longueur_min.indeterminate		=	not longueur_min_use
+			spn_longueur_min.enabled 			=	longueur_min_use 
+			
+			spn_longueur_max.indeterminate		=	not longueur_max_use
+			spn_longueur_max.enabled 			=	longueur_max_use 
+			
+		)
+					
+		
+		
+		on chk_etages_min changed state do
+			actualiser()
+		on chk_etages_max changed state do
+			actualiser()
+		on chk_longueur_min changed state do
+			actualiser()
+		on chk_longueur_max changed state do
+			actualiser()
+	)
+	
+	
 	
 	
 	
@@ -1427,5 +1501,4 @@ category:"CP | Bâtiment	| Element"
 	
 	
 ) --------- fin plugin --------------
-
 

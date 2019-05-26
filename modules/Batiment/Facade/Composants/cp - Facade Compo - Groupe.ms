@@ -77,6 +77,9 @@ category:	"CP | Facade	| Element"
 	(
 		hasard_seed					type:#integer 			ui:spn_hasard_seed		default:123456
 		
+		est_ouvrable					type:#boolean 		default:true
+		
+		
 		fen_proba_ouv				type:#float 			ui:spn_fen_proba_ouv		default:0.
 		fen_ouvMax					type:#float 			ui:spn_fen_ouvMax			default:0.
 	)
@@ -151,7 +154,7 @@ category:	"CP | Facade	| Element"
 	
 	
 	--------------- FONCTIONS  ----------------------------------------------------------------------------------------------------------------------
-	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeElem_ensemble
+-- 	fn est_ouvrable		_compo	=	classof	_compo	==	cp_facadeElem_ensemble
 	
 
 	fn get_longueur	=	(

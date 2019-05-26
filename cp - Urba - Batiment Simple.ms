@@ -86,14 +86,14 @@ category:"CP | Urba"
 	
 	
 	
-	parameters param_etages rollout:roll_etages	(
+	parameters param_etages/*  rollout:roll_etages */	(
 		
 		------- Etages			------------------
-		etages_nbre					type: #integer				default:1			ui:spn_etages_nbres	 				animatable:false		invisibleInTV:true
-		etages_hauteur_global		type: #worldUnits 		default:250.	 	ui:spn_etages_hauteur	 			animatable:false		invisibleInTV:true
-		
-		dalle_epaisseur				type: #worldUnits 		default:20.	 		/* ui:spn_dalle_epaisseur */	 			animatable:false		invisibleInTV:true
-		soubassement_hauteur	type: #worldUnits 		default:100.	 	/* ui:spn_soubassement_hauteur */	animatable:false		invisibleInTV:true
+-- 		etages_nbre					type: #integer				default:1			ui:spn_etages_nbres	 				animatable:false		invisibleInTV:true
+-- 		etages_hauteur_global		type: #worldUnits 		default:250.	 	ui:spn_etages_hauteur	 			animatable:false		invisibleInTV:true
+-- 		
+-- 		dalle_epaisseur				type: #worldUnits 		default:20.	 		/* ui:spn_dalle_epaisseur */	 			animatable:false		invisibleInTV:true
+-- 		soubassement_hauteur	type: #worldUnits 		default:100.	 	/* ui:spn_soubassement_hauteur */	animatable:false		invisibleInTV:true
 		
 		
 		------- Etages	 specifiques		------------------
@@ -103,7 +103,7 @@ category:"CP | Urba"
 		
 	)
 	
-	parameters param_surface rollout:roll_surface	(
+	parameters param_general rollout:roll_general	(
 		------- Surface		------------------
 		surface_node					type:#node 			 	ui:btn_pick_perimetre		animatable:false		invisibleInTV:true
 		
@@ -122,13 +122,25 @@ category:"CP | Urba"
 		optim_ortho_seuil			type:#float				default:100.		/* ui:spn_ortho	 */	animatable:false		invisibleInTV:true
 		optim_aligner_seuil			type:#float				default:50.			/* ui:spn_aligner	 */	animatable:false		invisibleInTV:true
 		
+		
+		
+		
+		
+		
+		------- Etages			------------------
+		etages_nbre					type: #integer				default:1			ui:spn_etages_nbres	 				animatable:false		invisibleInTV:true
+		etages_hauteur_global		type: #worldUnits 		default:250.	 	ui:spn_etages_hauteur	 			animatable:false		invisibleInTV:true
+		
+		dalle_epaisseur				type: #worldUnits 		default:20.	 		/* ui:spn_dalle_epaisseur */	 			animatable:false		invisibleInTV:true
+		soubassement_hauteur	type: #worldUnits 		default:100.	 	/* ui:spn_soubassement_hauteur */	animatable:false		invisibleInTV:true
+		
 	)
 	
 	parameters param_facades rollout:roll_facades	(
 		facades							type:#maxObjectTab	tabSizeVariable:true
 		
 -- 		affichage_longueurs		type:#boolean 		/* ui:ckb_afficher_longueur	 */			default:true
-		editeur_facade_ouvert		type:#boolean 		 ui:btn_editer_facade	 			default:false
+-- 		editeur_facade_ouvert		type:#boolean 		 ui:btn_editer_facade	 			default:false
 		
 	)
 	
@@ -217,182 +229,32 @@ category:"CP | Urba"
 			afficher_longueurs state
 	)
 	
-	rollout roll_surface "Surface" width:180 height:160
+	rollout roll_general "Général" width:180 height:160
 	(
 		
 		fn shape_filt 		obj = superclassof obj == shape
 		
 		pickbutton 'btn_pick_perimetre' "Pick shape" pos:[1,2] width:170 height:20 filter:shape_filt autoDisplay:true align:#left
+-- 		
+		checkbox 'chk_optimiser' "Optimiser" pos:[1,25] width:87 height:15 across:2 align:#left
 		
-		checkbox 'chk_optimiser' "Optimiser" pos:[13,25] width:57 height:15 across:2 align:#left
-		/* 
-		GroupBox 'grp1' "Optimiser" pos:[4,23] width:169 height:101 align:#left
-			
-		checkbox 'chk_souder' "Souder" pos:[13,42] width:57 height:15 across:2 align:#left
-		spinner 'spn_souder' "" pos:[90,42] width:75 height:16 range:[0,10000,0] type:#worldunits align:#left
 		
-		checkbox 'chk_ortho' "Orthonorm." pos:[13,57] width:77 height:15 across:2 align:#left
-		spinner 'spn_ortho' "" pos:[90,57] width:75 height:16 range:[0,100,0] type:#float align:#left
 		
-		checkbox 'chk_aplanir' "Aplanir" pos:[13,72] width:56 height:15 across:2 align:#left
-		spinner 'spn_aplanir' "" pos:[90,72] width:75 height:16 range:[0,40,0] align:#left
 		
-
-		checkbox 'chk_aligner' "Aligner" pos:[13,87] width:56 height:15 across:2 align:#left
-		spinner 'spn_aligner' "" pos:[90,87] width:75 height:16 range:[0,100,0] align:#left
-
-		checkbox 'chk_projeter' "Projeter" pos:[13,102] width:61 height:15 align:#left  
-   */
-  
+		GroupBox 'grp_etages' "Etages" pos:[4,45] width:169 height:60 align:#left
+		spinner 'spn_etages_nbres' "" pos:[90,64] width:75 height:16 range:[0,1000,1] type:#integer align:#left
+		spinner 'spn_etages_hauteur' "" pos:[90,79] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
+		label 'lbl_nombre' "Nombre:" pos:[20,64] width:67 height:14 align:#left
+		
+		label 'lbl_hauteur' "Hauteur:" pos:[20,79] width:67 height:14 align:#left
+		
+		
+		
 		
 	)
 	
-	rollout roll_etages "Etages" width:180 height:270
+	rollout roll_facades "Facades" width:202 height:295
 	(
-		GroupBox 'grp_general' "Général" pos:[4,1] width:169 height:60 align:#left
-		spinner 'spn_etages_nbres' "" pos:[90,20] width:75 height:16 range:[0,1000,1] type:#integer align:#left
-		spinner 'spn_etages_hauteur' "" pos:[90,35] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
-		label 'lbl_nombre' "Nombre:" pos:[20,20] width:67 height:14 align:#left
-		
-		label 'lbl_hauteur' "Hauteur:" pos:[20,35] width:67 height:14 align:#left
-		
-			/* 
-		spinner 'spn_dalle_epaisseur' "" pos:[90,50] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
-		spinner 'spn_soubassement_hauteur' "" pos:[90,65] width:75 height:16 range:[0,1e+20,0] type:#worldunits align:#left
-		GroupBox 'grp2' "Etages spécifiques" pos:[4,90] width:169 height:139 align:#left
-	
-			
-		button 'btn_etages_nouveau' "Nouveau" pos:[20,112] width:70 height:16 toolTip:"Ajouter	étages spécifiques" across:2 align:#left
-		button 'btn_etages_supprimer' "Supprimer" pos:[93,112] width:70 height:16 toolTip:"Supprimer étages spécifiques" align:#left
-		listbox 'lbx_etages_specifiques' "" pos:[20,131] width:146 height:4 align:#left
-			
-		label 'lbl_etage_specifiques' "Etages :" pos:[20,190] width:45 height:19 across:4 align:#left 
- 
- 
- 
- 
- 
-		spinner 'spn_etageMin_specifiques' "" pos:[90,190] width:35 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left 
- 
- 
- 
- 
- 
--- 			checkbutton 	ckb_etageMax_specifiques ">"  width:16 height:16 
-		label 'lbl_etageMax_specifiques' ">" pos:[125,190] width:7 height:16 align:#left 
- 
- 
- 
- 
- 
-		spinner 'spn_etageMax_specifiques' "" pos:[130,190] width:35 height:16 range:[0,1e+13,0] type:#integer align:#left
-		label 'lbl_hauteur_specifiques' "Hauteur :" pos:[20,205] width:55 height:18 across:2 align:#left
-		spinner 'spn_hauteur_specifiques' "" pos:[90,205] width:75 height:16 range:[0,1e+13,0] type:#worldunits align:#left
-		
-		
-			
-		
-		label 'lbl_dalle_ep' "Dalle ép.:" pos:[20,50] width:67 height:14 align:#left
-		label 'lbl11' "Ss bas.:" pos:[20,65] width:67 height:14 align:#left
-		
-		
-		 */
-		
-		
-		
-		
-		
-		fn actualiser =(
-			/* 
-			--- la liste box ------
-			local liste_etages =#()
-			for i = 1 to  etages_spe_min.count do 
-				append liste_etages ( etages_spe_min[i] as string + " > " + etages_spe_max[i] as string + " : " + etages_spe_hauteur[i] as string + "cm." )			
-			lbx_etages_specifiques.items = liste_etages
-			
-			---- les valeurs --------
-			if lbx_etages_specifiques.selection != 0 then (
-				local selec = lbx_etages_specifiques.selection
-				
-				btn_etages_supprimer.enabled 		= true
-				lbl_etage_specifiques.enabled 		= true
-				lbl_etageMax_specifiques.enabled 	= true
-				lbl_hauteur_specifiques.enabled 		= true
-				
-				spn_etageMin_specifiques.enabled 	= true
-				spn_etageMax_specifiques.enabled 	= true
-				spn_hauteur_specifiques.enabled 	= true
-				
-				spn_etageMin_specifiques.indeterminate 	= false
-				spn_etageMax_specifiques.indeterminate 	= false
-				spn_hauteur_specifiques.indeterminate 	= false
-				
-				spn_etageMin_specifiques.value 		= etages_spe_min[selec] 
-				spn_etageMax_specifiques.value 	= etages_spe_max[selec] 
-				spn_hauteur_specifiques.value 		= etages_spe_hauteur[selec] 
-				
-			) else (
-				
-				btn_etages_supprimer.enabled 		= false
-				lbl_etage_specifiques.enabled 		= false
-				lbl_etageMax_specifiques.enabled 	= false
-				lbl_hauteur_specifiques.enabled 		= false
-				
-				spn_etageMin_specifiques.enabled 	= false
-				spn_etageMax_specifiques.enabled 	= false
-				spn_hauteur_specifiques.enabled 	= false
-				
-				spn_etageMin_specifiques.indeterminate 	= true
-				spn_etageMax_specifiques.indeterminate 	= true
-				spn_hauteur_specifiques.indeterminate 	= true
-				
-			) */
-			
-		)
-		
-		
-		
-		
-		on roll_etages open do
-			actualiser ()
-		on btn_etages_nouveau pressed do
-		(
-					ajouter_etage_spe	()
-					actualiser ()
-				)
-		on btn_etages_supprimer pressed do
-		(
-					supprimer_etage_spe	lbx_etages_specifiques.selection
-					actualiser ()
-				)
-		on lbx_etages_specifiques selected sel do
-			actualiser ()
-		on spn_etageMin_specifiques changed val do
-		(
-					local selec = lbx_etages_specifiques.selection			
-					etages_spe_min[selec] = val
-					if etages_spe_max[selec] < val do
-						etages_spe_max[selec] = val
-					actualiser ()
-				)
-		on spn_etageMax_specifiques changed val do
-		(
-					local selec = lbx_etages_specifiques.selection			
-					etages_spe_max[selec] = val
-					if etages_spe_min[selec] > val do
-						etages_spe_min[selec] = val
-					actualiser ()
-				)
-		on spn_hauteur_specifiques changed val do
-		(
-					local selec = lbx_etages_specifiques.selection			
-					etages_spe_hauteur[selec] = val
-					actualiser ()
-					redrawViews ()
-				)
-	)
-	
-	rollout roll_facades "Facades"	(
 		
 		button 'btn_ajouter' "Nouv." pos:[3,3] width:45 height:19 across:4 align:#left
 		button 'btn_retirer' "Supp." pos:[91,3] width:45 height:19 align:#left
@@ -400,9 +262,40 @@ category:"CP | Urba"
 		button 'btn_monter' "/\\" pos:[135,3] width:19 height:19 align:#left
 		button 'btn_descendre' "\\/" pos:[153,3] width:19 height:19 align:#left
 		listbox 'lbx_facades' "" pos:[3,22] width:170 height:5 align:#left
-		edittext 'edTxt_nom' "" pos:[-1,94] width:174 height:17 align:#left
 		
-		checkbutton		btn_editer_facade		"Editeur de façade"	pos:[2,112] width:171 height:25 -- width:140 height:25
+		
+		
+		edittext 'edTxt_nom' "" pos:[-1,94] width:174 height:17 align:#left
+		dropdownList 'ddl_repartition' "" pos:[3,112] width:170 height:21 items:#("Répartir", "Centrer", "Aligner à gauche", "Aligner à droite", "Espacer") align:#left
+
+		
+		
+		
+		label 'lbl_etages' "Etages:" pos:[15,150] width:55 height:16 align:#left
+		label 'lbl6' "Façades:" pos:[14,237] width:78 height:16 align:#left
+		spinner 'spn_etages_min' "" pos:[31,164] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
+		label 'lbl9' ">" pos:[85,165] width:12 height:15 align:#left
+		checkbutton 'chk_etages_min' "" pos:[16,164] width:16 height:16 align:#left
+		spinner 'spn_etages_max' "" pos:[110,164] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
+		checkbutton 'chk_etages_max' "" pos:[95,164] width:16 height:16 align:#left
+		label 'lbl28' "Longueurs:" pos:[15,179] width:55 height:16 align:#left
+		spinner 'spn_longueur_min' "" pos:[31,193] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
+		label 'lbl29' ">" pos:[85,194] width:12 height:15 align:#left
+		checkbutton 'chk_longueur_min' "" pos:[16,193] width:16 height:16 align:#left
+		spinner 'spn_longueur_max' "" pos:[110,193] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
+		checkbutton 'chk_longueur_max' "" pos:[95,193] width:16 height:16 align:#left
+		checkbutton 'ckb_mur_nord' "N." pos:[15,221] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
+		checkbutton 'ckb_mur_sud' "S." pos:[52,221] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_est' "E." pos:[89,221] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_ouest' "O." pos:[125,221] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		
+		dropdownList 'ddl_murs' "" pos:[15,250] width:150 height:21 items:#("Tous", "Pignons", "Gouttereaux") align:#left
+		label 'lbl5' "Orientation:" pos:[15,208] width:78 height:14 align:#left
+
+		
+		
+		groupBox 'grp_contraintes' "Contraintes" pos:[3,135] width:168 height:145 align:#left
+		
 		
 		fn actualiser =(
 			
@@ -422,37 +315,101 @@ category:"CP | Urba"
 			btn_monter.enabled 				= lbx_facades.selection > 1
 			btn_descendre.enabled 			= lbx_facades.selection < facades.count and lbx_facades.selection != 0
 			
-			edTxt_nom.enabled 				= lbx_facades.selection != 0
-			edTxt_nom.text	 					= if lbx_facades.selection != 0	then	facades[  lbx_facades.selection ].nom	else ""
-			
-			btn_editer_facade.enabled 		= lbx_facades.selection != 0
-			
-			
 		) --- fin actualiser -----------
 		
 		
-		on roll_facades	open do actualiser ()
 		
 		
 		----- Facades -----------------
-		on lbx_facades 		selected sel 	do	actualiser ()		
-		on lbx_facades	 rightClick 	_id 	do	(
-			lbx_facades.selection = _id
-			actualiser ()
-		)	
-		on lbx_facades	 doubleClicked  	_id 	do		basculer_editeurFacade 	true
 			
-		on btn_ajouter 		pressed 			do 	ajouter_facade ()
-		on btn_retirer 		pressed 			do	retirer_facade			lbx_facades.selection 
-		on btn_dupliquer 		pressed 			do	dupliquer_facade		lbx_facades.selection 
-		on btn_monter 		pressed 			do	monter_facade		lbx_facades.selection 
-		on btn_descendre 	pressed		 	do	descendre_facade	lbx_facades.selection 
 	
-		on edTxt_nom entered txt 			do 	renommer_facade		lbx_facades.selection 	txt
+		on roll_facades open do
+			actualiser ()
+		on btn_ajouter pressed do
+			ajouter_facade ()
+		on btn_retirer pressed do
+			retirer_facade			lbx_facades.selection
+		on btn_dupliquer pressed do
+			dupliquer_facade		lbx_facades.selection
+		on btn_monter pressed do
+			monter_facade		lbx_facades.selection
+		on btn_descendre pressed do
+			descendre_facade	lbx_facades.selection
+		on lbx_facades selected sel 	do
+			actualiser ()
+		on lbx_facades doubleClicked _id 	do
+			basculer_editeurFacade 	true
+		on lbx_facades rightClick _id 	do
+		(
+					lbx_facades.selection = _id
+					actualiser ()
+				)
+		on edTxt_nom entered txt 			do
+			renommer_facade		lbx_facades.selection 	txt
+	)
+	
+	/* 
+	rollout roll_regles "Règles" width:180 height:212
+	(
 		
-		on btn_editer_facade  changed state	do 	basculer_editeurFacade 	state
+		label 'lbl_etages' "Etages:" pos:[15,77] width:55 height:16 align:#left
+		label 'lbl6' "Façades:" pos:[14,164] width:78 height:16 align:#left
+		spinner 'spn_etages_min' "" pos:[31,91] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
+		label 'lbl9' ">" pos:[85,92] width:12 height:15 align:#left
+		checkbutton 'chk_etages_min' "" pos:[16,91] width:16 height:16 align:#left
+		spinner 'spn_etages_max' "" pos:[110,91] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
+		checkbutton 'chk_etages_max' "" pos:[95,91] width:16 height:16 align:#left
+		label 'lbl28' "Longueurs:" pos:[15,106] width:55 height:16 align:#left
+		spinner 'spn_longueur_min' "" pos:[31,120] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
+		label 'lbl29' ">" pos:[85,121] width:12 height:15 align:#left
+		checkbutton 'chk_longueur_min' "" pos:[16,120] width:16 height:16 align:#left
+		spinner 'spn_longueur_max' "" pos:[110,120] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
+		checkbutton 'chk_longueur_max' "" pos:[95,120] width:16 height:16 align:#left
+		checkbutton 'ckb_mur_nord' "N." pos:[15,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
+		checkbutton 'ckb_mur_sud' "S." pos:[52,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_est' "E." pos:[89,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_ouest' "O." pos:[125,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
 		
-	) --- fin rollout facades-------------------------
+		dropdownList 'ddl_murs' "" pos:[15,177] width:150 height:21 items:#("Tous", "Pignons", "Gouttereaux") align:#left
+		label 'lbl5' "Orientation:" pos:[15,135] width:78 height:14 align:#left
+		
+-- 		label 'lbl_repart' "Répartition:" pos:[15,23] width:78 height:14 align:#left
+-- 		dropdownList 'ddl_repartition' "" pos:[15,37] width:150 height:21 items:#("Répartir", "Centrer", "Aligner à gauche", "Aligner à droite", "Espacer") align:#left
+-- 		editText 'edt1' "" pos:[10,6] width:156 height:18 align:#left
+		
+		
+		fn actualiser= (
+-- 			 spn_etages_min.indeterminate		=	not etages_min_use
+-- 			spn_etages_min.enabled 				=	etages_min_use 
+-- 			
+-- 			spn_etages_max.indeterminate		=	not etages_max_use
+-- 			spn_etages_max.enabled 				=	etages_max_use 
+-- 			
+-- 			spn_longueur_min.indeterminate		=	not longueur_min_use
+-- 			spn_longueur_min.enabled 			=	longueur_min_use 
+-- 			
+-- 			spn_longueur_max.indeterminate		=	not longueur_max_use
+-- 			spn_longueur_max.enabled 			=	longueur_max_use 
+-- 			 
+		)
+					
+		
+		
+		on chk_etages_min changed state do
+			actualiser()
+		on chk_etages_max changed state do
+			actualiser()
+		on chk_longueur_min changed state do
+			actualiser()
+		on chk_longueur_max changed state do
+			actualiser()
+	)
+	
+	 */
+	
+	
+	
+	
 	
 	rollout roll_toiture "Toiture" width:180 height:203
 	(
@@ -1296,4 +1253,4 @@ category:"CP | Urba"
 	on create  	do initialiser ()
 	on load  		do initialiser ()
 	
-) --------- fin plugin ------------------------------------------------------------------------------------
+) --------- fin plugin ---------------------------------------------------------------------------------
