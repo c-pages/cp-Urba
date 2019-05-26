@@ -20,10 +20,11 @@ global 	urba_fn_afficheur_longueurs	--- fonction pour affichage viewport
 
 
 
+ */
 
 -------- pour changer les qualites des geometries si besoin, avant rendu, et remettre en qualite viewport apres --------------------------
 ---- PRERENDU	-----------
-callbacks.removescripts 	id:	#urbaBat_preRender
+callbacks.removescripts 	id:	#urbaBatSimple_preRender
 
 global batiments_asProxy =#()
 txt_pre ="with redraw off (\n"
@@ -35,14 +36,13 @@ txt_pre +="		) \n	)	\n )	\n	"
 callbacks.addscript 	#preRender 	txt_pre 		id:#urbaBat_preRender
 
 ---- POST RENDU	-----------
-callbacks.removescripts 	id:#urbaBat_postRender
+callbacks.removescripts 	id:#urbaBatSimple_postRender
 txt_post ="	for bat in batiments_asProxy do (\n"
 txt_post +="			if bat.qualite_courante != bat.qualite_viewport do bat.qualite_courante = bat.qualite_viewport\n"
 txt_post +="		)\n"
-callbacks.addscript 	#postRender 	txt_post 		id:#urbaBat_postRender
+callbacks.addscript 	#postRender 	txt_post 		id:#urbaBatSimple_postRender
 
 
- */
 
 
 
@@ -73,7 +73,7 @@ category:"CP | Urba"
 	local roll_editeur_facade
 	local preset_copier,	preset_coller, preset_enregistrer, preset_charger
 	
-	local definir_toiture
+	local definir_toiture, optimiser
 	
 	----- les points de la surface------------------------
 	local pts_surface
@@ -108,7 +108,7 @@ category:"CP | Urba"
 		surface_node					type:#node 			 	ui:btn_pick_perimetre		animatable:false		invisibleInTV:true
 		
 		------- Optimisations		------------------
-		optimiser							type:#boolean			default:true		ui:chk_optimiser		animatable:false		invisibleInTV:true
+		optimisation							type:#boolean			default:true		ui:chk_optimisation		animatable:false		invisibleInTV:true
 		
 		optim_aplanir					type:#boolean			default:true		/* ui:chk_aplanir	 */	animatable:false		invisibleInTV:true
 		optim_souder					type:#boolean			default:true		/* ui:chk_souder */		animatable:false		invisibleInTV:true
@@ -236,7 +236,7 @@ category:"CP | Urba"
 		
 		pickbutton 'btn_pick_perimetre' "Pick shape" pos:[1,2] width:170 height:20 filter:shape_filt autoDisplay:true align:#left
 -- 		
-		checkbox 'chk_optimiser' "Optimiser" pos:[1,25] width:87 height:15 across:2 align:#left
+		checkbox 'chk_optimisation' "Optimiser" pos:[1,25] width:87 height:15 across:2 align:#left
 		
 		
 		
@@ -250,51 +250,54 @@ category:"CP | Urba"
 		
 		
 		
+		on chk_optimisation	 changed state do	optimiser state
 		
 	)
 	
-	rollout roll_facades "Facades" width:202 height:295
+	rollout roll_facades "Facades" width:202 height:890
 	(
 		
+		----- les facades ---------------------
 		button 'btn_ajouter' "Nouv." pos:[3,3] width:45 height:19 across:4 align:#left
 		button 'btn_retirer' "Supp." pos:[91,3] width:45 height:19 align:#left
 		button 'btn_dupliquer' "Dupl." pos:[47,3] width:45 height:19 across:4 align:#left
 		button 'btn_monter' "/\\" pos:[135,3] width:19 height:19 align:#left
-		button 'btn_descendre' "\\/" pos:[153,3] width:19 height:19 align:#left
+		button 'btn_descendre' "\/" pos:[153,3] width:19 height:19 align:#left
 		listbox 'lbx_facades' "" pos:[3,22] width:170 height:5 align:#left
 		
 		
-		
-		edittext 'edTxt_nom' "" pos:[-1,94] width:174 height:17 align:#left
-		dropdownList 'ddl_repartition' "" pos:[3,112] width:170 height:21 items:#("Répartir", "Centrer", "Aligner à gauche", "Aligner à droite", "Espacer") align:#left
+		------ les propriété des facades ------------------------
+		edittext 'edTxt_nom' "" pos:[-1,97] width:174 height:17 align:#left
+		dropdownList 'ddl_repartition' "" pos:[3,115] width:170 height:21 items:#("Répartir", "Centrer", "Aligner à gauche", "Aligner à droite", "Espacer") align:#left
 
 		
 		
+		---- les contraintes --------------
+		GroupBox 'grp_contraintes' "Contraintes" pos:[3,140] width:168 height:145 align:#left
 		
-		label 'lbl_etages' "Etages:" pos:[15,150] width:55 height:16 align:#left
-		label 'lbl6' "Façades:" pos:[14,237] width:78 height:16 align:#left
-		spinner 'spn_etages_min' "" pos:[31,164] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
-		label 'lbl9' ">" pos:[85,165] width:12 height:15 align:#left
-		checkbutton 'chk_etages_min' "" pos:[16,164] width:16 height:16 align:#left
-		spinner 'spn_etages_max' "" pos:[110,164] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
-		checkbutton 'chk_etages_max' "" pos:[95,164] width:16 height:16 align:#left
-		label 'lbl28' "Longueurs:" pos:[15,179] width:55 height:16 align:#left
-		spinner 'spn_longueur_min' "" pos:[31,193] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
-		label 'lbl29' ">" pos:[85,194] width:12 height:15 align:#left
-		checkbutton 'chk_longueur_min' "" pos:[16,193] width:16 height:16 align:#left
-		spinner 'spn_longueur_max' "" pos:[110,193] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
-		checkbutton 'chk_longueur_max' "" pos:[95,193] width:16 height:16 align:#left
-		checkbutton 'ckb_mur_nord' "N." pos:[15,221] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
-		checkbutton 'ckb_mur_sud' "S." pos:[52,221] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-		checkbutton 'ckb_mur_est' "E." pos:[89,221] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-		checkbutton 'ckb_mur_ouest' "O." pos:[125,221] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		label 'lbl_etages' "Etages:" pos:[13,156] width:55 height:16 align:#left
+		label 'lbl6' "Façades:" pos:[13,243] width:78 height:16 align:#left
+		spinner 'spn_etages_min' "" pos:[29,170] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
+		label 'lbl9' ">" pos:[83,171] width:12 height:15 align:#left
+		checkbutton 'chk_etages_min' "" pos:[14,170] width:16 height:16 align:#left
+		spinner 'spn_etages_max' "" pos:[108,170] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
+		checkbutton 'chk_etages_max' "" pos:[93,170] width:16 height:16 align:#left
+		label 'lbl28' "Longueurs:" pos:[13,185] width:55 height:16 align:#left
+		spinner 'spn_longueur_min' "" pos:[29,199] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
+		label 'lbl29' ">" pos:[83,200] width:12 height:15 align:#left
+		checkbutton 'chk_longueur_min' "" pos:[14,199] width:16 height:16 align:#left
+		spinner 'spn_longueur_max' "" pos:[108,199] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
+		checkbutton 'chk_longueur_max' "" pos:[93,199] width:16 height:16 align:#left
+		checkbutton 'ckb_mur_nord' "N." pos:[13,227] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
+		checkbutton 'ckb_mur_sud' "S." pos:[50,227] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_est' "E." pos:[87,227] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb_mur_ouest' "O." pos:[123,227] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
 		
-		dropdownList 'ddl_murs' "" pos:[15,250] width:150 height:21 items:#("Tous", "Pignons", "Gouttereaux") align:#left
-		label 'lbl5' "Orientation:" pos:[15,208] width:78 height:14 align:#left
+		dropdownList 'ddl_murs' "" pos:[13,256] width:150 height:21 items:#("Tous", "Pignons", "Gouttereaux") align:#left
+		label 'lbl5' "Orientation:" pos:[13,214] width:78 height:14 align:#left
+
 
 		
-		
-		groupBox 'grp_contraintes' "Contraintes" pos:[3,135] width:168 height:145 align:#left
 		
 		
 		fn actualiser =(
@@ -321,10 +324,13 @@ category:"CP | Urba"
 		
 		
 		----- Facades -----------------
-			
-	
+		
 		on roll_facades open do
-			actualiser ()
+		(
+-- 					initialiser_tv ()
+					actualiser ()
+					
+				)
 		on btn_ajouter pressed do
 			ajouter_facade ()
 		on btn_retirer pressed do
@@ -348,64 +354,134 @@ category:"CP | Urba"
 			renommer_facade		lbx_facades.selection 	txt
 	)
 	
-	/* 
-	rollout roll_regles "Règles" width:180 height:212
-	(
-		
-		label 'lbl_etages' "Etages:" pos:[15,77] width:55 height:16 align:#left
-		label 'lbl6' "Façades:" pos:[14,164] width:78 height:16 align:#left
-		spinner 'spn_etages_min' "" pos:[31,91] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
-		label 'lbl9' ">" pos:[85,92] width:12 height:15 align:#left
-		checkbutton 'chk_etages_min' "" pos:[16,91] width:16 height:16 align:#left
-		spinner 'spn_etages_max' "" pos:[110,91] width:50 height:16 range:[0,1e+13,0] type:#integer scale:1 align:#left
-		checkbutton 'chk_etages_max' "" pos:[95,91] width:16 height:16 align:#left
-		label 'lbl28' "Longueurs:" pos:[15,106] width:55 height:16 align:#left
-		spinner 'spn_longueur_min' "" pos:[31,120] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
-		label 'lbl29' ">" pos:[85,121] width:12 height:15 align:#left
-		checkbutton 'chk_longueur_min' "" pos:[16,120] width:16 height:16 align:#left
-		spinner 'spn_longueur_max' "" pos:[110,120] width:50 height:16 range:[0,1e+13,0] type:#worldunits scale:1 align:#left
-		checkbutton 'chk_longueur_max' "" pos:[95,120] width:16 height:16 align:#left
-		checkbutton 'ckb_mur_nord' "N." pos:[15,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
-		checkbutton 'ckb_mur_sud' "S." pos:[52,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-		checkbutton 'ckb_mur_est' "E." pos:[89,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-		checkbutton 'ckb_mur_ouest' "O." pos:[125,148] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
-		
-		dropdownList 'ddl_murs' "" pos:[15,177] width:150 height:21 items:#("Tous", "Pignons", "Gouttereaux") align:#left
-		label 'lbl5' "Orientation:" pos:[15,135] width:78 height:14 align:#left
-		
--- 		label 'lbl_repart' "Répartition:" pos:[15,23] width:78 height:14 align:#left
--- 		dropdownList 'ddl_repartition' "" pos:[15,37] width:150 height:21 items:#("Répartir", "Centrer", "Aligner à gauche", "Aligner à droite", "Espacer") align:#left
--- 		editText 'edt1' "" pos:[10,6] width:156 height:18 align:#left
-		
-		
-		fn actualiser= (
--- 			 spn_etages_min.indeterminate		=	not etages_min_use
--- 			spn_etages_min.enabled 				=	etages_min_use 
--- 			
--- 			spn_etages_max.indeterminate		=	not etages_max_use
--- 			spn_etages_max.enabled 				=	etages_max_use 
--- 			
--- 			spn_longueur_min.indeterminate		=	not longueur_min_use
--- 			spn_longueur_min.enabled 			=	longueur_min_use 
--- 			
--- 			spn_longueur_max.indeterminate		=	not longueur_max_use
--- 			spn_longueur_max.enabled 			=	longueur_max_use 
--- 			 
-		)
-					
-		
-		
-		on chk_etages_min changed state do
-			actualiser()
-		on chk_etages_max changed state do
-			actualiser()
-		on chk_longueur_min changed state do
-			actualiser()
-		on chk_longueur_max changed state do
-			actualiser()
-	)
 	
-	 */
+	
+	
+	
+	
+	
+	
+	
+	rollout roll_sequence "Séquence" width:180 height:806
+	(
+	
+		----- les elements de facades ------
+		dotNetControl 'tv_elementsFacade' "treeview" pos:[12,35] width:148 height:90 align:#left
+	
+		GroupBox 'grp3' "Séquence" pos:[3,4] width:168 height:310 align:#left
+		label 'lbl13' "Eléments :" pos:[13,20] width:78 height:14 align:#left
+		dotNetControl 'tv_motif' "treeview" pos:[13,147] width:148 height:143 align:#left
+		checkbutton 'ckb17' "Dup." pos:[12,291] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." across:4 align:#left
+		checkbutton 'ckb18' "Inst." pos:[49,291] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb19' "Uni." pos:[86,291] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		checkbutton 'ckb20' "Sup." pos:[122,291] width:38 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Etage minimum." align:#left
+		label 'lbl14' "Motif :" pos:[13,132] width:78 height:14 align:#left
+		
+		
+		---- propriete element ------------
+		subRollout 'subRoll_param' "" pos:[3,339] width:168 height:160 align:#left		
+		
+		
+		dotNetControl 'btn_resize' "System.Windows.Forms.Button" pos:[3,502] width:168 height:10 align:#left
+		label 'lbl10' "Elément :" pos:[6,324] width:127 height:13 align:#left
+		
+		
+		---------- Treeview -----------------------------------------------------------------------------
+		fn vider_tv = (
+			tv_elementsFacade.Nodes.Clear()
+		)
+		------- treeview -------------------------
+		fn ajouter_TV_item	_item_aAjouter	_itemParent	=(
+			
+			---- pour element vide ---------
+			struct tv_elem_vide (
+				nom ="..."
+			)
+		
+			local nv_node 	=	_itemParent.Nodes.add 		_item_aAjouter.nom
+			
+			if est_instance 	_item_aAjouter	( nv_node.index + 1 )	(get_element_parent nv_node)	do nv_node.text += " *"
+				
+			case classof _item_aAjouter of (
+				cp_facadeElem_mur:			nv_node.imageIndex = nv_node.selectedImageIndex	=	1
+				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	2
+				cp_facadeElem_balcon:		nv_node.imageIndex = nv_node.selectedImageIndex	=	3
+				cp_facadeElem_groupe:		nv_node.imageIndex = nv_node.selectedImageIndex	=	4
+-- 				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	5
+				
+				default:	nv_node.imageIndex = nv_node.selectedImageIndex	=	0
+			)
+			
+			
+			if hasProperty	_item_aAjouter	"elements" do (
+				if _item_aAjouter.elements.count == 0 then (
+						local elem_vide = ajouter_TV_item	(tv_elem_vide () )	nv_node
+						elem_vide.tag	="vide"
+				) else (
+					for elem in _item_aAjouter.elements	do (
+						local elem_enfant = ajouter_TV_item	elem	nv_node
+						
+					)
+				)
+			)
+			
+			nv_node.expand ()
+			nv_node
+		)
+		fn initialiser_tv = (
+			
+			---- TRee view ----
+			tv_elementsFacade.borderstyle 			= (dotnetclass "System.Windows.Forms.BorderStyle").None
+			tv_elementsFacade.LabelEdit 				= false 
+			tv_elementsFacade.allowdrop 				= true
+			tv_elementsFacade.HideSelection 		= false
+-- 			tv_elementsFacade.ShowRootLines	 	= true
+			tv_elementsFacade.ShowLines   			= true
+-- 			tv_elementsFacade.HotTracking   		= true
+			tv_elementsFacade.BackColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
+			tv_elementsFacade.ForeColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
+			tv_elementsFacade.LineColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
+			tv_elementsFacade.DrawMode 			= (dotnetclass "TreeViewDrawMode.OwnerDrawText")
+			
+			tv_elementsFacade.indent				= 24
+			
+			
+			---- TRee view ----
+			tv_motif.borderstyle 			= (dotnetclass "System.Windows.Forms.BorderStyle").None
+			tv_motif.LabelEdit 				= false 
+			tv_motif.allowdrop 				= true
+			tv_motif.HideSelection 		= false
+-- 			tv_motif.ShowRootLines	 	= true
+			tv_motif.ShowLines   			= true
+-- 			tv_motif.HotTracking   		= true
+			tv_motif.BackColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
+			tv_motif.ForeColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
+			tv_motif.LineColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
+			tv_motif.DrawMode 			= (dotnetclass "TreeViewDrawMode.OwnerDrawText")
+			
+			tv_motif.indent				= 24
+			
+			
+		)
+		
+		----- UI	divers ----------------------------------------------------------------------------------------------------
+		fn actualiser_TV 	=(
+			/* 
+			---- tree view --------------------------------------------------
+			vider_tv ()
+			for i = 1 to sequence.count do 				
+				ajouter_TV_item	sequence[i]		tv_elementsFacade
+			 */
+		) --- fin actualiser -----------
+		
+		
+		on roll_sequence open do
+		(
+					initialiser_tv ()
+-- 					actualiser ()
+					
+				)
+	)
 	
 	
 	
@@ -448,7 +524,7 @@ category:"CP | Urba"
 					subRoll_hauteur_init		= 	subroll_param.height
 					btnResize_pos_init			=	btn_resize.pos
 					roll_hauteur_init			=	roll_toiture.height
-					debug "pos_initial"	var:pos_initial
+-- 					debug "pos_initial"	var:pos_initial
 				)
 		fn resizer =(
 			if resize_enCours do (
@@ -456,8 +532,8 @@ category:"CP | Urba"
 				local subRoll_nvl_ht 		= subRoll_hauteur_init 		+ 	changement_ht
 				
 				if subRoll_nvl_ht >	50 do (
-					debug "mouse_pos"	var:mouse_pos
-					debug "changement_ht"	var:changement_ht
+-- 					debug "mouse_pos"	var:mouse_pos
+-- 					debug "changement_ht"	var:changement_ht
 					
 					
 					subroll_param.height		=	subRoll_nvl_ht
@@ -492,9 +568,7 @@ category:"CP | Urba"
 	)
 	
 	rollout roll_divers  "Divers"	(
--- 		group "Qualité" (
--- 			checkbox	shk_lowPoly			"Low poly"
--- 		)
+		
 		 group "Qualité" (
 			label lbl_viewport 	"Viewport"  align:#left	 across:2
 			label lbl_render 		"Render"   align:#left
@@ -589,7 +663,13 @@ category:"CP | Urba"
 	)
 	
 	
-	
+	fn optimiser 	_state =(
+		optim_aplanir			= _state
+		optim_souder			= _state
+		optim_orthonormer	= _state
+		optim_aligner			= _state
+		optim_projeter			= _state
+	)
 	
 	
 	--------- viewport --------------------------------------------------------------------------	
@@ -597,7 +677,7 @@ category:"CP | Urba"
 		
 		gw.setTransform (matrix3 1)
 		
-		if selection.count == 1 and classof $ == cp_batiment do (
+		if selection.count == 1 and classof $ == cp_batimentSimple do (
 			local nd	 = $
 			
 -- 			local bat 				= nd.core.get_bat_edition ()
@@ -1253,4 +1333,4 @@ category:"CP | Urba"
 	on create  	do initialiser ()
 	on load  		do initialiser ()
 	
-) --------- fin plugin ---------------------------------------------------------------------------------
+) --------- fin plugin ---------------------------------------------------------------------------

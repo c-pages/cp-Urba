@@ -1,8 +1,9 @@
-# CP - Urba V0.4.1
+# CP - Urba V0.5.0
+
+
 Suite de plugins pour 3DSmax  |  Maxscript  | Pour réalisation de bout de villes, bâtiments, surfaces pour rues, trottoire, gazon etc.
 
-Version validée pour passer à version plus simple et plus claire du batiment.
-
+[26 mai 2019]
 #### Auteur :
 
  Christophe Pagès |  contact@c-pages.fr  |   [c-pages.fr](http://c-pages.fr)  | [git](https://github.com/c-pages/cp-Urba)
@@ -30,7 +31,7 @@ M
 
 
  ### Version blender
- Passage du plugin en phython pour intégration à Blender par Dindoune el amigo dit Bruno ! | [git](https://github.com/dindoun) | [dindoun.lautre.net](http://www.dindoun.lautre.net/)
+ Recherche sur la transcription du plugin en phython pour intégration à Blender par Dindoune el amigo dit Bruno ! | [git](https://github.com/dindoun) | [dindoun.lautre.net](http://www.dindoun.lautre.net/)
 
 
 ----------
@@ -59,17 +60,11 @@ Il suffit de créer un objet 'Batiment' dans la scène, accessible dans 'create'
 
 
  ----------
-### TODO | CP - Urba V0.4.1
+### TODO | CP - Urba V0.5.0
 
 
 #### __Bâtiment__
-  - [x] Gestion des hauteurs d'étages spécifiques. (07/02/2019)
-  - [x] Prise en compte des contrainte d'orientation cardinale des façades.
-  - [x] Mise au propre des menuiseries.
-  - [x] Prise en compte de 3 niveaux de détails des géometries (full, medium et low) + Volume !!.
-  - [x] Début de l'intégration des presets, il y a questionnement sur enregistrement ou plutot sur la lecture des parametres des maxObjects inclus dans des parametres (tableau) de nos preset a sauvegarder...
-  - [x] Gestion des Presets (enregistrer, charger, copier, coller) version XML est opérationnel !!
-  - [x] Façade, duplication de facade
+
   - [ ] Toitures à 1 pan, toiture à 2 pans
   - [ ] donc il faut trouver les goutereaux et pignons (cf squeletisation)
   - [ ] les occultations des baies (volets roulant, battants et stores bans)

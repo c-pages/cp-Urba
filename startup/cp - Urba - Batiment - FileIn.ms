@@ -22,6 +22,14 @@ for fichier_ms in fichiers_ms do filein	fichier_ms
 fichiers_ms = getFiles (dossier_batMod + 	"Facade\\Menuiseries\\*.ms")
 for fichier_ms in fichiers_ms do filein	fichier_ms
 	
+
+
+------- Elements de facade-----------
+fichiers_ms = getFiles (dossier_batMod + 	"Facade\\ElementsDeFacade\\*.ms")  recurse:true
+for fichier_ms in fichiers_ms do filein	fichier_ms
+	
+
+
 ------- occultants-----------
 fichiers_ms = getFiles (dossier_batMod + 	"Facade\\Menuiseries\\Elements\\Occultants\\*.ms")
 for fichier_ms in fichiers_ms do filein	fichier_ms

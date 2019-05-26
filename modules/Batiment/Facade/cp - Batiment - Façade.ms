@@ -154,12 +154,10 @@ category:"CP | Bâtiment	| Element"
 		
 		
 		--- UI ----------------------------------------------------------------------------------------------
--- 		group "Séquence" (
 			
 			button 		btn_ajouter_mur 			"Mur"			width:50		height:17		across:3		align:#left
-			button 		btn_ajouter_baie 			"Baie"			width:50		height:17		align:#left		--	enabled:false
-			button 		btn_ajouter_balcon 	"Balcon"			width:50		height:17		align:#left		
--- 			button 		btn_ajouter_vide1 	""			width:50	height:17			align:#left		enabled:false
+			button 		btn_ajouter_baie 			"Baie"			width:50		height:17		align:#left		
+			button 		btn_ajouter_balcon 	"Balcon"			width:50		height:17		align:#left	
 			
 			button 		btn_ajouter_chainage 	"Chaînage"			width:50		height:17		align:#left		enabled:false	across:3	
 			button 		btn_ajouter_corniche 	"Corniche"			width:50	height:17			align:#left		enabled:false
@@ -177,9 +175,6 @@ category:"CP | Bâtiment	| Element"
 			button 		btn_rendreUnique	 	"Uni."				width:27	height:17			align:#center
 			button 		btn_retirer	 				"Sup."			width:27	height:17			align:#center
 			
--- 			editText 	edTxt_nom		 	"Nom:" 	
-		
--- 		)
 		
 		
 		---------- Treeview -----------------------------------------------------------------------------
@@ -242,7 +237,6 @@ category:"CP | Bâtiment	| Element"
 				)
 			)
 			
--- 			debug "element"	var:element
 			element
 			
 		)
@@ -462,20 +456,16 @@ category:"CP | Bâtiment	| Element"
 		----- UI	divers ----------------------------------------------------------------------------------------------------
 		fn actualiser_TV 	=(
 			
-			---- repartition -------
--- 			spn_repetitions.enabled = ddl_repartition.selection == 2
-			
 			---- tree view --------------------------------------------------
-			
-			
-			
 			vider_tv ()
 			for i = 1 to sequence.count do 				
 				ajouter_TV_item	sequence[i]		tv_sequence
 			
-			
-			
 		) --- fin actualiser -----------
+		
+		
+		
+		
 		fn actualiser 	nd:	=(
 			
 			
