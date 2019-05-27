@@ -47,9 +47,9 @@ category:"CP | Bâtiment	| Element"
 	)
 	parameters params_repartition 	rollout:roll_repartition	(
 		
-		repartition					type:#integer					ui:ddl_repartition			default:1
-		repart_repetitions				type:#integer					ui:spn_repetitions		default:1
-		repart_decalage			type:#worldUnits				ui:spn_decalage			default:0.
+		repartition						type:#integer					ui:ddl_repartition			default:1
+		repart_repetitions			type:#integer					ui:spn_repetitions		default:1
+		repart_decalage				type:#worldUnits				ui:spn_decalage			default:0.
 		repart_espacement		type:#worldUnits				ui:spn_espacement		default:0.
 	)
 	parameters params_sequence 		rollout:roll_sequence		(

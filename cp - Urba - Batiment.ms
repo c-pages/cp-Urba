@@ -1233,7 +1233,7 @@ category:"CP | Urba"
 		) --- fin if surface ---------------------
 		
 		local chrono_fin = timeStamp()
-		debug  "build mesh : " var:( ((chrono_fin - chrono_debut) / 1000.0) as string + "s.")
+-- 		debug  "build mesh" var:( ((chrono_fin - chrono_debut) / 1000.0) as string + "s.")
 		
 	) --------- fin on build mesh --------------------------
 	
