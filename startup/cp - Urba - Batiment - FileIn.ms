@@ -45,4 +45,5 @@ for fichier_ms in fichiers_ms do filein	fichier_ms
 ------- les composant du batiment ----------
 filein ( dossier_batMod + 	"Facade\\cp - Batiment - Façade.ms"	)
 filein ( dossier_batMod + 	"Toiture\\cp - Batiment - Toit - n pans.ms"	)
+filein ( dossier_batMod + 	"Toiture\\cp - Batiment - Toit - Sans.ms"	)
 

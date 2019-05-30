@@ -828,9 +828,11 @@ category:"CP | Urba"
 		)
 		fn resizer =(
 			if resize_enCours do (
-				local changement_ht 	= mouse.pos.y - pos_initial.y
-				local subRoll_nvl_ht 		=    subRoll_hauteur_init		+ 	changement_ht
+				local changement_ht 	= 		mouse.pos.y - pos_initial.y
+				local subRoll_nvl_ht 		=    	subRoll_hauteur_init		+ 	changement_ht
 				
+				
+-- 					roll_sequence.height		=	roll_hauteur_init 	+ 	changement_ht
 				debug""
 				debug""
 				debug""
@@ -841,9 +843,19 @@ category:"CP | Urba"
 				
 				
 				if subRoll_nvl_ht >	50 do (
+					
+-- 				if changement_ht > 0 do subRoll_nvl_ht	+=	corrig_ht
+-- 				if changement_ht < 0 do subRoll_nvl_ht	-=	corrig_ht
+					
+					
 					subroll_param.height		=	subRoll_nvl_ht
 					btn_resize.pos.y			=	btnResize_pos_init.y		+	changement_ht
 					roll_sequence.height		=	roll_hauteur_init 	+ 	changement_ht
+						
+					local corrig_ht = 12
+					if changement_ht > 0 do roll_sequence.height	+=	corrig_ht/2
+					if changement_ht < 0 do roll_sequence.height	-=	corrig_ht
+						
 -- 					roll_sequence.height		=	btn_resize.pos.y 	+ 	150
 -- 					roll_sequence.height		=	roll_hauteur_init 	+ 	subRoll_nvl_ht
 				)
@@ -891,9 +903,9 @@ category:"CP | Urba"
 		
 		
 		dropdownList 'ddl_toiture_type' "" pos:[5,3] width:165 height:21 items:#("Sans", "Terrasse", "1 pan", "2 pans", "n pans") align:#left
-		subRollout 'subRoll_param' "" pos:[5,25] width:165 height:160 align:#left
+		subRollout 'subRoll_param' "" pos:[5,25] width:165 height:1 align:#left
 		
-		dotNetControl 'btn_resize' "System.Windows.Forms.Button" pos:[5,188] width:165 height:10 align:#left
+-- 		dotNetControl 'btn_resize' "System.Windows.Forms.Button" pos:[5,188] width:165 height:10 align:#left
 		
 		fn actualiser = (
 			
@@ -906,10 +918,16 @@ category:"CP | Urba"
 			---- on ajoute le nouveau -----------------
 			if ddl_toiture_type.selection > 1 then (
 				addSubRollout 	subroll_param		toiture.roll_general
+				
+				subroll_param.height		=	toiture.roll_general.height -  14
+				roll_toiture.height			=	subroll_param.height + ddl_toiture_type.height + 7
+			) else (
+				subroll_param.height		= 0
+				roll_toiture.height			=	 36
+				
 			)
-			
 		)
-		
+		/* 
 		----- Gestion du resize du subRollout -----------------------
 		local resize_enCours 			= false
 		local pos_initial					=	[0,0]
@@ -942,7 +960,7 @@ category:"CP | Urba"
 		on btn_resize mouseMove 		do	resizer ()
 		on btn_resize mouseUp 			do	resize_enCours = false
 		on btn_resize MouseLeave 		do	resize_enCours = false
-		
+		 */
 		
 		
 		
@@ -951,16 +969,21 @@ category:"CP | Urba"
 		on roll_toiture open do
 		(
 					actualiser ()
-					
+					/* 
 					---- le bouton resize -----------------------
 					btn_resize.FlatStyle	=		(dotNetClass "System.Windows.Forms.FlatStyle").flat	
 					btn_resize.BackColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
 					btn_resize.ForeColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
+			 */
 				)
 		on ddl_toiture_type selected val		do
 			actualiser()
 		
 	)
+	
+	
+	
+	
 	
 	rollout roll_divers  "Divers"	(
 		
@@ -1508,8 +1531,9 @@ category:"CP | Urba"
 	fn definir_toiture		_id_type 	=(
 -- 		debug "definir_toiture" var:_id_type
 		case _id_type of (
-			1:		toiture		=	undefined
+			1:		toiture 		= createInstance		cp_batimentElem_toiture_sans
 			5:		toiture 		= createInstance		cp_batimentElem_toiture_nPans
+			default:		toiture		=	undefined
 		)
 -- 		debug "toiture" var:toiture
 	)
@@ -1660,7 +1684,7 @@ category:"CP | Urba"
 				
 				1: (	-----Aucune-----------------------------
 					
-					
+					/* 
 					local vert_debut 	=	 getNumVerts mesh + 1
 					local vert_fin 		=	getNumVerts mesh  + pts_toiture.count
 					
@@ -1672,7 +1696,12 @@ category:"CP | Urba"
 					)
 					local verts_toiture = #{vert_debut..vert_fin} as array
 					meshop.createPolygon  mesh verts_toiture 	smGroup:1 	matID:matId_mur
+					 */
 					
+					local compo_toiture 			= copy toiture
+					compo_toiture.set_points	pts_toiture
+					compo_toiture.qualite		=	qualite_courante
+					mgr_mesh.attacher		mesh		compo_toiture	transf:[0,0,0 ]
 				)
 					
 				5:(	---------- n pans ----------------------

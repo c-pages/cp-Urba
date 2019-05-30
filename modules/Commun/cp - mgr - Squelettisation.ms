@@ -15,10 +15,6 @@ struct str_squel_evnt_division (
 	distance_toEvt	,
 	pt_intersection,
 	pt_o 
-	/* 
-	rapport_collision,
-	pt_intersec_relatif,
-	*/
 )
 
 
@@ -62,7 +58,7 @@ struct  str_squelettisation (
 		
 		decallage_z = 1.,
 		
-		
+		pignons_results 			=#(),	---- < --- les pignons du batiment, et dons les goutereaux
 		
 	---------------- manager de shapes ---------------
 	private
@@ -78,9 +74,11 @@ struct  str_squelettisation (
 			for i = 1 to pts.count do (
 				local j = if i == pts.count then 1 else i + 1 
 					
-				if distance pts[i]  pts[j] > precisionDoublons then
-					append pts_result pts[i]
-				else (
+				if distance pts[i]  pts[j] > precisionDoublons then (
+					append pts_result 				pts[i]
+					
+					
+				) else (
 -- 					debug "				---> supprimer doublon " var:i
 -- 					debug "				---> pts[i]  " var:pts[i] 
 				)
@@ -244,7 +242,14 @@ struct  str_squelettisation (
 				local pos_evt 				= 	pts[id_evt] + normal_diag * dist_depuis_pt
 				local dist_passe		 	= 	 sin ( angles_poly[id_evt] / 2 )
 				
--- 				local passe_prevu		=	compteur_de_passes + integer ( dist_depuis_pt / indent_distance ) - 1
+					
+				
+-- 				append pignons_results 		pts[ ids_pt_evt[i]]
+-- 				append pignons_results 		pos_evt
+-- 				
+				
+				
+				local passe_prevu		=	compteur_de_passes + integer ( dist_depuis_pt / indent_distance ) - 1
 				
 				--- la creation de l'evenement -----------
 				local nv_evt 	= str_squel_evnt_segment 	id_pt_evnt:			id_evt				\
@@ -910,12 +915,12 @@ struct  str_squelettisation (
 		fn exe 		pts 	pans_points:	pente:	= (
 			debug "----- EXECUTER -----------------------------"
 			
-			compteur_de_passes = 0
-			squelette_result = #()
+			compteur_de_passes 		= 0
+			squelette_result 			= #()
 			
-			local bb_pts 				= shp.get_BB_shape 	pts
+			local bb_pts 					= shp.get_BB_shape 	pts
 			local longueurs_BBpts 	= #( bb_pts[2].x - bb_pts[1].x ,  bb_pts[2].y - bb_pts[1].y )
-			precision 					= ( amax longueurs_BBpts  ) / 100			
+			precision 						= ( amax longueurs_BBpts  ) / 100			
 			indent_distance 			= precision
 			debug "longueurs_BBpts" var:longueurs_BBpts	
 			debug "--->	precision" var:precision

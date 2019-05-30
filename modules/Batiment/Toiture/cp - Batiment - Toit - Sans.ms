@@ -1,8 +1,8 @@
 
 
-plugin simpleObject		cp_batimentElem_toiture_nPans
-name:"Toit n pans"
-classID:#(0x484f89fb, 0x546888a1)
+plugin simpleObject		cp_batimentElem_toiture_sans
+name:"Sans"
+classID:#(0x23dc3da5, 0x7c3c45b6)
 category:"CP | Bâtiment	| Element"
 -- invisible:true
 (
@@ -11,7 +11,7 @@ category:"CP | Bâtiment	| Element"
 	------------ DEBUG	----------------------------------------------------------------------------------
 	local m_debug = true
 -- 	local 	m_debug = false
-	local 	m_dbgPrefix ="cp_batimentElem_toiture_nPans"
+	local 	m_dbgPrefix ="cp_batimentElem_toiture_sans"
 	fn debug 	_txt  var:	 param:    =	if m_debug do ::debuger 	_txt  	var:var	 param:param	prefix:m_dbgPrefix
 	------------ DEBUG	----------------------------------------------------------------------------------
 	
@@ -27,7 +27,7 @@ category:"CP | Bâtiment	| Element"
 	---- managers		 -------------------
 	local mgr_mesh 			=	str_mgr_mesh ()
 	local mgr_shape 			=	str_mgr_shape ()
-	local mgr_squelette		=	str_squelettisation ()
+-- 	local mgr_squelette		=	str_squelettisation ()
 	
 	
 	
@@ -35,12 +35,12 @@ category:"CP | Bâtiment	| Element"
 		
 		----- global ---------------------
 		points_surface					type:#point3Tab  	tabSizeVariable:true
-		pente		 					type:#float			 	ui:spn_pente				default:20.
-		decallage						type:#worldUnits		ui:spn_decallage			default:10.
+-- 		pente		 					type:#float			 	ui:spn_pente				default:20.
+-- 		decallage						type:#worldUnits		ui:spn_decallage			default:10.
 		
-		debord_use						type:#boolean 		ui:shk_debord				default:true
-		debord_longueur				type:#worldUnits		ui:spn_debord_lg			default:30.
-		debord_hauteur				type:#worldUnits		ui:spn_debord_ht			default:20.
+-- 		debord_use						type:#boolean 		ui:shk_debord				default:true
+-- 		debord_longueur				type:#worldUnits		ui:spn_debord_lg			default:30.
+-- 		debord_hauteur				type:#worldUnits		ui:spn_debord_ht			default:20.
 		
 	)
 	
@@ -72,7 +72,7 @@ category:"CP | Bâtiment	| Element"
 	
 	
 	rollout roll_general 			"Paramètres"		width:165	(
-		
+		/* 
 		spinner spn_pente	 				"Pente (°)" 				type:#float range:[0,80,0]
 		spinner spn_decallage 				"Decallage" 			type:#worldunits range:[0,1e20,0]
 		
@@ -92,6 +92,7 @@ category:"CP | Bâtiment	| Element"
 		
 		
 		on shk_debord changed state do actualiser ()
+		 */
 	)
 	
 	rollout roll_divers  			"Divers"			(
@@ -190,143 +191,44 @@ category:"CP | Bâtiment	| Element"
 		if points_surface.count > 0 do (
 			
 			
-			
--- 			meshop.createPolygon <Mesh mesh> <vertIndex array> smGroup:<int=0> matID:
-			
-			local pts 		= #()
-			local faces		= #()
-			local matIds	= #()
-			local id_pt		=	1
-			
-			local pts_toiture
-			
-			---- si on est PAS 	en volume ------------------------------
-			if qualite != 4 then (
-			
-				-----	la corniche	------------------------------------------
-				local pts_corniche 	= for pt in  points_surface collect pt			
-				local pts_sousFace 	= mgr_shape.retrecir_polygone	pts_corniche	-debord_longueur
-				local pts_epaisseur 	= deepcopy pts_sousFace
-				pts_epaisseur.z +=	debord_hauteur
-	-- 			local pts_toiture 	
-				
-				if debord_use then pts_toiture	= mgr_shape.retrecir_polygone	pts_epaisseur	decallage
-				else pts_toiture	= mgr_shape.retrecir_polygone	pts_corniche	decallage
-				
-				for i = 1 to points_surface.count do (
-					
-					local j= if i == points_surface.count then 1 else i + 1
-					
-					if debord_use then (
-						---- la sous face ------------
-						pts 		+= #( pts_corniche[i], pts_corniche[j], pts_sousFace[j], pts_sousFace[i]	)
-						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-						matIds	+=	#( matId_corniche, matId_corniche )
-						
-						id_pt 	+=	4
-						
-						
-						---- l'epaisseur --------------
-						pts 		+= 	#( pts_sousFace[i], pts_sousFace[j], pts_epaisseur[j], pts_epaisseur[i]	)
-						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-						matIds	+=	#( matId_corniche, matId_corniche )
-						
-						id_pt 	+=	4
-						
-						---- decallage toiture --------------
-						pts 		+= 	#( pts_epaisseur[i], pts_epaisseur[j], pts_toiture[j], pts_toiture[i]	)
-						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-						matIds	+=	#( matId_corniche, matId_corniche )
-						
-						id_pt 	+=	4
-						
-						
-					) else (
-					
-						---- decallage toiture --------------
-						pts 		+= 	#( pts_corniche[i], pts_corniche[j], pts_toiture[j], pts_toiture[i]	)
-						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-						matIds	+=	#( matId_corniche, matId_corniche )
-						
-						id_pt 	+=	4
-					
-					)
-				)
-			
-			---- si on est en volume ------------------------------
-			) else (
-				
-				local pts_corniche 	= for pt in  points_surface collect pt	
-				local pts_epaisseur 	= deepcopy pts_corniche
-				pts_epaisseur.z +=	debord_hauteur
-
-				
-				for i = 1 to points_surface.count do (
-					
-					local j= if i == points_surface.count then 1 else i + 1
-					
-					if debord_use then (
-						---- l'epaisseur --------------
-						pts 		+= 	#( pts_corniche[i], pts_corniche[j], pts_epaisseur[j], pts_epaisseur[i]	)
-						faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-						matIds	+=	#( matId_corniche, matId_corniche )
-						
-						id_pt 	+=	4
-					)
-				)
--- 				points_surface.
-				pts_toiture = pts_epaisseur
-			)
-			
-			
-			
-			-----	les pans 		---------------
-			local faces_squel = mgr_squelette.exe 		pts_toiture 	pente:pente
-			
--- 			debug "faces_squel" var:faces_squel
--- 			local pts 		= #()
--- 			local faces		= #()
--- 			local matIds	= #()
--- 			local id_pt		=	1
-			
-			for face_squel in faces_squel do (
-				
-				pts 		+=	face_squel.pts
-				faces		+=	#( [ id_pt, id_pt +1 , id_pt +2 ] ,  [ id_pt, id_pt +2 , id_pt +3 ] )
-				matIds	+=	#( matId_toiture, matId_toiture )
-				
-				id_pt 	+=	4
-				
-			)
-			
-			
-			
-			setMesh 	mesh 	verts:pts	faces:faces	materialIDs:matIds
-			
-			for i = 1 to	faces.count do (
-				setFaceSmoothGroup mesh i 0
+-- 			local pts_toiture 			= 	deepcopy points_surface
 			/* 
--- 				local faceNormal = in coordsys theObj (getFaceNormal theObj theFace)
-				local faceNormal 			= getFaceNormal  mesh 	i
-				local worldUpVector 		= [0,0,1]
-				local	rightVector 			= normalize (cross worldUpVector faceNormal)
-				local upVector 				= normalize ( cross rightVector faceNormal )
-				local theMappingMatrix 	= matrix3 rightVector upVector faceNormal [0,0,0]
-				 */
+			--- calcul de l'altitude du toit ---------
+			local altitude_toiture	=	0
+			for etage_courant = 0 to etages_nbre do (
 				
-			)
+				if etage_courant != etages_nbre do
+					altitude_toiture += dalle_epaisseur
+				
+				---- la hauteur des étages, normal ou specifique -----------------
+				local on_est_sur_etage_spe	=	false
+				local hauteur_etage 			=	etages_hauteur_global
+				for i = 1 to  etages_spe_min.count do (
+					local etageSpe_min 		= etages_spe_min[i]
+					local etageSpe_max 	= etages_spe_max[i]
+					local etageSpe_ht 		= etages_spe_hauteur[i]
+					if not on_est_sur_etage_spe and etageSpe_min <= etage_courant and etageSpe_max >= etage_courant	do (
+						on_est_sur_etage_spe = true
+						hauteur_etage	=	etageSpe_ht
+					)
+				)
+				altitude_toiture += hauteur_etage
+			) */
 			
-			meshop.autoEdge mesh (#{1..mesh.Edges.count} as array )  2.
+			--- on place donc les points sur Z ---------------
+-- 			pts_toiture.z 		= altitude_toiture
 			
-			
-			----- le mapping 	--------------
-			meshop.applyUVWMap 	mesh  #box		tm:(scaleMatrix [2,2,2]	)
-			
-			
-			
-			
-			
-			
+			local vert_debut 	=	 getNumVerts mesh + 1
+					local vert_fin 		=	getNumVerts mesh  + points_surface.count
+					
+					meshop.setNumVerts  mesh 	vert_fin
+					
+					for i = 1 to points_surface.count do (
+						local i_vert = vert_debut - 1 + i
+						setVert mesh 	i_vert 		points_surface[ i ]
+					)
+					local verts_toiture = #{vert_debut..vert_fin} as array
+					meshop.createPolygon  mesh verts_toiture 	smGroup:1 	matID:matId_toiture
 			
 		)
 		
