@@ -523,9 +523,6 @@ category:"CP | Bâtiment	| Element"
 			
 			local touches = dotnetclass  "System.Windows.Forms.Keys"
 			
-			
-			
-			
 			debug "key_up arg" var:_arg
 		)
 		
@@ -566,22 +563,19 @@ category:"CP | Bâtiment	| Element"
 		on tv_sequence 	DragOver 	_sender		_arg	do	drag_checkSurvol  	_arg
 		on tv_sequence 	DragDrop 					_arg 	do	drag_recevoir 			_arg
 		on tv_sequence 	ItemDrag 	_sender		_arg 	do	drag_demarrer 		_arg
-
 		
 		
 		----- Sequence ------------------------------------------------------------------
-		on btn_ajouter_mur	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_mur
-		
-		on btn_ajouter_baie	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_baie
-			
+		on btn_ajouter_mur	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_mur		
+		on btn_ajouter_baie	 			pressed 			do 	ajouter_element_facade 	cp_facadeElem_baie			
 		on btn_ajouter_balcon			pressed 			do 	ajouter_element_facade 	cp_facadeElem_balcon
 		on btn_ajouter_groupe			pressed 			do 	ajouter_element_facade 	cp_facadeElem_groupe
 		
 		--------- Edition ---------
-		on btn_dupliquer 			pressed 			do	dupliquer_element_facade 			( get_element_parent	tv_sequence.SelectedNode	)				( tv_sequence.SelectedNode.index + 1 )
-		on btn_instancier 		pressed 			do	instancier_element_facade 		( get_element_parent	tv_sequence.SelectedNode	)				( tv_sequence.SelectedNode.index + 1 )
-		on btn_rendreUnique	pressed 			do	rendreUnique_element_facade 	( get_element_parent	tv_sequence.SelectedNode	)				( tv_sequence.SelectedNode.index + 1 )
-		on btn_retirer 			pressed 			do	retirer_element_facade 			( get_element_parent	tv_sequence.SelectedNode	)				( tv_sequence.SelectedNode.index + 1 )
+		on btn_dupliquer 			pressed 	do	dupliquer_element_facade 			( get_element_parent	tv_sequence.SelectedNode	)	( tv_sequence.SelectedNode.index + 1 )
+		on btn_instancier 		 	pressed		do	instancier_element_facade 		( get_element_parent	tv_sequence.SelectedNode	)	( tv_sequence.SelectedNode.index + 1 )
+		on btn_rendreUnique	 	pressed		do	rendreUnique_element_facade 	( get_element_parent	tv_sequence.SelectedNode	)	( tv_sequence.SelectedNode.index + 1 )
+		on btn_retirer 			 	pressed		do	retirer_element_facade 				( get_element_parent	tv_sequence.SelectedNode	)	( tv_sequence.SelectedNode.index + 1 )
 		
 	
 	
@@ -862,7 +856,7 @@ category:"CP | Bâtiment	| Element"
 		)
 		
 	)
-	fn inserer_element						_elementParent_enDrag		_id_aDeplacer		_elementParent_dest			_id_destination		=(
+	fn inserer_element							_elementParent_enDrag		_id_aDeplacer		_elementParent_dest			_id_destination		=(
 		
 		local elem_aDeplacer
 		

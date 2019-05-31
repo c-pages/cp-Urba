@@ -215,7 +215,11 @@ category:"CP | Menuiserie"
 			)		
 	) --- fin tool create ---------
 	
-	
+	/* 
+	on load  		do format "LOAD FIXE\n"
+	on create 		do format "CREATE FIXE\n"
+	on update 	do format "UPDATE FIXE\n"
+	 */
 ) ------- fin plugin ---------------------
 
 

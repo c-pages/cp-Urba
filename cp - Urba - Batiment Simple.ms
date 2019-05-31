@@ -75,6 +75,8 @@ category:"CP | Urba"
 	
 	local definir_toiture, optimiser
 	
+	local ajouter_elementFacade
+	
 	local facade_courante
 	
 	
@@ -640,6 +642,9 @@ category:"CP | Urba"
 	rollout roll_sequence "Séquence de la façade" width:180 height:806
 	(
 		
+		------------ TRee view -----------------------------
+		local m_dragDropEffect		=	dotNetClass "System.Windows.Forms.DragDropEffects"		
+		local tv_imageList 			=	dotNetObject "System.Windows.Forms.ImageList"
 		
 		
 		
@@ -648,7 +653,7 @@ category:"CP | Urba"
 		----- les elements de facades ------
 		dotNetControl 'tv_elementsFacade' "treeview" pos:[3,39] width:168 height:90 align:#left
 		label 'lbl_elements' "Eléments :" pos:[7,24] width:78 height:14 align:#left
-		dotNetControl 'tv_motif' "treeview" pos:[4,151] width:168 height:143 align:#left
+		dotNetControl 'tv_sequence' "treeview" pos:[4,151] width:168 height:143 align:#left
 		checkbutton 'ckb_dupliquer' "Dup." pos:[3,295] width:42 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Dupliquer" across:4 align:#left
 		checkbutton 'ckb_instancier' "Inst." pos:[45,295] width:42 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Instancier" align:#left
 		checkbutton 'ckb_rendreUnique' "Uni." pos:[86,295] width:42 height:16 enabled:true highlightColor:(color 180 180 0) toolTip:"Renddre Unique" align:#left
@@ -658,11 +663,11 @@ category:"CP | Urba"
 		
 		---- propriete element ------------
 		subRollout 'subRoll_param' "" pos:[3,317] width:168 height:160 align:#left
-		dotNetControl 'btn_resize' "System.Windows.Forms.Button" pos:[3,480] width:168 height:10 align:#left
+-- 		dotNetControl 'btn_resize' "System.Windows.Forms.Button" pos:[3,480] width:168 height:10 align:#left
 		
 		
 		
-		local boutons = #( /* tv_elementsFacade, */ lbl_elements, tv_motif, ckb_dupliquer, ckb_instancier, ckb_rendreUnique, ckb_supprimer, lbl_motif, subRoll_param, btn_resize )
+		local boutons = #( /* tv_elementsFacade, */ lbl_elements, tv_sequence, ckb_dupliquer, ckb_instancier, ckb_rendreUnique, ckb_supprimer, lbl_motif, subRoll_param/* , btn_resize  */)
 		
 		
 		
@@ -673,23 +678,25 @@ category:"CP | Urba"
 		---------- Treeview -----------------------------------------------------------------------------
 		fn vider_TVs = (
 			tv_elementsFacade.Nodes.Clear()
-			tv_motif.Nodes.Clear()
+			tv_sequence.Nodes.Clear()
 		)
-		------- treeview -------------------------
-		fn ajouter_TV_element	_item_aAjouter	_itemParent	_tag:"" 	_ForeColor:((dotNetClass "System.Drawing.Color").fromARGB 	255	255	255)		=(
+		fn ajouter_TV_element		_item_aAjouter	_itemParent	_tag:"" 	_ForeColor:((dotNetClass "System.Drawing.Color").fromARGB 	255	255	255)		=(
 			
 			local nv_node 			=	_itemParent.Nodes.add 		_item_aAjouter
 			nv_node.ForeColor 	= _ForeColor
 			nv_node.tag 				= _tag
-		
+			
 			nv_node
 		)
+		
+		
+		
+		
 		
 		
 		fn initialiser_tv = (
 			
 			
--- 			show tv_elementsFacade
 			
 			
 			---- elements ----
@@ -709,28 +716,51 @@ category:"CP | Urba"
 			
 			
 			---- sequence motif ----
-			tv_motif.borderstyle 			= (dotnetclass "System.Windows.Forms.BorderStyle").None
-			tv_motif.LabelEdit 				= false 
-			tv_motif.allowdrop 			= true
-			tv_motif.HideSelection 		= false
--- 			tv_motif.ShowRootLines	 	= true
-			tv_motif.ShowLines   			= true
--- 			tv_motif.HotTracking   		= true
-			tv_motif.BackColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
-			tv_motif.ForeColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
-			tv_motif.LineColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
-			tv_motif.DrawMode 			= (dotnetclass "TreeViewDrawMode.OwnerDrawText")
+			tv_sequence.borderstyle 			= (dotnetclass "System.Windows.Forms.BorderStyle").None
+			tv_sequence.LabelEdit 				= false 
+			tv_sequence.allowdrop 			= true
+			tv_sequence.HideSelection 		= false
+-- 			tv_sequence.ShowRootLines	 	= true
+			tv_sequence.ShowLines   			= true
+-- 			tv_sequence.HotTracking   		= true
+			tv_sequence.BackColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
+			tv_sequence.ForeColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
+			tv_sequence.LineColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
+			tv_sequence.DrawMode 			= (dotnetclass "TreeViewDrawMode.OwnerDrawText")
 			
-			tv_motif.indent					= 24
+			tv_sequence.indent					= 24
 			
+			---- icones TV sequence -------------
+			
+			
+			tv_sequence.indent				= 24
+			
+			tv_imageList.imageSize 		= 	dotNetObject "System.Drawing.Size" 32 32
+			
+			
+			local dossier_images = ( GetDir #userScripts ) + "\\cp-Urba\\img\\"
+			tv_imageList.Images.Clear ()
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - vide.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - mur.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - baie.png"))
+-- 			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - ensemble menuis.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - balcon.png"))
+			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - groupe.png"))
+		
+			tv_sequence.ImageList =	tv_imageList
+			
+			
+			
+			
+			/* 
 			---- le bouton resize -----------------------
 			btn_resize.FlatStyle	=		(dotNetClass "System.Windows.Forms.FlatStyle").flat	
 			btn_resize.BackColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
 			btn_resize.ForeColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
+			 */
 		)
 		
 		----- UI	divers ----------------------------------------------------------------------------------------------------
-		
 		------ recuperre le nom du plugin de chaque fichier --------------------------
 		fn get_plugin_nom 	_fichier	= (
 			local fichier_stream		=	openFile 	_fichier 	mode:"r"
@@ -747,8 +777,6 @@ category:"CP | Urba"
 			close fichier_stream	
 			plugin_nom
 		) --- fin get_plugin_nom ----------
-		
-		
 		fn get_plugin 	_fichier	= (
 			local fichier_stream		=	openFile 	_fichier 	mode:"r"
 			local plugin_nom
@@ -773,28 +801,29 @@ category:"CP | Urba"
 			vider_TVs ()
 			
 			-------------------- ELEMENTS ------------------------------------------
-			
--- 			if roll_facades.lbx_facades.selection != 0 do (
+			----- les dossiers -----------------------------------------
+			local chemins_elements = getDirectories 	"$userScripts\\cp-Urba\\modules\\Batiment\\Facade\\ElementsDeFacade\\*"
+			local dossier_elements = #()
+			for chemin in chemins_elements do (				
+				local tab_chemin = filterString chemin "\\"
 				
-				----- les dossiers -----------------------------------------
-				local chemins_elements = getDirectories 	"$userScripts\\cp-Urba\\modules\\Batiment\\Facade\\ElementsDeFacade\\*"
-				local dossier_elements = #()
-				for chemin in chemins_elements do (				
-					local tab_chemin = filterString chemin "\\"
-					
-					--- le dossier -----
-					nd_dossier = ajouter_TV_element	tab_chemin[tab_chemin.count]		tv_elementsFacade  \
-																							_ForeColor:((dotNetClass "System.Drawing.Color").fromARGB 	200	200	200)
-					
-					--- les plugins -----
-					local fichiers = getFiles ( chemin + "*.ms" )
-					for fichier in fichiers do 
-						ajouter_TV_element	( get_plugin_nom 	fichier )		nd_dossier	_tag:( get_plugin 	fichier )	
-					
-				)
--- 			)
+				--- le dossier -----
+				nd_dossier = ajouter_TV_element	tab_chemin[tab_chemin.count]		tv_elementsFacade  \
+																						_ForeColor:((dotNetClass "System.Drawing.Color").fromARGB 	200	200	200)
+				
+				--- les plugins -----
+				local fichiers = getFiles ( chemin + "*.ms" )
+				for fichier in fichiers do 
+					ajouter_TV_element	( get_plugin_nom 	fichier )		nd_dossier	_tag:( get_plugin 	fichier )	
+				
+			)
 			
-		) --- fin actualiser -----------
+			
+			
+			-------------------- SEQUENCE ------------------------------------------
+			----- les dossiers -----------------------------------------
+			
+		) --- fin actualiser_TV -----------
 		
 		fn actualiser =(
 			debug "facade_courante" var:facade_courante
@@ -808,11 +837,37 @@ category:"CP | Urba"
 				ddl_repartition.enabled = false
 				ddl_repartition.selection 		= 0
 			)
+		) --- fin actualiser----------
+		
+		
+		
+		
+		
+		
+		--------- le treeView ELEMENTS DE FACADE---------
+		on tv_elementsFacade 	mouseDown 				_arg 	do  	(
+-- 			showEvents  tv_elementsFacade
+			local node_pique = tv_elementsFacade.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y ) 
+-- 			debug "	-------->		tv_elementsFacade 	mouseDown  <--------------------------"
+			debug "	-------->		_arg" var:_arg
+-- 			debug "	-------->		node_pique.text" 	var:node_pique.text
+-- 			debug "	-------->		node_pique.tag" 		var:node_pique.tag
+		)
+		on tv_elementsFacade 	DoubleClick 				_arg 	do  	(
+			local node_pique = tv_elementsFacade.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y ) 
+			if node_pique != undefined and node_pique.tag	!= "" do (
+				ajouter_elementFacade			(execute node_pique.tag )	 	
+			
+			)
+-- 			debug "	-------->		tv_elementsFacade 	mouseDown  <--------------------------"
+-- 			debug "	-------->		_arg" var:_arg
+-- 			debug "	-------->		node_pique.text" 	var:node_pique.text
+-- 			debug "	-------->		node_pique.tag" 		var:node_pique.tag
 		)
 		
 		
 		
-		
+		/* 
 		----- Gestion du resize du subRollout -----------------------
 		local resize_enCours 			= false
 		local pos_initial					=	[0,0]
@@ -868,12 +923,14 @@ category:"CP | Urba"
 				
 			)
 		)
+		
+		
 		------------ le bouton resize -----------------------
 		on btn_resize mouseDown 		do 	resize_init		()
 		on btn_resize mouseMove 		do	resizer ()
 		on btn_resize mouseUp 			do	resize_enCours = false
 		on btn_resize MouseLeave 		do	resize_enCours = false
-		
+		 */
 		
 		
 		
@@ -905,7 +962,6 @@ category:"CP | Urba"
 		dropdownList 'ddl_toiture_type' "" pos:[5,3] width:165 height:21 items:#("Sans", "Terrasse", "1 pan", "2 pans", "n pans") align:#left
 		subRollout 'subRoll_param' "" pos:[5,25] width:165 height:1 align:#left
 		
--- 		dotNetControl 'btn_resize' "System.Windows.Forms.Button" pos:[5,188] width:165 height:10 align:#left
 		
 		fn actualiser = (
 			
@@ -915,67 +971,34 @@ category:"CP | Urba"
 				for subRoll in subroll_param.rollouts  do
 					removeSubRollout subroll_param	subRoll
 				
+				
+				
 			---- on ajoute le nouveau -----------------
 			if ddl_toiture_type.selection > 1 then (
 				addSubRollout 	subroll_param		toiture.roll_general
 				
+				ddl_toiture_type.height  = 66 
+				
 				subroll_param.height		=	toiture.roll_general.height -  14
-				roll_toiture.height			=	subroll_param.height + ddl_toiture_type.height + 7
+				roll_toiture.height			=	subroll_param.height + ddl_toiture_type.height  + 7
+				
+				
+				debug "subroll_param.height" var:subroll_param.height
+				debug "roll_toiture.height" var:roll_toiture.height
+				debug "ddl_toiture_type.height" var:ddl_toiture_type.height
+				
 			) else (
 				subroll_param.height		= 0
 				roll_toiture.height			=	 36
-				
 			)
 		)
-		/* 
-		----- Gestion du resize du subRollout -----------------------
-		local resize_enCours 			= false
-		local pos_initial					=	[0,0]
-		local subRoll_hauteur_init		=	0
-		local btnResize_pos_init		=	[0,0]
-		local roll_hauteur_init			=	[0,0]
-		fn resize_init	=(
-					resize_enCours 				= true
-					pos_initial						=	mouse.pos
-					subRoll_hauteur_init		= 	subroll_param.height
-					btnResize_pos_init			=	btn_resize.pos
-					roll_hauteur_init			=	roll_toiture.height
--- 					debug "pos_initial"	var:pos_initial
-				)
-		fn resizer =(
-			if resize_enCours do (
-				local changement_ht 	= mouse.pos.y - pos_initial.y
-				local subRoll_nvl_ht 		= subRoll_hauteur_init 		+ 	changement_ht
-				
-				if subRoll_nvl_ht >	50 do (
-					
-					subroll_param.height		=	subRoll_nvl_ht
-					btn_resize.pos.y			=	btnResize_pos_init.y		+	changement_ht
-					roll_toiture.height			=	roll_hauteur_init 			+ 	changement_ht
-				)
-			)
-		)
-		------------ le bouton resize -----------------------
-		on btn_resize mouseDown 		do 	resize_init		()
-		on btn_resize mouseMove 		do	resizer ()
-		on btn_resize mouseUp 			do	resize_enCours = false
-		on btn_resize MouseLeave 		do	resize_enCours = false
-		 */
 		
 		
 		
 		
 		
 		on roll_toiture open do
-		(
-					actualiser ()
-					/* 
-					---- le bouton resize -----------------------
-					btn_resize.FlatStyle	=		(dotNetClass "System.Windows.Forms.FlatStyle").flat	
-					btn_resize.BackColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
-					btn_resize.ForeColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
-			 */
-				)
+			actualiser ()
 		on ddl_toiture_type selected val		do
 			actualiser()
 		
@@ -1522,6 +1545,33 @@ category:"CP | Urba"
 		result
 		
 	) ---- fin choisir facade ------------
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	------------------- Elements de Facades ------------------------------
+	fn ajouter_elementFacade			_element_plug	 		=(
+		if facade_courante != undefined do (
+			local nvl_element 		= createinstance		_element_plug
+			append facade_courante.sequence			nvl_element
+		
+			---- actualisations -----------
+-- 			actualiser_UI ()
+		)
+	)
+	
+	
 	
 	
 	

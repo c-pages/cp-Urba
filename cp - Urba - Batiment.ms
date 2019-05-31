@@ -79,7 +79,7 @@ category:"CP | Urba"
 	
 	
 	---- managers ----------
-	local mgr_shp 		= str_mgr_shape ()
+	local mgr_shp 			= str_mgr_shape ()
 	local mgr_mesh 		= str_mgr_mesh ()
 	local mgr_presets 	= str_mgr_batiment_presetsXML ()
 	
@@ -88,11 +88,11 @@ category:"CP | Urba"
 	parameters param_etages rollout:roll_etages	(
 		
 		------- Etages			------------------
-		etages_nbre					type: #integer				default:1			ui:spn_etages_nbres	 				animatable:false		invisibleInTV:true
+		etages_nbre						type: #integer				default:1			ui:spn_etages_nbres	 				animatable:false		invisibleInTV:true
 		etages_hauteur_global		type: #worldUnits 		default:250.	 	ui:spn_etages_hauteur	 			animatable:false		invisibleInTV:true
 		
-		dalle_epaisseur				type: #worldUnits 		default:20.	 		ui:spn_dalle_epaisseur	 			animatable:false		invisibleInTV:true
-		soubassement_hauteur	type: #worldUnits 		default:100.	 	ui:spn_soubassement_hauteur	animatable:false		invisibleInTV:true
+		dalle_epaisseur					type: #worldUnits 		default:20.	 		ui:spn_dalle_epaisseur	 			animatable:false		invisibleInTV:true
+		soubassement_hauteur		type: #worldUnits 		default:100.	 	ui:spn_soubassement_hauteur	animatable:false		invisibleInTV:true
 		
 		
 		------- Etages	 specifiques		------------------

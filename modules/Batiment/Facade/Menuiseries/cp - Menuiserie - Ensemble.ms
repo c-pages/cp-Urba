@@ -961,7 +961,10 @@ category:"CP | Menuiserie"
 				4:	hauteur 					= length ( gridPoint - pt_hauteur )
 			)
 	) --- fin tool create ---------
-	
-	
+	/* 
+	on load  		do format "LOAD ENSEMBLE\n"
+	on create 		do format "CREATE ENSEMBLE\n"
+	on update 	do format "UPDATE ENSEMBLE\n"
+	 */
 ) ------- fin plugin ---------------------
 
