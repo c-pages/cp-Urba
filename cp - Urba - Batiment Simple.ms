@@ -75,7 +75,7 @@ category:"CP | Urba"
 	
 	local definir_toiture, optimiser
 	
-	local ajouter_elementFacade
+	local ajouter_element_sequence
 	
 	local facade_courante
 	
@@ -676,23 +676,6 @@ category:"CP | Urba"
 		
 		
 		---------- Treeview -----------------------------------------------------------------------------
-		fn vider_TVs = (
-			tv_elementsFacade.Nodes.Clear()
-			tv_sequence.Nodes.Clear()
-		)
-		fn ajouter_TV_element		_item_aAjouter	_itemParent	_tag:"" 	_ForeColor:((dotNetClass "System.Drawing.Color").fromARGB 	255	255	255)		=(
-			
-			local nv_node 			=	_itemParent.Nodes.add 		_item_aAjouter
-			nv_node.ForeColor 	= _ForeColor
-			nv_node.tag 				= _tag
-			
-			nv_node
-		)
-		
-		
-		
-		
-		
 		
 		fn initialiser_tv = (
 			
@@ -715,27 +698,22 @@ category:"CP | Urba"
 			tv_elementsFacade.indent					= 24
 			
 			
-			---- sequence motif ----
+			---- TRee view ----
 			tv_sequence.borderstyle 			= (dotnetclass "System.Windows.Forms.BorderStyle").None
 			tv_sequence.LabelEdit 				= false 
-			tv_sequence.allowdrop 			= true
+			tv_sequence.allowdrop 				= true
 			tv_sequence.HideSelection 		= false
 -- 			tv_sequence.ShowRootLines	 	= true
 			tv_sequence.ShowLines   			= true
 -- 			tv_sequence.HotTracking   		= true
 			tv_sequence.BackColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
-			tv_sequence.ForeColor 			= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
+			tv_sequence.ForeColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
 			tv_sequence.LineColor 				= (dotNetClass "System.Drawing.Color").fromARGB 	255	255	255
 			tv_sequence.DrawMode 			= (dotnetclass "TreeViewDrawMode.OwnerDrawText")
 			
-			tv_sequence.indent					= 24
-			
-			---- icones TV sequence -------------
-			
-			
 			tv_sequence.indent				= 24
 			
-			tv_imageList.imageSize 		= 	dotNetObject "System.Drawing.Size" 32 32
+			tv_imageList.imageSize 	= 	dotNetObject "System.Drawing.Size" 32 32
 			
 			
 			local dossier_images = ( GetDir #userScripts ) + "\\cp-Urba\\img\\"
@@ -748,17 +726,86 @@ category:"CP | Urba"
 			tv_imageList.Images.Add((dotnetclass "System.Drawing.Image" ).FromFile(dossier_images + "tv - groupe.png"))
 		
 			tv_sequence.ImageList =	tv_imageList
+
 			
 			
 			
 			
-			/* 
-			---- le bouton resize -----------------------
-			btn_resize.FlatStyle	=		(dotNetClass "System.Windows.Forms.FlatStyle").flat	
-			btn_resize.BackColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
-			btn_resize.ForeColor	=		(dotNetClass "System.Drawing.Color").fromARGB 	110	110	110
-			 */
 		)
+		
+		
+		
+		
+		
+		
+		
+		fn vider_tv_elements = (
+			tv_elementsFacade.Nodes.Clear()
+		)
+		fn vider_tv_sequence = (
+			tv_sequence.Nodes.Clear()
+		)
+		
+		
+		
+		
+		fn ajouter_node_element		_item_aAjouter	_itemParent	_tag:"" 	_ForeColor:((dotNetClass "System.Drawing.Color").fromARGB 	255	255	255)		=(
+			
+			local nv_node 			=	_itemParent.Nodes.add 		_item_aAjouter
+			nv_node.ForeColor 	= _ForeColor
+			nv_node.tag 				= _tag
+			
+			nv_node
+		)
+		fn ajouter_node_sequence		_item_aAjouter	_itemParent	_tag:"" 	_ForeColor:((dotNetClass "System.Drawing.Color").fromARGB 	255	255	255)		=(
+			
+			---- pour element vide ---------
+			struct tv_elem_vide (
+				nom ="..."
+			)
+		
+			local nv_node 	=	_itemParent.Nodes.add 		_item_aAjouter.nom
+			
+			---- instance ?!? -------
+-- 			if est_instance 	_item_aAjouter	( nv_node.index + 1 )	(get_element_parent nv_node)	do nv_node.text += " *"
+			
+			debug "#### classof 	_item_aAjouter #### " var:(classof _item_aAjouter)
+			
+			
+			
+			case  classof  _item_aAjouter of (
+				
+				cp_facadeElem_mur:			nv_node.imageIndex = nv_node.selectedImageIndex	=	1
+				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	2
+				cp_facadeElem_balcon:		nv_node.imageIndex = nv_node.selectedImageIndex	=	3
+				cp_facadeElem_groupe:		nv_node.imageIndex = nv_node.selectedImageIndex	=	4
+-- 				cp_facadeElem_baie:			nv_node.imageIndex = nv_node.selectedImageIndex	=	5
+				
+				default:	nv_node.imageIndex = nv_node.selectedImageIndex	=	0
+				
+			)
+			
+			
+			if hasProperty	_item_aAjouter	"elements" do (
+				if _item_aAjouter.elements.count == 0 then (
+						local elem_vide = ajouter_node_sequence		(tv_elem_vide () )	nv_node
+						elem_vide.tag	="vide"
+				) else (
+					for elem in _item_aAjouter.elements	do (
+						local elem_enfant = ajouter_node_sequence		elem	nv_node
+						
+					)
+				)
+			)
+			
+			nv_node.expand ()
+			nv_node
+		)
+		
+		
+		
+		
+		
 		
 		----- UI	divers ----------------------------------------------------------------------------------------------------
 		------ recuperre le nom du plugin de chaque fichier --------------------------
@@ -796,9 +843,9 @@ category:"CP | Urba"
 		
 		
 		
-		fn actualiser_TV 	=(
+		fn actualiser_TV_elements 	=(
 			
-			vider_TVs ()
+			vider_tv_elements ()
 			
 			-------------------- ELEMENTS ------------------------------------------
 			----- les dossiers -----------------------------------------
@@ -808,36 +855,58 @@ category:"CP | Urba"
 				local tab_chemin = filterString chemin "\\"
 				
 				--- le dossier -----
-				nd_dossier = ajouter_TV_element	tab_chemin[tab_chemin.count]		tv_elementsFacade  \
+				nd_dossier = ajouter_node_element	tab_chemin[tab_chemin.count]		tv_elementsFacade  \
 																						_ForeColor:((dotNetClass "System.Drawing.Color").fromARGB 	200	200	200)
 				
 				--- les plugins -----
 				local fichiers = getFiles ( chemin + "*.ms" )
 				for fichier in fichiers do 
-					ajouter_TV_element	( get_plugin_nom 	fichier )		nd_dossier	_tag:( get_plugin 	fichier )	
+					ajouter_node_element	( get_plugin_nom 	fichier )		nd_dossier	_tag:( get_plugin 	fichier )	
 				
 			)
 			
 			
 			
-			-------------------- SEQUENCE ------------------------------------------
-			----- les dossiers -----------------------------------------
+		) --- fin actualiser_TV_elements -----------
+		
+		fn actualiser_TV_sequence 	=(
 			
-		) --- fin actualiser_TV -----------
+			vider_tv_sequence ()
+			
+			-------------------- ELEMENTS ------------------------------------------
+			if facade_courante != undefined do 
+				for i = 1 to facade_courante.sequence.count do 				
+					ajouter_node_sequence		facade_courante.sequence[i]		tv_sequence
+			
+		) --- fin actualiser_TV_elements -----------
+		
+		
+		
+		
+		
 		
 		fn actualiser =(
 			debug "facade_courante" var:facade_courante
--- 			if facade_courante != undefined do 
 			roll_sequence.boutons.enabled		= 		facade_courante != undefined 	--lbx_facades.selection != 0
 			
 			if facade_courante != undefined 	then (
-				ddl_repartition.enabled = true
-				ddl_repartition.selection 		= facade_courante.repartition 
+				ddl_repartition.enabled 		= true
+				ddl_repartition.selection 	= facade_courante.repartition 
 			)else (
-				ddl_repartition.enabled = false
-				ddl_repartition.selection 		= 0
+				ddl_repartition.enabled 		= false
+				ddl_repartition.selection 	= 0
 			)
+			
 		) --- fin actualiser----------
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		
@@ -846,23 +915,14 @@ category:"CP | Urba"
 		
 		--------- le treeView ELEMENTS DE FACADE---------
 		on tv_elementsFacade 	mouseDown 				_arg 	do  	(
--- 			showEvents  tv_elementsFacade
 			local node_pique = tv_elementsFacade.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y ) 
--- 			debug "	-------->		tv_elementsFacade 	mouseDown  <--------------------------"
-			debug "	-------->		_arg" var:_arg
--- 			debug "	-------->		node_pique.text" 	var:node_pique.text
--- 			debug "	-------->		node_pique.tag" 		var:node_pique.tag
 		)
 		on tv_elementsFacade 	DoubleClick 				_arg 	do  	(
 			local node_pique = tv_elementsFacade.GetNodeAt (dotNetObject "System.Drawing.Point" _arg.x _arg.y ) 
 			if node_pique != undefined and node_pique.tag	!= "" do (
-				ajouter_elementFacade			(execute node_pique.tag )	 	
-			
+				ajouter_element_sequence		(execute node_pique.tag )	 	
+				actualiser_TV_sequence		()
 			)
--- 			debug "	-------->		tv_elementsFacade 	mouseDown  <--------------------------"
--- 			debug "	-------->		_arg" var:_arg
--- 			debug "	-------->		node_pique.text" 	var:node_pique.text
--- 			debug "	-------->		node_pique.tag" 		var:node_pique.tag
 		)
 		
 		
@@ -940,7 +1000,8 @@ category:"CP | Urba"
 		on roll_sequence open do
 		(
 			initialiser_tv ()
-			actualiser_TV ()
+			actualiser_TV_elements ()
+			actualiser_TV_sequence ()
 			actualiser ()
 		)
 		
@@ -983,9 +1044,9 @@ category:"CP | Urba"
 				roll_toiture.height			=	subroll_param.height + ddl_toiture_type.height  + 7
 				
 				
-				debug "subroll_param.height" var:subroll_param.height
-				debug "roll_toiture.height" var:roll_toiture.height
-				debug "ddl_toiture_type.height" var:ddl_toiture_type.height
+-- 				debug "subroll_param.height" var:subroll_param.height
+-- 				debug "roll_toiture.height" var:roll_toiture.height
+-- 				debug "ddl_toiture_type.height" var:ddl_toiture_type.height
 				
 			) else (
 				subroll_param.height		= 0
@@ -1561,13 +1622,10 @@ category:"CP | Urba"
 	
 	
 	------------------- Elements de Facades ------------------------------
-	fn ajouter_elementFacade			_element_plug	 		=(
+	fn ajouter_element_sequence			_element_plug	 		=(
 		if facade_courante != undefined do (
 			local nvl_element 		= createinstance		_element_plug
 			append facade_courante.sequence			nvl_element
-		
-			---- actualisations -----------
--- 			actualiser_UI ()
 		)
 	)
 	
